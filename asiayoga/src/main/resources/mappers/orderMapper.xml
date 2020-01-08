@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.company.asiayoga.mapper.orderMapper">
+ 
+ 	<!-- 해당 매장의 주문 전체 정보  -->
+ 	<select id="orderList" parameterType="orderVO" resultType="orderVO">
+ 		/* orderMapper.orderList */
+		SELECT 	order_seq,
+				store_seq,
+				product_seq,
+				member_seq,
+				product_start_day,
+				product_end_day,
+				product_term,
+				product_count,
+				remaining_count,
+				del_yn
+		FROM ORDERINFO
+		WHERE store_seq = #{storeSeq}
+		AND del_yn = 'N';
+	</select>
+	
+	<!-- 고객 1명의 주문 목록  -->
+ 	<select id="customerOrderList" parameterType="orderVO" resultType="orderVO">
+ 		/* orderMapper.customerOrderList */
+		SELECT  ordinfo.order_seq,
+				ordinfo.store_seq,
+				ordinfo.product_seq,
+				ordinfo.member_seq,
+				ordinfo.product_start_day,
+				ordinfo.product_end_day,
+				ordinfo.product_term,
+				ordinfo.product_count,
+				ordinfo.remaining_count,
+				ordinfo.del_yn,
+				prdinfo.product_name,
+				prdinfo.product_code
+		FROM ORDERINFO ordinfo
+		INNER JOIN PRODUCTINFO prdinfo
+		ON ordinfo.product_seq = prdinfo.product_seq
+		WHERE ordinfo.store_seq = #{storeSeq}
+		AND ordinfo.member_seq = #{memberSeq}
+		AND ordinfo.del_yn = 'N'
+		ORDER BY ordinfo.modify_date DESC
+	</select>
+	
+	<!-- 고객 1명의 주문 1개의 내용  -->
+ 	<select id="customerOrder" parameterType="orderVO" resultType="orderVO">
+ 		/* orderMapper.customerOrder */
+		SELECT  ordinfo.order_seq,
+				ordinfo.store_seq,
+				ordinfo.product_seq,
+				ordinfo.member_seq,
+				ordinfo.product_start_day,
+				ordinfo.product_end_day,
+				ordinfo.product_term,
+				ordinfo.product_count,
+				ordinfo.remaining_count,
+				ordinfo.del_yn,
+				prdinfo.product_name,
+				prdinfo.product_code
+		FROM ORDERINFO ordinfo
+		INNER JOIN PRODUCTINFO prdinfo
+		ON ordinfo.product_seq = prdinfo.product_seq
+		WHERE ordinfo.order_seq = #{orderSeq}
+		AND ordinfo.del_yn = 'N'
+	</select>
+	
+	<update id="updateOrderCount" parameterType="orderVO">
+ 		/* orderMapper.updateOrderCount */
+		UPDATE ORDERINFO
+		SET remaining_count = (SELECT remaining_count FROM ORDERINFO WHERE order_seq = #{orderSeq} AND del_yn = 'N')-1
+		WHERE order_seq = #{orderSeq}
+		AND del_yn = 'N'
+	</update>
+    
+</mapper>

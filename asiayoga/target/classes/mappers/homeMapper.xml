@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.company.asiayoga.mapper.memberMapper">
+ 
+ 	<select id="attendanceList" parameterType="memberVO" resultType="memberVO">
+ 		/* memberMapper.attendanceList */
+		SELECT
+			@ROWNUM:=@ROWNUM+1 as row_num,
+			atdinfo.attendance_seq,
+			atdinfo.member_seq,
+	        ( SELECT name FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') AS name,
+	        ( SELECT phone FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') as phone,
+        	( SELECT sex FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') as sex,
+			atdinfo.attendance_date,
+			atdinfo.register_date,
+			atdinfo.register_id,
+			atdinfo.modify_date, 
+			atdinfo.modify_id,
+			atdinfo.del_yn,
+			atdinfo.store_code 
+		FROM ATTENDANCEINFO atdinfo , (SELECT @ROWNUM :=0) AS R
+		WHERE atdinfo.store_code = #{storeCode}
+		AND	atdinfo.del_yn = 'N'
+		ORDER BY atdinfo.attendance_date DESC
+	</select>
+    
+</mapper>

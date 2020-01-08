@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration 
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+    
+<configuration>
+
+	<settings>
+		<!-- 중첩구문내 RowBound 사용 허용여부 -->
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+		  	
+		<!-- 전통적 DB 컴럼명을 JAVA의 Camel표기법으로 자동 매핑 설정 -->
+		<setting name="localCacheScope" value="SESSION"/>
+	</settings>
+	
+	<typeAliases>
+		<typeAlias type="com.company.asiayoga.attendance.domain.AttendanceVO" alias="attendanceVO" />
+		<typeAlias type="com.company.asiayoga.member.domain.MemberVO" alias="memberVO" />
+		<typeAlias type="com.company.asiayoga.product.domain.ProductVO" alias="productVO" />
+		<typeAlias type="com.company.asiayoga.store.domain.StoreVO" alias="storeVO" />
+		<typeAlias type="com.company.asiayoga.order.domain.OrderVO" alias="orderVO" />
+	</typeAliases>
+
+</configuration>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.company.asiayoga.mapper.attendanceMapper">
+	
+	<!-- 출석 목록  -->
+	<select id="attendanceList" parameterType="attendanceVO" resultType="attendanceVO">
+		/* attendanceMapper.attendanceList */
+		SELECT
+			@ROWNUM:=@ROWNUM+1 as row_num,
+			atdinfo.attendance_seq,
+			atdinfo.member_seq,
+	        ( SELECT name FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') AS name,
+	        ( SELECT phone FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') as phone,
+        	( SELECT sex FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') as sex,
+			atdinfo.attendance_date,
+			atdinfo.register_date,
+			atdinfo.register_id,
+			atdinfo.modify_date, 
+			atdinfo.modify_id,
+			atdinfo.del_yn,
+			atdinfo.store_seq 
+		FROM ATTENDANCEINFO atdinfo , (SELECT @ROWNUM :=0) AS R
+		WHERE atdinfo.store_seq = #{storeSeq}
+		AND	atdinfo.del_yn = 'N'
+		ORDER BY atdinfo.attendance_date DESC, row_num DESC
+	</select>
+
+  	<!-- 회원 출석 상세 정보  -->
+  	<select id="attendanceDetail" parameterType="attendanceVO" resultType="attendanceVO">
+  		/* attendanceMapper.attendanceDetail */
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+				temp.member_seq,
+				temp.name,
+				temp.sex,
+				temp.birth,
+				temp.phone,
+				temp.email,
+				temp.memo,
+				temp.store_seq,
+				temp.attendance_seq,
+				temp.attendance_date
+		FROM (
+				SELECT	mbinfo.member_seq,
+						mbinfo.name,
+						mbinfo.sex,
+						mbinfo.birth,
+						mbinfo.phone,
+						mbinfo.email,
+						mbinfo.memo,
+						mbinfo.store_seq,
+						atdinfo.attendance_seq,
+						atdinfo.attendance_date
+				FROM MEMBERINFO mbinfo
+				INNER JOIN ATTENDANCEINFO atdinfo 
+				ON mbinfo.member_seq =  atdinfo.member_seq
+				WHERE mbinfo.del_yn = 'N'
+				AND atdinfo.del_yn ='N'
+				AND mbinfo.member_seq = #{memberSeq}
+				AND mbinfo.store_seq = #{storeSeq}
+        	) AS temp, (SELECT @ROWNUM :=0) AS R
+        ORDER BY temp.attendance_date DESC,row_num DESC
+	</select>
+	
+	<insert id="insertAttendance" parameterType="attendanceVO">
+		/* attendanceMapper.insertAttendance */
+		
+		INSERT INTO ATTENDANCEINFO
+				( member_seq,
+				  attendance_date,
+				  register_date,
+				  register_id,
+				  modify_date,
+				  modify_id,
+				  del_yn,
+				  store_seq
+				)
+		VALUES
+				( #{memberSeq},
+				  #{attendanceDate},
+				  now(),
+				  'admin',
+				  now(),
+				  'admin',
+				  'N',
+				  #{storeSeq}
+				)
+	</insert>
+  	
+
+</mapper>

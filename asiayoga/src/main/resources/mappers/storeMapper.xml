@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.company.asiayoga.mapper.storeMapper">
+
+	<select id="storeList" parameterType="storeVO" resultType="storeVO">
+		/* storeMapper.storeList */
+		SELECT
+			@ROWNUM:=@ROWNUM+1 AS row_num, 
+			store_seq,
+			store_name,
+			store_tel,
+			store_phone,
+			store_address,
+			store_memo
+		FROM STOREINFO, (SELECT @ROWNUM :=0) AS R
+		WHERE del_yn = 'N'
+		ORDER BY store_seq DESC
+	</select>
+
+
+</mapper>

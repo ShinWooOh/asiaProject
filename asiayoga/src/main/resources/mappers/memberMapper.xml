@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.company.asiayoga.mapper.memberMapper">
+  
+	<!-- 회원 목록  -->
+	<select id="memberList" parameterType="memberVO" resultType="memberVO">
+  		/* memberMapper.memberList */
+		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
+				member_seq,
+				name,
+	            sex,
+	            phone,
+	            email,
+	            birth,
+	            memo,
+	            store_seq,
+	            register_date
+		FROM MEMBERINFO , (SELECT @ROWNUM :=0) AS R
+		WHERE store_seq = #{storeSeq}
+		AND del_yn = 'N'
+	    ORDER BY register_date DESC, row_num DESC
+	</select>
+	
+	<!-- 회원 정보 상세  -->
+	<select id="memberDetail" parameterType="memberVO" resultType="memberVO">
+  		/* memberMapper.memberDetail */
+		SELECT	member_seq,
+				name,
+	            sex,
+	            phone,
+	            email,
+	            birth,
+	            memo,
+	            store_seq,
+	            register_date,
+	            ( SELECt store_name FROM STOREINFO WHERE store_seq = #{storeSeq} ) AS store_name
+		FROM MEMBERINFO
+	    WHERE member_seq = #{memberSeq}
+	    AND store_seq = #{storeSeq}
+	</select>
+	
+	
+	<!-- 회원 정보 등록  -->
+	<insert id="memberInsert" parameterType="memberVO">
+  		/* memberMapper.memberInsert */
+		INSERT INTO MEMBERINFO
+				(	name,
+				 	sex,
+					birth,
+					phone,
+					email,
+					memo,
+					store_seq,
+					register_date,
+					register_id,
+					modify_date,
+					modify_id,
+					del_yn
+				)
+		VALUES
+				(
+					#{name},
+					#{sex},
+					#{birth},
+					#{phone},
+					#{email},
+					#{memo},
+					#{storeSeq},
+					now(),
+					'admin',
+					now(),
+					'admin',
+					'N'
+				)
+	</insert>
+	
+	<!-- 회원 정보 삭제  -->
+	<update id="memberDel" parameterType="memberVO">
+  		/* memberMapper.memberDel */
+  		UPDATE MEMBERINFO 
+  		SET del_yn = 'Y'
+  		WHERE member_seq = #{memberSeq}
+  		AND store_seq = #{storeSeq} 
+	</update>
+	
+	
+	<!-- 회원 정보 업데이트  -->
+	<update id="memberEdit" parameterType="memberVO">
+  		/* memberMapper.memberEdit */
+  		UPDATE MEMBERINFO 
+  		<set>
+  			<if test="name != null and name != ''">name = #{name},</if>
+  			<if test="sex != null and sex != ''">sex = #{sex},</if>
+  			<if test="birth != null and birth != ''">birth = #{birth},</if>
+  			<if test="phone != null and phone != ''">phone = #{phone},</if>
+  			<if test="email != null and email != ''">email = #{email},</if>
+  			<if test="memo != null and memo != ''">memo = #{memo},</if>
+  			modify_date= now(),
+  			modify_id = 'admin'
+  		</set> 
+  		WHERE member_seq = #{memberSeq}
+  		AND store_seq = #{storeSeq}
+  		AND del_yn ='N' 
+	</update>
+	
+  </mapper>
