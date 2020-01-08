@@ -22,8 +22,8 @@ public class OrderVO extends MemberVO {
     private String registerId;                      // 등록자 아이디
     private Date modifyDate;                        // 수정 일자
     private String modifyId;                        // 수정자 아이디
-    
-	public int getOrderSeq() {
+	
+    public int getOrderSeq() {
 		return orderSeq;
 	}
 	public void setOrderSeq(int orderSeq) {
@@ -119,28 +119,6 @@ public class OrderVO extends MemberVO {
 	public void setModifyId(String modifyId) {
 		this.modifyId = modifyId;
 	}
-	@Override
-	public String toString() {
-		return "OrderVO [orderSeq=" + orderSeq + ", storeSeq=" + storeSeq + ", memberSeq=" + memberSeq + ", productSeq="
-				+ productSeq + ", productName=" + productName + ", productCode=" + productCode + ", productStartDay="
-				+ productStartDay + ", productEndDay=" + productEndDay + ", productTerm=" + productTerm
-				+ ", productCount=" + productCount + ", remainingCount=" + remainingCount + ", delYn=" + delYn
-				+ ", registerDate=" + registerDate + ", registerId=" + registerId + ", modifyDate=" + modifyDate
-				+ ", modifyId=" + modifyId + ", getOrderSeq()=" + getOrderSeq() + ", getStoreSeq()=" + getStoreSeq()
-				+ ", getMemberSeq()=" + getMemberSeq() + ", getProductSeq()=" + getProductSeq() + ", getProductName()="
-				+ getProductName() + ", getProductCode()=" + getProductCode() + ", getProductStartDay()="
-				+ getProductStartDay() + ", getProductEndDay()=" + getProductEndDay() + ", getProductTerm()="
-				+ getProductTerm() + ", getProductCount()=" + getProductCount() + ", getRemainingCount()="
-				+ getRemainingCount() + ", getDelYn()=" + getDelYn() + ", getRegisterDate()=" + getRegisterDate()
-				+ ", getRegisterId()=" + getRegisterId() + ", getModifyDate()=" + getModifyDate() + ", getModifyId()="
-				+ getModifyId() + ", getRowNum()=" + getRowNum() + ", getAttendanceSeq()=" + getAttendanceSeq()
-				+ ", getName()=" + getName() + ", getBirth()=" + getBirth() + ", getYear()=" + getYear()
-				+ ", getMonth()=" + getMonth() + ", getDay()=" + getDay() + ", getPhone()=" + getPhone()
-				+ ", getPhone1()=" + getPhone1() + ", getPhone2()=" + getPhone2() + ", getPhone3()=" + getPhone3()
-				+ ", getEmail()=" + getEmail() + ", getSex()=" + getSex() + ", getMemo()=" + getMemo()
-				+ ", getAttendanceDate()=" + getAttendanceDate() + ", toString()=" + super.toString()
-				+ ", getStoreName()=" + getStoreName() + ", getStoreTel()=" + getStoreTel() + ", getStorePhone()="
-				+ getStorePhone() + ", getStoreAddress()=" + getStoreAddress() + ", getStoreMemo()=" + getStoreMemo()
-				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + "]";
-	}
+    
+	
 }

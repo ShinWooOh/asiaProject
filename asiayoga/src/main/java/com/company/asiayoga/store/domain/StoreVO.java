@@ -16,7 +16,6 @@ public class StoreVO {
     private String registerId;                      // 등록자 아이디
     private Date modifyDate;                        // 수정 일자
     private String modifyId;                        // 수정자 아이디
-	
     
     public int getRowNum() {
 		return rowNum;

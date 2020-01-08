@@ -40,5 +40,4 @@ public class MemberDAO {
 	public int memberEdit(MemberVO memberVO) {
 		return sqlSession.update(MEMBER_NAMESPACE+".memberEdit", memberVO);
 	}
-
 }

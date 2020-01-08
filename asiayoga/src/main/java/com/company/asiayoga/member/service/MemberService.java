@@ -20,4 +20,6 @@ public interface MemberService {
 
 	// 회원 정보 업데이트
 	int memberEdit(MemberVO memberVO) throws Exception;
+	
+
 }

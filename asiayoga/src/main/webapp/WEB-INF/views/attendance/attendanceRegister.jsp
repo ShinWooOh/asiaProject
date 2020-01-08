@@ -69,8 +69,8 @@
                         <table class="table table-bordered">
                             <tbody>
                             <tr>
-                                <th style="width: 40px">회원번호</th>
-                                <th style="width: 100px">회원명</th>
+                                <th style="width: 60px">회원번호</th>
+                                <th style="width: 80px">회원명</th>
                                 <th style="width: 100px">연락처</th>
                                 <th style="width: 100px">이메일</th>
                                 <th style="width: 150px">생년월일</th>
@@ -79,14 +79,24 @@
                            
 	                            <tr>
 	                            	<td><c:out value="${memberDetail.memberSeq}"/></td>
-	                            	<td><c:out value="${memberDetail.name}"/></td>
+	                            	<td>
+	                            		<c:choose>
+	                            			<c:when test="${memberDetail.name ne null}"><c:out value="${memberDetail.name}"/></c:when>
+	                            			<c:otherwise>
+	                            				<input type="text" id="paramName" name="paramName" readonly="readonly">
+	                            				<input type="button" id="findName" name="findName" value="이름 찾기" data-toggle="modal" data-target="#findMember">
+	                            			</c:otherwise>
+	                            		</c:choose>
+	                            		<c:out value="${memberDetail.name}"/>
+	                            	</td>
 	                            	<td><c:out value="${memberDetail.phone}"/></td>
 	                            	<td><c:out value="${memberDetail.email}"/></td>
 	                            	<td><c:out value="${memberDetail.birth}"/></td>
 	                            	<td>
 		                            	<c:choose>
 		                            		<c:when test="${memberDetail.sex eq 'M'}">남</c:when>
-		                            		<c:otherwise>여</c:otherwise>
+		                            		<c:when test="${memberDetail.sex eq 'W'}">여</c:when>
+		                            		<c:otherwise></c:otherwise>
 		                            	</c:choose>
 	                            	</td>
 	                            </tr>
@@ -136,6 +146,7 @@
                             	<td>
                             		<c:choose>
                             			<c:when test="${orderDetail.storeSeq eq '10'}">레이디요가 의정부점</c:when>
+                            			<c:when test="${orderDetail.storeSeq eq null}"></c:when>
                             			<c:otherwise>준비중입니다.</c:otherwise>
                             		</c:choose>
                             	</td>
@@ -175,6 +186,7 @@
 	<input type="hidden" id="storeSeq" name="storeSeq">
 	<input type="hidden" id="attendanceDate" name="attendanceDate">
 	<input type="hidden" id="orderSeq" name="orderSeq">
+	<input type="hidden" id="name" name="name">
 </form:form>
 <!-- REQUIRED SCRIPTS -->
 
@@ -244,7 +256,7 @@ function attendanceRegister(memberSeq,storeSeq,orderSeq){
  	var attendanceDate = new Date(dateSplit[0],dateSplit[1]-1,dateSplit[2],hour,minute);
 	$("#attendanceDate").val(attendanceDate);
 	
-		$.ajax({
+	$.ajax({
 		type: 'POST',
         url : "/attendance/insertAttendance",
         data: $("#attendanceInfo").serialize(),
@@ -262,7 +274,84 @@ function attendanceRegister(memberSeq,storeSeq,orderSeq){
     });
 }
 
+function searchName(){
+	
+	if($("#popName").val() ==''){
+		alert("이름을 입력해 주세요");
+		return false;
+	}
+	
+	var paramName = $("#popName").val();
+	$("#name").val(paramName);
+	
+/* 	$.ajax({
+		type: 'POST',
+        url : "/attendance/searchMember",
+        data: $("#attendanceInfo").serialize(),
+        success : function(data){
+            if(data == 'success'){
+            	
+            }
+            
+        },
+        error:function(request,status,error){
+            alert("저장에 실패하였습니다. 관리자에게 문의하세요");
+        }
+        
+    }); */
+}
+
 
 </script>
+
+
+<!--popUp Modal -->
+<div class="modal fade" id="findMember" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+			  <h4 class="modal-title">회원 찾기</h4>
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body">
+				<div style="margin: 10px;">
+					<input type="text" id="popName" name="popName"  placeholder="이름">
+					<input type="button" id="popFindName" name="popFindName" value="찾기" onclick="searchName();" style="margin-bottom: 10px;">
+				</div>
+				<div style="margin: 10px; border-top-style: solid;">
+					<table class="table table-bordered" style="margin-top: 20px;">
+						<tbody>
+							<tr>
+								<th>이름</th>
+								<th>연락처</th>
+								<th>성별</th>
+								<th>등록상품</th>
+							</tr>
+							<c:choose>
+								<c:when test="${popMemberList ne null and popMemberList ne ''}">
+									<c:forEach var="popMemberList" items="${popMemberList}">
+										<tr>
+											<td>${popMemberList.name}</td>
+											<td>${popMemberList.phone}</td>
+											<td>${popMemberList.sex}</td>
+											<td>${popMemberList.productName}</td>
+										</tr>
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+									<tr><th colspan="4" style="text-align: center;">결과가 없습니다.</th></tr>
+								</c:otherwise>
+							</c:choose>
+							
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
 </body>
 </html>

@@ -27,6 +27,9 @@ public class MemberVO extends StoreVO {
     private Date modifyDate;                        // 수정 일자
     private String modifyId;                        // 수정자 아이디
     private String delYn;                           // 삭제여부
+    
+    private int productSeq;						// 상품 번호
+    private String productName;						// 상품명
 	
     public int getRowNum() {
 		return rowNum;
@@ -154,6 +157,19 @@ public class MemberVO extends StoreVO {
 	public void setDelYn(String delYn) {
 		this.delYn = delYn;
 	}
+	
+	public int getProductSeq() {
+		return productSeq;
+	}
+	public void setProductSeq(int productSeq) {
+		this.productSeq = productSeq;
+	}
+	public String getProductName() {
+		return productName;
+	}
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
 	@Override
 	public String toString() {
 		return "MemberVO [rowNum=" + rowNum + ", attendanceSeq=" + attendanceSeq + ", memberSeq=" + memberSeq
@@ -161,17 +177,19 @@ public class MemberVO extends StoreVO {
 				+ ", phone=" + phone + ", phone1=" + phone1 + ", phone2=" + phone2 + ", phone3=" + phone3 + ", email="
 				+ email + ", sex=" + sex + ", memo=" + memo + ", attendanceDate=" + attendanceDate + ", registerDate="
 				+ registerDate + ", registerId=" + registerId + ", modifyDate=" + modifyDate + ", modifyId=" + modifyId
-				+ ", delYn=" + delYn + ", getRowNum()=" + getRowNum() + ", getAttendanceSeq()=" + getAttendanceSeq()
-				+ ", getMemberSeq()=" + getMemberSeq() + ", getName()=" + getName() + ", getBirth()=" + getBirth()
-				+ ", getYear()=" + getYear() + ", getMonth()=" + getMonth() + ", getDay()=" + getDay() + ", getPhone()="
-				+ getPhone() + ", getPhone1()=" + getPhone1() + ", getPhone2()=" + getPhone2() + ", getPhone3()="
-				+ getPhone3() + ", getEmail()=" + getEmail() + ", getSex()=" + getSex() + ", getMemo()=" + getMemo()
+				+ ", delYn=" + delYn + ", productSeq=" + productSeq + ", productName=" + productName + ", getRowNum()="
+				+ getRowNum() + ", getAttendanceSeq()=" + getAttendanceSeq() + ", getMemberSeq()=" + getMemberSeq()
+				+ ", getName()=" + getName() + ", getBirth()=" + getBirth() + ", getYear()=" + getYear()
+				+ ", getMonth()=" + getMonth() + ", getDay()=" + getDay() + ", getPhone()=" + getPhone()
+				+ ", getPhone1()=" + getPhone1() + ", getPhone2()=" + getPhone2() + ", getPhone3()=" + getPhone3()
+				+ ", getEmail()=" + getEmail() + ", getSex()=" + getSex() + ", getMemo()=" + getMemo()
 				+ ", getAttendanceDate()=" + getAttendanceDate() + ", getRegisterDate()=" + getRegisterDate()
 				+ ", getRegisterId()=" + getRegisterId() + ", getModifyDate()=" + getModifyDate() + ", getModifyId()="
-				+ getModifyId() + ", getDelYn()=" + getDelYn() + ", getStoreSeq()=" + getStoreSeq()
-				+ ", getStoreName()=" + getStoreName() + ", getStoreTel()=" + getStoreTel() + ", getStorePhone()="
-				+ getStorePhone() + ", getStoreAddress()=" + getStoreAddress() + ", getStoreMemo()=" + getStoreMemo()
-				+ ", toString()=" + super.toString() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
-				+ "]";
+				+ getModifyId() + ", getDelYn()=" + getDelYn() + ", getProductSeq()=" + getProductSeq()
+				+ ", getProductName()=" + getProductName() + ", getStoreSeq()=" + getStoreSeq() + ", getStoreName()="
+				+ getStoreName() + ", getStoreTel()=" + getStoreTel() + ", getStorePhone()=" + getStorePhone()
+				+ ", getStoreAddress()=" + getStoreAddress() + ", getStoreMemo()=" + getStoreMemo() + ", toString()="
+				+ super.toString() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + "]";
 	}
+	
 }

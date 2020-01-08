@@ -141,5 +141,22 @@ public class MemberController {
 		
 		return result;
 	}
+	
+	
+	// 회원 찾기
+	@RequestMapping(value = "memberSearch")
+	@ResponseBody
+	public String memberSearch(Model model,@ModelAttribute("memberVO") MemberVO memberVO) throws Exception{
+		
+		int resultParam = 0;
+		resultParam = memberService.memberEdit(memberVO);
+		String result = "fail";
+		
+		if(resultParam >= 1) {
+			result = "success"; 
+		}
+		
+		return result;
+	}
 
 }

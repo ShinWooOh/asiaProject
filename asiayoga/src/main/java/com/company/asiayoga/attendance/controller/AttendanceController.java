@@ -77,7 +77,7 @@ public class AttendanceController {
 	}
 	
 	// 출석 등록 화면으로 이동
-	@RequestMapping(value = "attendanceRegister", method = RequestMethod.POST)
+	@RequestMapping(value = "attendanceRegister", method = {RequestMethod.POST,RequestMethod.GET})
 	public String attendanceRegister(Model model,@ModelAttribute("attendanceVO") AttendanceVO attendanceVO) throws Exception{
 		
 		// 회원 정보
@@ -96,7 +96,7 @@ public class AttendanceController {
 		return "/attendance/attendanceRegister";
 	}
 	
-	// 출석 등록(insert)
+	// 출석 등록
 	@RequestMapping(value = "insertAttendance", method = RequestMethod.POST)
 	@ResponseBody
 	public String insertAttendance(Model model,@ModelAttribute("attendanceVO") AttendanceVO attendanceVO) throws Exception{
@@ -108,6 +108,33 @@ public class AttendanceController {
 		
 		if(resultParam >= 1) {
 			result = "success"; 
+		}
+		
+		return result;
+	}
+	
+	// 팝업에서의 회원 찾기(List 리턴 , 상품정보 포함)
+	@RequestMapping(value = "searchMember", method = RequestMethod.POST)
+	@ResponseBody
+	public String searchMember(Model model,@ModelAttribute("attendanceVO") AttendanceVO attendanceVO) throws Exception{
+		
+		int resultParam = 0;
+		String result = "fail";
+		
+		
+		MemberVO memberVO = new MemberVO();
+		memberVO.setStoreSeq(10);
+		memberVO.setName(attendanceVO.getName());
+		
+		List<MemberVO> memberList = attendanceService.memberSearch(memberVO);
+		
+		
+		if(resultParam >= 1) {
+			result = "success";
+			model.addAttribute("popMemberList", memberList);
+		} else {
+			model.addAttribute("popMemberList", "");
+			
 		}
 		
 		return result;

@@ -88,6 +88,32 @@
 				  #{storeSeq}
 				)
 	</insert>
+	
+	<!--  회원 정보 검색(List 로 리턴, 상품과 함께 정보 제공)   -->
+	<select id="memberSearchList" parameterType="memberVO" resultType="memberVO">
+  		/* memberMapper.memberSearchList */
+		SSELECT	@ROWNUM:=@ROWNUM+1 as row_num,
+				mbinfo.member_seq,
+				mbinfo.name,
+	            mbinfo.sex,
+	            mbinfo.phone,
+	            mbinfo.email,
+	            mbinfo.birth,
+	            mbinfo.memo,
+	            mbinfo.store_seq,
+	            mbinfo.register_date,
+                ( SELECT product_name FROM PRODUCTINFO WHERE product_seq = ordinfo.product_seq ) AS product_name
+		FROM MEMBERINFO mbinfo
+        INNER JOIN ORDERINFO ordinfo
+        ON mbinfo.member_seq = ordinfo.member_seq
+		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		WHERE mbinfo.store_seq = #{storeSeq}
+		AND mbinfo.name = #{name}
+		AND mbinfo.del_yn = 'N'
+        AND ordinfo.expiration_yn = 'N'
+        AND ordinfo.del_yn = 'N'
+	    ORDER BY mbinfo.register_date DESC, row_num DESC;
+	</select>
   	
 
 </mapper>

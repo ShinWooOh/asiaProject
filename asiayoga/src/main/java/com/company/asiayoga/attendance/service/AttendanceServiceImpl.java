@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.company.asiayoga.attendance.dao.AttendanceDAO;
 import com.company.asiayoga.attendance.domain.AttendanceVO;
+import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.order.dao.OrderDAO;
 import com.company.asiayoga.order.domain.OrderVO;
 
@@ -52,8 +53,10 @@ public class AttendanceServiceImpl implements AttendanceService {
 		
 		return resultParam;
 	}
-	
-	
-	
+
+	@Override
+	public List<MemberVO> memberSearch(MemberVO memberVO) throws Exception {
+		return attendanceDAO.memberSearch(memberVO);
+	}
 	
 }
