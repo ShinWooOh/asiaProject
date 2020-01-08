@@ -96,7 +96,7 @@ public class AttendanceController {
 		return "/attendance/attendanceRegister";
 	}
 	
-	// 출석 등록
+	// 출석 등록(insert)
 	@RequestMapping(value = "insertAttendance", method = RequestMethod.POST)
 	@ResponseBody
 	public String insertAttendance(Model model,@ModelAttribute("attendanceVO") AttendanceVO attendanceVO) throws Exception{
