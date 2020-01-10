@@ -106,4 +106,38 @@
   		AND del_yn ='N' 
 	</update>
 	
+	
+	<!--  회원 정보 검색(List 로 리턴, 상품과 함께 정보 제공)   -->
+	<select id="memberSearchList" parameterType="memberVO" resultType="memberVO">
+  		/* memberMapper.memberSearchList */
+		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
+				mbinfo.member_seq,
+				mbinfo.name,
+	            mbinfo.sex,
+	            mbinfo.phone,
+	            mbinfo.email,
+	            mbinfo.birth,
+	            mbinfo.memo,
+	            mbinfo.store_seq,
+	            ( SELECT store_name FROM STOREINFO WHERE store_seq=#{storeSeq} ) AS store_name,
+	            mbinfo.register_date,
+	            ordinfo.order_seq,
+                ordinfo.product_end_day,
+                ordinfo.remaining_count,
+            	prdinfo.product_code,
+				prdinfo.product_name
+		FROM MEMBERINFO mbinfo
+        INNER JOIN ORDERINFO ordinfo
+        ON mbinfo.member_seq = ordinfo.member_seq
+        INNER JOIN PRODUCTINFO prdinfo
+    	ON ordinfo.product_seq = prdinfo.product_seq
+		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		WHERE mbinfo.store_seq = #{storeSeq}
+		AND mbinfo.name = #{name}
+		AND mbinfo.del_yn = 'N'
+        AND ordinfo.expiration_yn = 'N'
+        AND ordinfo.del_yn = 'N'
+	    ORDER BY mbinfo.register_date DESC, row_num DESC;
+	</select>
+	
   </mapper>

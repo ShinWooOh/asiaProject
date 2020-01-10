@@ -8,24 +8,37 @@
 	<!-- 출석 목록  -->
 	<select id="attendanceList" parameterType="attendanceVO" resultType="attendanceVO">
 		/* attendanceMapper.attendanceList */
-		SELECT
-			@ROWNUM:=@ROWNUM+1 as row_num,
-			atdinfo.attendance_seq,
-			atdinfo.member_seq,
-	        ( SELECT name FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') AS name,
-	        ( SELECT phone FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') as phone,
-        	( SELECT sex FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') as sex,
-			atdinfo.attendance_date,
-			atdinfo.register_date,
-			atdinfo.register_id,
-			atdinfo.modify_date, 
-			atdinfo.modify_id,
-			atdinfo.del_yn,
-			atdinfo.store_seq 
-		FROM ATTENDANCEINFO atdinfo , (SELECT @ROWNUM :=0) AS R
-		WHERE atdinfo.store_seq = #{storeSeq}
-		AND	atdinfo.del_yn = 'N'
-		ORDER BY atdinfo.attendance_date DESC, row_num DESC
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+				temp.attendance_seq,
+	            temp.member_seq,
+				temp.name,
+	            temp.phone,
+	            temp.sex,
+	            temp.attendance_date,
+	            temp.register_date,
+	            temp.register_id,
+	            temp.modify_date, 
+				temp.modify_id,      
+	            temp.del_yn,
+	            temp.store_seq
+     	FROM  ( SELECT 	atdinfo.attendance_seq, 
+						atdinfo.member_seq,
+						( SELECT name FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') AS name,
+						( SELECT phone FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') as phone,
+						( SELECT sex FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') as sex,
+						atdinfo.attendance_date,
+						atdinfo.register_date,
+						atdinfo.register_id,
+						atdinfo.modify_date, 
+						atdinfo.modify_id,
+						atdinfo.del_yn,
+						atdinfo.store_seq 
+				FROM ATTENDANCEINFO atdinfo
+				WHERE atdinfo.store_seq = #{storeSeq} 
+				AND atdinfo.del_yn = 'N' 
+                ORDER BY atdinfo.attendance_date ASC 
+             	) AS temp , (SELECT @ROWNUM :=0) AS R 
+        ORDER BY row_num DESC; 
 	</select>
 
   	<!-- 회원 출석 상세 정보  -->
@@ -60,8 +73,9 @@
 				AND atdinfo.del_yn ='N'
 				AND mbinfo.member_seq = #{memberSeq}
 				AND mbinfo.store_seq = #{storeSeq}
+				ORDER BY atdinfo.attendance_date ASC
         	) AS temp, (SELECT @ROWNUM :=0) AS R
-        ORDER BY temp.attendance_date DESC,row_num DESC
+        ORDER BY row_num DESC
 	</select>
 	
 	<insert id="insertAttendance" parameterType="attendanceVO">
@@ -88,6 +102,6 @@
 				  #{storeSeq}
 				)
 	</insert>
-  	
+	
 
 </mapper>

@@ -1,5 +1,6 @@
 package com.company.asiayoga.attendance.controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -116,11 +117,12 @@ public class AttendanceController {
 	// 팝업에서의 회원 찾기(List 리턴 , 상품정보 포함)
 	@RequestMapping(value = "searchMember", method = RequestMethod.POST)
 	@ResponseBody
-	public String searchMember(Model model,@ModelAttribute("attendanceVO") AttendanceVO attendanceVO) throws Exception{
+	public HashMap<String, Object> searchMember(Model model,AttendanceVO attendanceVO) throws Exception{
+		
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
 		
 		int resultParam = 0;
 		String result = "fail";
-		
 		
 		MemberVO memberVO = new MemberVO();
 		memberVO.setStoreSeq(10);
@@ -128,16 +130,17 @@ public class AttendanceController {
 		
 		List<MemberVO> memberList = attendanceService.memberSearch(memberVO);
 		
-		
-		if(resultParam >= 1) {
-			result = "success";
-			model.addAttribute("popMemberList", memberList);
+		if(memberList.size() >= 1) {
+			hashMap.put("result", "success");
+			hashMap.put("popMemberList", memberList);
+		} else if(memberList.size() == 0){
+			hashMap.put("result", "noCount");
+			hashMap.put("popMemberList", "");
 		} else {
-			model.addAttribute("popMemberList", "");
 			
 		}
 		
-		return result;
+		return hashMap;
 	}
     
 

@@ -72,7 +72,7 @@
 	<update id="updateOrderCount" parameterType="orderVO">
  		/* orderMapper.updateOrderCount */
 		UPDATE ORDERINFO
-		SET remaining_count = (SELECT remaining_count FROM ORDERINFO WHERE order_seq = #{orderSeq} AND del_yn = 'N')-1
+		SET remaining_count = #{remainingCount}
 		WHERE order_seq = #{orderSeq}
 		AND del_yn = 'N'
 	</update>

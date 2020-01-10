@@ -39,12 +39,12 @@ public class AttendanceServiceImpl implements AttendanceService {
 		// 출석 내역 insert
 		resultParam = attendanceDAO.insertAttendance(attendanceVO);
 		
-		
 		// 상품이 횟수제 상품인 경우 -1 count
-		if(attendanceVO.getProductCode() == "002") {
+		if(attendanceVO.getProductCode().equals("002")) {
 			int orderParam = 0;
 			OrderVO orderVO = new OrderVO();
 			orderVO.setOrderSeq(attendanceVO.getOrderSeq());
+			orderVO.setRemainingCount(attendanceVO.getRemainingCount()-1);
 			orderParam = orderDAO.updateOrderCount(orderVO);
 			if(orderParam == 0) {
 				resultParam = 0;
