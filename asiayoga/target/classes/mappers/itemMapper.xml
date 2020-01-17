@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.company.asiayoga.mapper.itemMapper">
+
+	<!-- 품목 목록  -->
+	<select id="itemList" parameterType="itemVO" resultType="itemVO">
+		/* itemMapper.itemList */
+		SELECT 
+			@ROWNUM:=@ROWNUM+1 as row_num,
+			tempA.store_seq,
+			tempA.store_name,
+			tempA.large_category,
+			tempA.item_seq,
+			tempA.item_name,
+			tempA.del_yn,
+			tempA.register_date, 
+			tempA.register_id,
+			tempA.modify_date,
+			tempA.modify_id
+		FROM (	SELECT	item_seq,
+						store_seq,
+						( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} AND del_yn ='N') AS store_name,
+						large_category,
+						item_name,
+						del_yn,
+						register_date, 
+						register_id,
+						modify_date,
+						modify_id
+				FROM PRODUCTITEM 
+				WHERE store_seq= #{storeSeq}
+				AND del_yn ='N'
+				ORDER BY modify_date ASC
+			 ) AS tempA , (SELECT @ROWNUM :=0) AS R
+		ORDER BY row_num DESC;
+	</select>
+	
+	<!-- 품목 저장  -->
+	<insert id="insertItem" parameterType="itemVO" useGeneratedKeys="true" keyProperty="itemSeq">
+		/* itemMapper.insertItem */
+		INSERT INTO PRODUCTITEM
+				(	store_seq,
+				 	item_name,
+				 	large_category,
+					del_yn,
+					register_date,
+					register_id,
+					modify_date,
+					modify_id
+				)
+		VALUES
+				(
+					#{storeSeq},
+					#{itemName},
+					#{largeCategory},
+					'N',
+					now(),
+					'admin',
+					now(),
+					'admin'
+				)
+	</insert>
+	
+	<!-- 품목 insert 후 품목 SEQ를 이용하여 상품 코드 업데이트  -->
+	<update id="updateProductCode" parameterType="itemVO">
+		/* itemMapper.updateProductCode */
+		UPDATE PRODUCTITEM
+		SET product_code = #{productCode}
+		WHERE item_seq = #{itemSeq}
+		AND del_yn ='N'
+	</update>
+	
+	<!-- 품목 삭제  -->
+	<update id="itemDelete" parameterType="itemVO">
+		/* itemMapper.itemDelete */
+		UPDATE PRODUCTITEM
+		SET del_yn = 'Y'
+		WHERE item_seq = #{itemSeq}
+		AND del_yn ='N'
+	</update>
+
+	<!-- 품목 상세  -->
+	<select id="itemDetail" parameterType="itemVO" resultType="itemVO">
+		/* itemMapper.itemDetail */
+		SELECT	item_seq,
+				store_seq,
+				( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} AND del_yn ='N') AS store_name,
+				item_name,
+				large_category,
+				register_date, 
+				register_id,
+				modify_date,
+				modify_id
+		FROM PRODUCTITEM 
+		WHERE item_seq= #{itemSeq}
+		AND store_seq= #{storeSeq}
+		AND del_yn ='N'
+	</select>
+
+	<!-- 품목 수정  -->
+	<update id="updateItem" parameterType="itemVO">
+		/* itemMapper.updateItem */
+		UPDATE PRODUCTITEM
+		<set>
+  			<if test="itemName != null and itemName != ''">item_name = #{itemName},</if>
+  			<if test="largeCategory != null and largeCategory != ''">large_category = #{largeCategory},</if>
+			modify_date= now(),
+			modify_id = 'admin',
+  		</set> 
+		WHERE item_seq = #{itemSeq}
+		AND del_yn ='N'
+	</update>
+</mapper>
