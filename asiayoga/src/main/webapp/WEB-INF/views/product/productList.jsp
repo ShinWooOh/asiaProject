@@ -60,57 +60,44 @@
 
         <!-- Main content -->
         <section class="content container-fluid" style="background-color: #FFFFFF">
-
             <div class="col-lg-12">
                 <div>
                     <div>
                         <table class="table table-bordered">
                             <tbody>
                             <tr>
-                                <th style="width: 30px">No</th>
-                                <th style="width: 50px">상품번호</th>
-                                <th style="width: 90px">상품명</th>
-                                <th style="width: 80px">매장명</th>
-                                <th style="width: 80px">상품구분</th>
-                                <th style="width: 70px">상품기간(기간제)</th>
-                                <th style="width: 70px">상품횟수(횟수제)</th>
-                                <th style="width: 70px"></th>
+                                <th style="width: 5%">No</th>
+                                <th style="width: 20%">매장명</th>
+                                <th style="width: 10%">품목구분</th>
+                                <th style="width: 40%">상품명</th>
+                                <th style="width: 15%">상품가격</th>
+                                <th style="width: 10%"></th>
                             </tr>
-                            <c:forEach var="productList" items="${productList}">
-	                           	<tr>
-									<td><c:out value="${productList.rowNum}"/></td>                            		
-									<td><c:out value="${productList.productSeq}"/></td>                            		
-									<td><c:out value="${productList.productName}"/></td>
-									<td><c:out value="${productList.storeName}"/></td>
-									<td>
-										<c:choose>
-											<c:when test="${productList.productCode eq '001'}">기간제</c:when>
-											<c:when test="${productList.productCode eq '002'}">횟수제</c:when>
-											<c:otherwise>기타</c:otherwise>
-										</c:choose>
-									</td>
-									<td>
-										<c:choose>
-											<c:when test="${productList.productCode eq '001'}"><c:out value="${productList.productTerm}"/>일</c:when>
-											<c:when test="${productList.productCode eq '002'}">해당없음</c:when>
-											<c:otherwise>기타</c:otherwise>
-										</c:choose>
-									</td>
-									<td>
-										<c:choose>
-											<c:when test="${productList.productCode eq '001'}">해당없음</c:when>
-											<c:when test="${productList.productCode eq '002'}"><c:out value="${productList.productCount}"/>회</c:when>
-											<c:otherwise>기타</c:otherwise>
-										</c:choose>
-									</td>
-									<td>
-										<input type="button" id="productDel" name="productDel" value="삭제" onclick="productDel(${productList.productSeq},${productList.storeCode})">
-									</td>
-	                           	</tr>
-                            </c:forEach>
+                            <c:choose>
+                            	<c:when test="${fn:length(productList) > 0}">
+		                            <c:forEach var="productList" items="${productList}">
+			                           	<tr>
+											<td><c:out value="${productList.rowNum}"/></td>                            		
+											<td><c:out value="${productList.storeName}"/></td>
+											<td ><c:out value="${productList.itemName}"/></td>                            		
+											<td><a href="#" onclick="goProductDetail(${productList.productSeq},${productList.storeSeq});"><c:out value="${productList.productName}"/></a></td>
+											<td><fmt:formatNumber type="number" maxFractionDigits="3" value="${productList.productPrice}" /></td>
+											<td align="center">
+												<input type="button" id="productDel" name="productDel" value="삭제" onclick="goProductDel(${productList.productSeq},${productList.storeSeq})">
+											</td>
+			                           	</tr>
+		                            </c:forEach>
+                            	</c:when>
+                            	<c:otherwise>
+                            		<tr><th colspan="6" style="text-align: center;">결과가 없습니다.</th></tr>
+                            	</c:otherwise>
+                            </c:choose>
                             </tbody>
                         </table>
                     </div>
+                    <div style="margin-top: 10px;" id="attendanceFooter">
+                		<input type="button" value="상품 등록" onclick="goProductRegister();" style="float: right; width:80px;">
+                	</div>
                 </div>
             </div>
 
@@ -134,9 +121,9 @@
 </div>
 <!-- ./wrapper -->
 
-<form:form action="/product/productDel" id="productDel" name="productDel" modelAttribute="productVO" method="post">
+<form:form action="/product/productDetail" id="productDetail" name="productDetail" modelAttribute="productVO" method="post">
 	<input type="hidden" id="productSeq" name="productSeq">
-	<input type="hidden" id="storeCode" name="storeCode">
+	<input type="hidden" id="storeSeq" name="storeSeq">
 </form:form>
 
 
@@ -150,12 +137,45 @@
 <script src="/resources/dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
 
-function goProductDel(productSeq,storeCode){
-	$("#productSeq").val(memberSeq);
-	$("#storeCode").val(storeSeq);
-	$("#productDel").submit();
+function goProductDel(productSeq,storeSeq){
+	
+	var delConfirm = confirm("삭제 하시겠습니까?");
+	if(!delConfirm){
+		return false;
+	}else{
+	 	$("#productDetail #productSeq").val(productSeq);
+		$("#productDetail #storeSeq").val(storeSeq);
+	}
+	
+	$.ajax({
+        type:'POST',
+        url : "/product/productDelete",
+        data:$("#productDetail").serialize(),
+        success : function(data){
+            if(data == 'success')
+            {
+              alert("삭제 하였습니다.");
+              location.reload();
+            }
+        },
+        error:function(request,status,error){
+            alert("저장에 실패하였습니다. 관리자에게 문의하세요");
+       }
+        
+    });
+	
+	
 }
 
+function goProductRegister(productSeq,storeCode){
+	location.href="/product/productRegister";
+}
+
+function goProductDetail(productSeq,storeSeq){
+	$("#productSeq").val(productSeq);
+	$("#storeSeq").val(storeSeq);
+	$("#productDetail").submit();
+}
 </script>
 </body>
 </html>

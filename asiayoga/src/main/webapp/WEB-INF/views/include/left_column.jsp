@@ -5,7 +5,7 @@
     <!-- Brand Logo -->
     <a href="#" class="brand-link">
         <img src="/resources/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light" style="font-size: 16px;">ASIA YOGA 출석 프로그램</span>
+        <span class="brand-text font-weight-light" style="font-size: 16px;">ASIA 출석 프로그램</span>
     </a>
 
     <!-- Sidebar -->
@@ -25,7 +25,8 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
-                <li class="nav-item has-treeview menu-open">
+                <li class="nav-item has-treeview">
+<!--                 <li class="nav-item has-treeview menu-open"> -->
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>회원
@@ -47,7 +48,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item has-treeview menu-open">
+                <li class="nav-item has-treeview">
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>출석
@@ -71,7 +72,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item has-treeview menu-open">
+                <li class="nav-item has-treeview">
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>구매 관리
@@ -80,7 +81,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="#" class="nav-link active">
+                            <a href="/order/orderList" class="nav-link active">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>구매 내역</p>
                             </a>
@@ -93,10 +94,10 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item has-treeview menu-open">
+                <li class="nav-item has-treeview">
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>상품
+                        <p>판매 상품
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
@@ -108,14 +109,36 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link active">
+                            <a href="/product/productRegister" class="nav-link active">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>상품 등록</p>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item has-treeview menu-open">
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>상품 품목
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/item/itemList" class="nav-link active">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>품목 관리</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/item/itemRegister" class="nav-link active">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>품목 등록</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item has-treeview">
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>매장

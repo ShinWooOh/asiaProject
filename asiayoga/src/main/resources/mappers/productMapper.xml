@@ -5,30 +5,114 @@
 
 <mapper namespace="com.company.asiayoga.mapper.productMapper">
 
+	<!-- 상품 목록  -->
 	<select id="productList" parameterType="productVO" resultType="productVO">
 		/* productMapper.productList */
 		SELECT
 			@ROWNUM:=@ROWNUM+1 AS row_num,
-			prtinfo.product_seq,
-			prtinfo.store_code,
-			prtinfo.product_name,
-			prtinfo.product_code,
-			prtinfo.product_term,
-			prtinfo.product_count,
-			prtinfo.del_yn,
-			prtinfo.register_date,
-			prtinfo.register_id,
-			prtinfo.modify_date,
-			prtinfo.modify_id,
-            stinfo.store_name
-		FROM PRODUCTINFO prtinfo
-	    INNER JOIN STOREINFO stinfo 
-        ON prtinfo.store_code = stinfo.store_seq
+			prdinfo.product_seq,
+			prdinfo.store_seq,
+			prdinfo.product_name,
+			prdinfo.product_price,
+			prdinfo.del_yn,
+			prdinfo.register_date,
+			prdinfo.register_id,
+			prdinfo.modify_date,
+			prdinfo.modify_id,
+            ( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} ) AS store_name,
+            prdinfo.item_seq,
+            ( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_name
+		FROM PRODUCTINFO prdinfo
         INNER JOIN (SELECT @ROWNUM :=0) AS R
-		WHERE prtinfo.store_code = #{storeCode}
-		AND	prtinfo.del_yn = 'N'
+		WHERE prdinfo.store_seq = #{storeSeq}
+		AND	prdinfo.del_yn = 'N'
 		ORDER BY row_num DESC
 	</select>
+	
+	<!-- 상품 등록  -->
+	<insert id="insertProduct" parameterType="productVO">
+		/* productMapper.insertProduct */
+		INSERT INTO PRODUCTINFO
+				(
+					store_seq,
+					item_seq,
+					product_name,
+					product_memo,
+					product_price,
+					locker_seq,
+					del_yn,
+					register_date,
+					register_id,
+					modify_date,
+					modify_id
+				)
+		VALUES	(
+					#{storeSeq},
+					#{itemSeq},
+					#{productName},
+					#{productMemo},
+					#{productPrice},
+					#{lockerSeq},
+					'N',
+					now(),
+					'admin',
+					now(),
+					'admin'
+				)
+	
+	</insert>
+	
+	
+	<!-- 상품 삭제  -->
+	<update id="productDelete" parameterType="productVO">
+		/* productMapper.productDelete */
+		UPDATE PRODUCTINFO
+		SET del_yn ='Y'
+		WHERE product_seq = #{productSeq}
+		AND store_seq = #{storeSeq}
+		AND del_yn = 'N'
+	</update>
 
+	<!-- 상품 상세  -->
+	<select id="productDetail" parameterType="productVO" resultType="productVO">
+		/* productMapper.productDetail */
+		SELECT
+			prdinfo.product_seq,
+			prdinfo.store_seq,
+			prdinfo.product_name,
+			prdinfo.product_memo,
+			prdinfo.product_price,
+			prdinfo.locker_seq,
+			prdinfo.del_yn,
+			prdinfo.register_date,
+			prdinfo.register_id,
+			prdinfo.modify_date,
+			prdinfo.modify_id,
+            ( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} ) AS store_name,
+            prdinfo.item_seq,
+            ( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_name,
+            ( SELECT large_category FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq) AS large_category
+		FROM PRODUCTINFO prdinfo
+		WHERE prdinfo.product_seq = #{productSeq} 
+		AND prdinfo.store_seq = #{storeSeq}
+		AND	prdinfo.del_yn = 'N'
+	</select>
+	
+	<update id="updateProduct" parameterType="productVO">
+		/* productMapper.updateProduct */
+		UPDATE PRODUCTINFO
+		<set>
+			item_seq =#{itemSeq},
+			product_name = #{productName},
+			product_price = #{productPrice},
+			locker_seq = #{lockerSeq},
+			product_memo = #{productMemo},
+			modify_date = now(),
+			modify_id = 'admin'
+		</set>
+		WHERE product_seq = #{productSeq}
+		AND store_seq = #{storeSeq}
+		AND del_yn ='N'
+	</update>
 
 </mapper>

@@ -18,6 +18,11 @@ public class OrderDAO {
 	private static final String ORDER_NAMESPACE = "com.company.asiayoga.mapper.orderMapper";
 	
 	
+	// 주문 목록
+	public List<OrderVO> orderList(OrderVO orderVO){
+		return sqlSession.selectList(ORDER_NAMESPACE+".orderList", orderVO);
+	}
+	
 	// 고객 1명에 대한 주문 목록
 	public List<OrderVO> customerOrderList(OrderVO orderVO){
 		return sqlSession.selectList(ORDER_NAMESPACE+".customerOrderList", orderVO);
@@ -32,4 +37,11 @@ public class OrderDAO {
 	public int updateOrderCount(OrderVO orderVO){
 		return sqlSession.update(ORDER_NAMESPACE+".updateOrderCount", orderVO);
 	}
+	
+	// 주문 내역 삭제
+	public int orderDel(OrderVO orderVO){
+		return sqlSession.update(ORDER_NAMESPACE+".orderDel", orderVO);
+	}
+	
+	
 }

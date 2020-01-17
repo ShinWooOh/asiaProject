@@ -2,15 +2,18 @@ package com.company.asiayoga.product.domain;
 
 import java.util.Date;
 
-public class ProductVO {
+import com.company.asiayoga.item.domain.ItemVO;
+
+public class ProductVO extends ItemVO {
 	
 	private int rowNum;
 	private int productSeq;							// 제품 번호
-	private int storeCode;							// 매장 번호
+	private int storeSeq;							// 매장 번호
 	private String productName;						// 제품명
-	private String productCode;						// 제품 코드 (001 : 기간제 , 002 : 횟수제)
-	private int productTerm;						// 상품 기간(기간제인 경우 해당)		
+	private String productMemo;						// 상품 설명
+	private int productPrice;						// 상품 가격		
 	private int productCount;						// 상품 개수(횟수제인 경우 해당)
+	private int lockerSeq;							// 락커 갯수
 	private String delYn;							// 삭제 여부
     private Date registerDate;                      // 등록 일자
     private String registerId;                      // 등록자 아이디
@@ -30,11 +33,11 @@ public class ProductVO {
 	public void setProductSeq(int productSeq) {
 		this.productSeq = productSeq;
 	}
-	public int getStoreCode() {
-		return storeCode;
+	public int getStoreSeq() {
+		return storeSeq;
 	}
-	public void setStoreCode(int storeCode) {
-		this.storeCode = storeCode;
+	public void setStoreSeq(int storeSeq) {
+		this.storeSeq = storeSeq;
 	}
 	public String getProductName() {
 		return productName;
@@ -42,20 +45,26 @@ public class ProductVO {
 	public void setProductName(String productName) {
 		this.productName = productName;
 	}
-	public String getProductCode() {
-		return productCode;
+	public String getProductMemo() {
+		return productMemo;
 	}
-	public void setProductCode(String productCode) {
-		this.productCode = productCode;
+	public void setProductMemo(String productMemo) {
+		this.productMemo = productMemo;
 	}
-	public int getProductTerm() {
-		return productTerm;
+	public int getProductPrice() {
+		return productPrice;
 	}
-	public void setProductTerm(int productTerm) {
-		this.productTerm = productTerm;
+	public void setProductPrice(int productPrice) {
+		this.productPrice = productPrice;
 	}
 	public int getProductCount() {
 		return productCount;
+	}
+	public int getLockerSeq() {
+		return lockerSeq;
+	}
+	public void setLockerSeq(int lockerSeq) {
+		this.lockerSeq = lockerSeq;
 	}
 	public void setProductCount(int productCount) {
 		this.productCount = productCount;
@@ -98,16 +107,20 @@ public class ProductVO {
 	}
 	@Override
 	public String toString() {
-		return "ProductVO [rowNum=" + rowNum + ", productSeq=" + productSeq + ", storeCode=" + storeCode
-				+ ", productName=" + productName + ", productCode=" + productCode + ", productTerm=" + productTerm
-				+ ", productCount=" + productCount + ", delYn=" + delYn + ", registerDate=" + registerDate
-				+ ", registerId=" + registerId + ", modifyDate=" + modifyDate + ", modifyId=" + modifyId
+		return "ProductVO [rowNum=" + rowNum + ", productSeq=" + productSeq + ", storeSeq=" + storeSeq
+				+ ", productName=" + productName + ", productMemo=" + productMemo + ", productPrice=" + productPrice
+				+ ", productCount=" + productCount + ", lockerSeq=" + lockerSeq + ", delYn=" + delYn + ", registerDate="
+				+ registerDate + ", registerId=" + registerId + ", modifyDate=" + modifyDate + ", modifyId=" + modifyId
 				+ ", storeName=" + storeName + ", getRowNum()=" + getRowNum() + ", getProductSeq()=" + getProductSeq()
-				+ ", getStoreCode()=" + getStoreCode() + ", getProductName()=" + getProductName()
-				+ ", getProductCode()=" + getProductCode() + ", getProductTerm()=" + getProductTerm()
-				+ ", getProductCount()=" + getProductCount() + ", getDelYn()=" + getDelYn() + ", getRegisterDate()="
-				+ getRegisterDate() + ", getRegisterId()=" + getRegisterId() + ", getModifyDate()=" + getModifyDate()
-				+ ", getModifyId()=" + getModifyId() + ", getStoreName()=" + getStoreName() + ", getClass()="
-				+ getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
+				+ ", getStoreSeq()=" + getStoreSeq() + ", getProductName()=" + getProductName() + ", getProductMemo()="
+				+ getProductMemo() + ", getProductPrice()=" + getProductPrice() + ", getProductCount()="
+				+ getProductCount() + ", getLockerSeq()=" + getLockerSeq() + ", getDelYn()=" + getDelYn()
+				+ ", getRegisterDate()=" + getRegisterDate() + ", getRegisterId()=" + getRegisterId()
+				+ ", getModifyDate()=" + getModifyDate() + ", getModifyId()=" + getModifyId() + ", getStoreName()="
+				+ getStoreName() + ", getItemSeq()=" + getItemSeq() + ", getProductCode()=" + getProductCode()
+				+ ", getLargeCategory()=" + getLargeCategory() + ", getItemName()=" + getItemName() + ", toString()="
+				+ super.toString() + ", getStoreTel()=" + getStoreTel() + ", getStorePhone()=" + getStorePhone()
+				+ ", getStoreAddress()=" + getStoreAddress() + ", getStoreMemo()=" + getStoreMemo() + ", getClass()="
+				+ getClass() + ", hashCode()=" + hashCode() + "]";
 	}
 }

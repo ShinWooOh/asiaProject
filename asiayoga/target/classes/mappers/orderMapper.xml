@@ -8,36 +8,66 @@
  	<!-- 해당 매장의 주문 전체 정보  -->
  	<select id="orderList" parameterType="orderVO" resultType="orderVO">
  		/* orderMapper.orderList */
-		SELECT 	order_seq,
-				store_seq,
-				product_seq,
-				member_seq,
-				product_start_day,
-				product_end_day,
-				product_term,
-				product_count,
-				remaining_count,
-				del_yn
-		FROM ORDERINFO
-		WHERE store_seq = #{storeSeq}
-		AND del_yn = 'N';
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+			 	tempA.order_seq,
+			 	tempA.store_seq,
+				tempA.product_seq,
+				tempA.member_seq,
+				tempA.start_day,
+				tempA.expiration_day,
+				tempA.product_count,
+				tempA.remaining_count,
+                tempA.expiration_yn,
+				tempA.locker_seq,
+				tempA.del_yn,
+                tempA.store_name,
+                tempA.product_code,
+                tempA.product_name,
+                tempA.name,
+                tempA.phone
+		FROM (	
+				SELECT	ordinfo.order_seq,
+						ordinfo.store_seq,
+						ordinfo.product_seq,
+						ordinfo.member_seq,
+						ordinfo.start_day,
+						ordinfo.expiration_day,
+						ordinfo.product_count,
+						ordinfo.remaining_count,
+		                ordinfo.expiration_yn,
+						ordinfo.locker_seq,
+						ordinfo.del_yn,
+		                ( SELECT store_name FROM STOREINFO WHERE store_Seq = #{storeSeq}) AS store_name,
+		                ( SELECT product_code FROM PRODUCTINFO WHERE product_seq = ordinfo.product_seq) AS product_code,
+                		( SELECT product_name FROM PRODUCTINFO WHERE product_seq = ordinfo.product_seq) As product_name,
+		                mbrinfo.name,
+		                mbrinfo.phone
+		FROM ORDERINFO ordinfo
+        INNER JOIN MEMBERINFO mbrinfo
+        ON ordinfo.member_seq = mbrinfo.member_seq
+		WHERE ordinfo.store_seq = #{storeSeq}
+		AND ordinfo.del_yn = 'N'
+        ORDER By ordinfo.order_seq DESC) AS tempA
+        , (SELECT @ROWNUM :=0) AS R ORDER BY row_num DESC;
 	</select>
 	
-	<!-- 고객 1명의 주문 목록  -->
+	<!-- 고객 1명의 구매 목록  -->
  	<select id="customerOrderList" parameterType="orderVO" resultType="orderVO">
  		/* orderMapper.customerOrderList */
 		SELECT  ordinfo.order_seq,
 				ordinfo.store_seq,
 				ordinfo.product_seq,
 				ordinfo.member_seq,
-				ordinfo.product_start_day,
-				ordinfo.product_end_day,
-				ordinfo.product_term,
+				ordinfo.start_day,
+				ordinfo.expiration_day,
 				ordinfo.product_count,
 				ordinfo.remaining_count,
+				ordinfo.locker_seq,
 				ordinfo.del_yn,
+				ordinfo.modify_date,
 				prdinfo.product_name,
-				prdinfo.product_code
+				prdinfo.product_code,
+				( SELECT store_name FROM STOREINFO WHERE store_Seq = #{storeSeq} ) AS store_name
 		FROM ORDERINFO ordinfo
 		INNER JOIN PRODUCTINFO prdinfo
 		ON ordinfo.product_seq = prdinfo.product_seq
@@ -54,11 +84,11 @@
 				ordinfo.store_seq,
 				ordinfo.product_seq,
 				ordinfo.member_seq,
-				ordinfo.product_start_day,
-				ordinfo.product_end_day,
-				ordinfo.product_term,
+				ordinfo.start_day,
+				ordinfo.expiration_day,
 				ordinfo.product_count,
 				ordinfo.remaining_count,
+				ordinfo.locker_seq,
 				ordinfo.del_yn,
 				prdinfo.product_name,
 				prdinfo.product_code
@@ -69,11 +99,22 @@
 		AND ordinfo.del_yn = 'N'
 	</select>
 	
+	<!-- 횟수제 상품일 경우 횟수 업데이트 -->
 	<update id="updateOrderCount" parameterType="orderVO">
  		/* orderMapper.updateOrderCount */
 		UPDATE ORDERINFO
 		SET remaining_count = #{remainingCount}
 		WHERE order_seq = #{orderSeq}
+		AND del_yn = 'N'
+	</update>
+	
+	<!-- 구매내역 삭제 -->
+	<update id="orderDel" parameterType="orderVO">
+ 		/* orderMapper.orderDel */
+		UPDATE ORDERINFO
+		SET del_yn = 'Y'
+		WHERE order_seq = #{orderSeq}
+		AND store_seq = #{storeSeq}
 		AND del_yn = 'N'
 	</update>
     

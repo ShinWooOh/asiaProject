@@ -16,6 +16,11 @@ public class OrderServiceImpl implements OrderService {
 	private OrderDAO orderDAO;
 	
 	@Override
+	public List<OrderVO> orderList(OrderVO orderVO) throws Exception {
+		return orderDAO.orderList(orderVO);
+	}
+	
+	@Override
 	public List<OrderVO> customerOrderList(OrderVO orderVO) throws Exception {
 		return orderDAO.customerOrderList(orderVO);
 	}
@@ -25,5 +30,10 @@ public class OrderServiceImpl implements OrderService {
 		return orderDAO.customerOrder(orderVO);
 	}
 
+	@Override
+	public int orderDel(OrderVO orderVO) throws Exception {
+		return orderDAO.orderDel(orderVO);
+	}
+	
 	
 }

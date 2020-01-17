@@ -17,10 +17,27 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<ProductVO> productList(ProductVO productVO) throws Exception {
-		
 		return productDAO.productList(productVO);
 	}
-	
-	
+
+	@Override
+	public int insertProduct(ProductVO productVO) throws Exception {
+		return productDAO.insertProduct(productVO);
+	}
+
+	@Override
+	public int productDelete(ProductVO productVO) throws Exception {
+		return productDAO.productDelete(productVO);
+	}
+
+	@Override
+	public ProductVO productDetail(ProductVO productVO) throws Exception {
+		return productDAO.productDetail(productVO);
+	}
+
+	@Override
+	public int updateProduct(ProductVO productVO) throws Exception {
+		return productDAO.updateProduct(productVO);
+	}
 
 }

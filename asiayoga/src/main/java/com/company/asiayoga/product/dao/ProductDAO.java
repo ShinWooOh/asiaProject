@@ -17,10 +17,29 @@ public class ProductDAO {
 	
 	private static final String PRODUCT_NAMESPACE = "com.company.asiayoga.mapper.productMapper";
 	
+	// 상품 목록
 	public List<ProductVO> productList(ProductVO productVO) throws Exception{
-		
 		return sqlSession.selectList(PRODUCT_NAMESPACE+".productList", productVO);
-		
+	}
+	
+	// 상품 등록
+	public int insertProduct(ProductVO productVO) throws Exception{
+		return sqlSession.insert(PRODUCT_NAMESPACE+".insertProduct", productVO);
+	}
+	
+	// 상품 삭제
+	public int productDelete(ProductVO productVO) throws Exception{
+		return sqlSession.update(PRODUCT_NAMESPACE+".productDelete",productVO);
+	}
+	
+	// 상품 상세
+	public ProductVO productDetail(ProductVO productVO) throws Exception{
+		return sqlSession.selectOne(PRODUCT_NAMESPACE+".productDetail", productVO);
+	}
+	
+	// 상품 업데이트
+	public int updateProduct(ProductVO productVO) throws Exception{
+		return sqlSession.update(PRODUCT_NAMESPACE+".updateProduct", productVO);
 	}
 
 }
