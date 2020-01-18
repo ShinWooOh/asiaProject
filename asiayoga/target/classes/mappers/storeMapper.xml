@@ -5,6 +5,7 @@
 
 <mapper namespace="com.company.asiayoga.mapper.storeMapper">
 
+	<!-- 매장 목록  -->
 	<select id="storeList" parameterType="storeVO" resultType="storeVO">
 		/* storeMapper.storeList */
 		SELECT
@@ -19,6 +20,77 @@
 		WHERE del_yn = 'N'
 		ORDER BY store_seq DESC
 	</select>
+	
+	<!-- 매장 상세  -->
+	<select id="storeDetail" parameterType="storeVO" resultType="storeVO">
+		/* storeMapper.storeDetail */
+		SELECT	store_seq,
+				store_name,
+				store_tel,
+				store_phone,
+				store_address,
+				store_memo
+		FROM STOREINFO
+		WHERE del_yn = 'N'
+		AND store_seq = #{storeSeq}
+	</select>
+	
+	<!-- 매장 저장  -->
+	<select id="insertStore" parameterType="storeVO">
+		/* storeMapper.insertStore */
+		INSERT INTO STOREINFO 
+				(	store_name,
+					store_tel,
+					store_phone,
+					store_address,
+					store_memo,
+					del_yn,
+					register_date,
+					register_id,
+					modify_date,
+					modify_id
+				)
+		VALUES	(	#{storeName},
+					#{storeTel},
+					#{storePhone},
+					#{storeAddress},
+					#{storeMemo},
+					'N',
+					now(),
+					'admin',
+					now(),
+					'admin'
+				)
+	</select>
+	
+	
+	<!-- 매장 삭제  -->
+	<update id="storeDelete" parameterType="storeVO">
+		/* storeMapper.storeDelete */
+		UPDATE STOREINFO
+		<set>
+			del_yn = 'Y'
+		</set>
+		WHERE store_seq = #{storeSeq}
+		AND del_yn = 'N'
+	</update>
+	
+	<!-- 매장 정보 업데이트  -->
+	<update id="updateStore" parameterType="storeVO">
+		/* storeMapper.updateStore */
+		UPDATE STOREINFO
+		<set>
+			<if test="storeName != null and storeName != ''">store_name = #{storeName},</if>
+  			<if test="storeTel != null and storeTel != ''">store_tel = #{storeTel},</if>
+  			<if test="storePhone != null and storePhone != ''">store_phone = #{storePhone},</if>
+  			<if test="storeAddress != null and storeAddress != ''">store_address = #{storeAddress},</if>
+  			store_memo = #{storeMemo},
+  			modify_date =now(),
+  			modify_id = 'admin' 			
+		</set>
+		WHERE store_seq = #{storeSeq}
+		AND del_yn = 'N'
+	</update>
 
 
 </mapper>

@@ -8,7 +8,13 @@ public class StoreVO {
 	private int storeSeq;							// 매장 번호
 	private String storeName;						// 매장명
 	private String storeTel;						// 매장 전화 번호
+	private String storeTel1;						// 매장 전화 번호1
+	private String storeTel2;						// 매장 전화 번호2
+	private String storeTel3;						// 매장 전화 번호3
 	private String storePhone;						// 매장 전화 번호(핸드폰)
+	private String storePhone1;						// 매장 전화 번호1(핸드폰)
+	private String storePhone2;						// 매장 전화 번호2(핸드폰)
+	private String storePhone3;						// 매장 전화 번호3(핸드폰)
 	private String storeAddress;					// 매장 주소
 	private String storeMemo;						// 매장 설명
 	private String delYn;							// 삭제 여부
@@ -41,8 +47,44 @@ public class StoreVO {
 	public void setStoreTel(String storeTel) {
 		this.storeTel = storeTel;
 	}
+	public String getStoreTel1() {
+		return storeTel1;
+	}
+	public void setStoreTel1(String storeTel1) {
+		this.storeTel1 = storeTel1;
+	}
+	public String getStoreTel2() {
+		return storeTel2;
+	}
+	public void setStoreTel2(String storeTel2) {
+		this.storeTel2 = storeTel2;
+	}
+	public String getStoreTel3() {
+		return storeTel3;
+	}
+	public void setStoreTel3(String storeTel3) {
+		this.storeTel3 = storeTel3;
+	}
 	public String getStorePhone() {
 		return storePhone;
+	}
+	public String getStorePhone1() {
+		return storePhone1;
+	}
+	public void setStorePhone1(String storePhone1) {
+		this.storePhone1 = storePhone1;
+	}
+	public String getStorePhone2() {
+		return storePhone2;
+	}
+	public void setStorePhone2(String storePhone2) {
+		this.storePhone2 = storePhone2;
+	}
+	public String getStorePhone3() {
+		return storePhone3;
+	}
+	public void setStorePhone3(String storePhone3) {
+		this.storePhone3 = storePhone3;
 	}
 	public void setStorePhone(String storePhone) {
 		this.storePhone = storePhone;
@@ -92,14 +134,18 @@ public class StoreVO {
 	@Override
 	public String toString() {
 		return "StoreVO [rowNum=" + rowNum + ", storeSeq=" + storeSeq + ", storeName=" + storeName + ", storeTel="
-				+ storeTel + ", storePhone=" + storePhone + ", storeAddress=" + storeAddress + ", storeMemo="
-				+ storeMemo + ", delYn=" + delYn + ", registerDate=" + registerDate + ", registerId=" + registerId
-				+ ", modifyDate=" + modifyDate + ", modifyId=" + modifyId + ", getRowNum()=" + getRowNum()
-				+ ", getStoreSeq()=" + getStoreSeq() + ", getStoreName()=" + getStoreName() + ", getStoreTel()="
-				+ getStoreTel() + ", getStorePhone()=" + getStorePhone() + ", getStoreAddress()=" + getStoreAddress()
-				+ ", getStoreMemo()=" + getStoreMemo() + ", getDelYn()=" + getDelYn() + ", getRegisterDate()="
-				+ getRegisterDate() + ", getRegisterId()=" + getRegisterId() + ", getModifyDate()=" + getModifyDate()
-				+ ", getModifyId()=" + getModifyId() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
-				+ ", toString()=" + super.toString() + "]";
+				+ storeTel + ", storeTel1=" + storeTel1 + ", storeTel2=" + storeTel2 + ", storeTel3=" + storeTel3
+				+ ", storePhone=" + storePhone + ", storePhone1=" + storePhone1 + ", storePhone2=" + storePhone2
+				+ ", storePhone3=" + storePhone3 + ", storeAddress=" + storeAddress + ", storeMemo=" + storeMemo
+				+ ", delYn=" + delYn + ", registerDate=" + registerDate + ", registerId=" + registerId + ", modifyDate="
+				+ modifyDate + ", modifyId=" + modifyId + ", getRowNum()=" + getRowNum() + ", getStoreSeq()="
+				+ getStoreSeq() + ", getStoreName()=" + getStoreName() + ", getStoreTel()=" + getStoreTel()
+				+ ", getStoreTel1()=" + getStoreTel1() + ", getStoreTel2()=" + getStoreTel2() + ", getStoreTel3()="
+				+ getStoreTel3() + ", getStorePhone()=" + getStorePhone() + ", getStorePhone1()=" + getStorePhone1()
+				+ ", getStorePhone2()=" + getStorePhone2() + ", getStorePhone3()=" + getStorePhone3()
+				+ ", getStoreAddress()=" + getStoreAddress() + ", getStoreMemo()=" + getStoreMemo() + ", getDelYn()="
+				+ getDelYn() + ", getRegisterDate()=" + getRegisterDate() + ", getRegisterId()=" + getRegisterId()
+				+ ", getModifyDate()=" + getModifyDate() + ", getModifyId()=" + getModifyId() + ", getClass()="
+				+ getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
 	}
 }

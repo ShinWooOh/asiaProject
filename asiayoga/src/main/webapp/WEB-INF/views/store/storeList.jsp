@@ -67,32 +67,33 @@
                         <table class="table table-bordered">
                             <tbody>
                             <tr>
-                                <th style="width: 10px">No</th>
-                                <th style="width: 60px">매장번호</th>
-                                <th style="width: 150px">매장명</th>
-                                <th style="width: 70px">매장 전화번호</th>
-                                <th style="width: 70px">매장 전화번호<br>(핸드폰)</th>
-                                <th style="width: 90px">매장 주소</th>
-                                <th style="width: 250px">매장 설명</th>
-                                <th style="width: 30px"></th>
+                                <th style="width: 10%">No</th>
+                                <th style="width: 10%">매장번호</th>
+                                <th style="width: 20%">매장명</th>
+                                <th style="width: 10%">매장 전화번호</th>
+                                <th style="width: 10%">매장 전화번호<br>(핸드폰)</th>
+                                <th style="width: 30%">매장 주소</th>
+                                <th style="width: 10%"></th>
                             </tr>
                             <c:forEach var="storeList" items="${storeList}">
 	                           	<tr>
 									<td><c:out value="${storeList.rowNum}"/></td>                            		
 									<td><c:out value="${storeList.storeSeq}"/></td>                            		
-									<td><c:out value="${storeList.storeName}"/></td>
+									<td><a href="#" onclick="goStoreDetail(${storeList.storeSeq});"><c:out value="${storeList.storeName}"/></a></td>
 									<td><c:out value="${storeList.storeTel}"/></td>
 									<td><c:out value="${storeList.storePhone}"/></td>
 									<td><c:out value="${storeList.storeAddress}"/></td>
-									<td><c:out value="${storeList.storeMemo}"/></td>
-									<td>
-										<input type="button" id="productDel" name="productDel" value="삭제" onclick="storeDel(${storeList.storeSeq})">
+									<td align="center">
+										<input type="button" id="storeDel" name="storeDel" value="삭제" onclick="goStoreDel(${storeList.storeSeq})">
 									</td>
 	                           	</tr>
                             </c:forEach>
                             </tbody>
                         </table>
                     </div>
+                   <div style="margin-top: 10px;" id="storeFooter">
+                		<input type="button" value="매장 등록" onclick="goStoreRegister();" style="float: right; width:80px;">
+                	</div>
                 </div>
             </div>
 
@@ -120,11 +121,6 @@
 	<input type="hidden" id="storeSeq" name="storeSeq">
 </form:form>
 
-<form:form action="/store/storeDel" id="storeDel" name="storeDel" modelAttribute="storeVO" method="post">
-	<input type="hidden" id="storeSeq" name="storeSeq">
-</form:form>
-
-
 <!-- REQUIRED SCRIPTS -->
 
 <!-- jQuery -->
@@ -135,9 +131,41 @@
 <script src="/resources/dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
 
+function goStoreRegister(){
+		location.href="/store/storeRegister";	
+}
+function goStoreDetail(storeSeq){
+		$("#storeDetail #storeSeq").val(storeSeq);
+		$("#storeDetail").submit();
+	
+}
+
+
 function goStoreDel(storeSeq){
-	$("#storeSeq").val(storeSeq);
-	$("#storeDetail").submit();
+	
+	var delConfirm = confirm("삭제 하시겠습니까?\n삭제 시 해당 매장의 품목 및 판매 상품은 보여지지 않습니다.");
+	if(!delConfirm){
+		return false;
+	}else{
+		$("#storeDetail #storeSeq").val(storeSeq);
+	}
+	
+	$.ajax({
+        type:'POST',
+        url : "/store/storeDelete",
+        data:$("#storeDetail").serialize(),
+        success : function(data){
+            if(data == 'success')
+            {
+              alert("삭제 하였습니다.");
+              location.reload();
+            }
+        },
+        error:function(request,status,error){
+            alert("저장에 실패하였습니다. 관리자에게 문의하세요");
+       }
+        
+    });
 }
 
 </script>
