@@ -17,6 +17,7 @@ public class MemberDAO {
 	
 	private static final String MEMBER_NAMESPACE = "com.company.asiayoga.mapper.memberMapper";
 	
+	// 회원 정보 목록
 	public List<MemberVO> memberList(int storeSeq){
 		return sqlSession.selectList(MEMBER_NAMESPACE+".memberList", storeSeq);
 	}
@@ -39,5 +40,10 @@ public class MemberDAO {
 	// 회원 정보 업데이트
 	public int memberEdit(MemberVO memberVO) {
 		return sqlSession.update(MEMBER_NAMESPACE+".memberEdit", memberVO);
+	}
+	
+	// 회원 찾기 팝업에서의 검색
+	public List<MemberVO> searchMemberList(MemberVO memberVO){
+		return sqlSession.selectList(MEMBER_NAMESPACE+".searchMemberList", memberVO);
 	}
 }

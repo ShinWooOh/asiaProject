@@ -40,4 +40,10 @@ public class MemberServiceImpl implements MemberService {
 		return memberDAO.memberEdit(memberVO);
 	}
 
+	@Override
+	public List<MemberVO> searchMemberList(MemberVO memberVO) throws Exception {
+		return memberDAO.searchMemberList(memberVO);
+	}
+	
+
 }

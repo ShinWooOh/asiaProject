@@ -18,17 +18,17 @@ public class OrderDAO {
 	private static final String ORDER_NAMESPACE = "com.company.asiayoga.mapper.orderMapper";
 	
 	
-	// 주문 목록
+	// 구매 목록
 	public List<OrderVO> orderList(OrderVO orderVO){
 		return sqlSession.selectList(ORDER_NAMESPACE+".orderList", orderVO);
 	}
 	
-	// 고객 1명에 대한 주문 목록
+	// 고객 1명에 대한 구매 목록
 	public List<OrderVO> customerOrderList(OrderVO orderVO){
 		return sqlSession.selectList(ORDER_NAMESPACE+".customerOrderList", orderVO);
 	}
 	
-	// 고객 1명에 대한 주문 1개에 대한 정보
+	// 고객 1명에 대한 구매 1개에 구매 정보
 	public OrderVO customerOrder(OrderVO orderVO){
 		return sqlSession.selectOne(ORDER_NAMESPACE+".customerOrder", orderVO);
 	}
@@ -38,9 +38,19 @@ public class OrderDAO {
 		return sqlSession.update(ORDER_NAMESPACE+".updateOrderCount", orderVO);
 	}
 	
-	// 주문 내역 삭제
-	public int orderDel(OrderVO orderVO){
-		return sqlSession.update(ORDER_NAMESPACE+".orderDel", orderVO);
+	// 구매 내역 삭제
+	public int orderDelete(OrderVO orderVO){
+		return sqlSession.update(ORDER_NAMESPACE+".orderDelete", orderVO);
+	}
+	
+	// 구매 내역 등록
+	public int insertOrder(OrderVO orderVO){
+		return sqlSession.insert(ORDER_NAMESPACE+".insertOrder", orderVO);
+	}
+	
+	// 구매 내역 업데이트
+	public int updateOrder(OrderVO orderVO) {
+		return sqlSession.update(ORDER_NAMESPACE+".updateOrder",orderVO);
 	}
 	
 	

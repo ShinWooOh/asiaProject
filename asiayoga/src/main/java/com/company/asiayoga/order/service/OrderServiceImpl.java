@@ -1,5 +1,7 @@
 package com.company.asiayoga.order.service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,13 +29,38 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public OrderVO customerOrder(OrderVO orderVO) throws Exception {
-		return orderDAO.customerOrder(orderVO);
+		
+		OrderVO vo = new OrderVO();
+		vo = orderDAO.customerOrder(orderVO);
+	    
+	    String[] arrPhone = vo.getPhone().split("-");
+	    String phone1 = arrPhone[0];
+	    String phone2 = arrPhone[1];
+	    String phone3 = arrPhone[2];
+	    
+	    vo.setPhone1(phone1);
+	    vo.setPhone2(phone2);
+	    vo.setPhone3(phone3);
+	    
+		return vo;
 	}
 
 	@Override
-	public int orderDel(OrderVO orderVO) throws Exception {
-		return orderDAO.orderDel(orderVO);
+	public int orderDelete(OrderVO orderVO) throws Exception {
+		return orderDAO.orderDelete(orderVO);
 	}
+
+	@Override
+	public int insertOrder(OrderVO orderVO) throws Exception {
+		return orderDAO.insertOrder(orderVO);
+	}
+
+	@Override
+	public int updateOrder(OrderVO orderVO) throws Exception {
+		return orderDAO.updateOrder(orderVO);
+	}
+	
+	
 	
 	
 }

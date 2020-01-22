@@ -67,78 +67,37 @@
                         <table class="table table-bordered">
                             <tbody>
                             <tr>
-                                <th style="width: 10px;">No</th>
-                                <th style="width: 60px;">매장</th>
-                                <th style="width: 60px;">상품</th>
-                                <th style="width: 60px;">이름</th>
-                                <th style="width: 50px;">연락처</th>
-                                <th style="width: 50px;">품목구분</th>
-                                <th style="width: 60px;">시작일</th>
-                                <th style="width: 60px;">만료일</th>
-                                <th style="width: 60px;">상품횟수</th>
-                                <th style="width: 60px;">잔여횟수</th>
-                                <th style="width: 60px;">만료여부</th>
-                                <th style="width: 30px;"></th>
+                                <th style="width: 5%;">No</th>
+                                <th style="width: 14%;">매장</th>
+                                <th style="width: 14%;">품목구분</th>
+                                <th style="width: 16%;">상품</th>
+                                <th style="width: 8%;">이름</th>
+                                <th style="width: 10%;">연락처</th>
+                                <th style="width: 8%;">시작일</th>
+                                <th style="width: 8%;">만료일</th>
+                                <th style="width: 8%;">만료여부</th>
+                                <th style="width: 7%"></th>
                             </tr>
                             <c:forEach var="orderList" items="${orderList}">
 	                            <tr>
-	                            	<td><c:out value="${orderList.rowNum}"/></td>
-	                            	<td><c:out value="${orderList.storeName}"/></td>
-	                            	<td><c:out value="${orderList.productName}"/></td>
-	                            	<td><a href="#" onclick="orderDetail(${orderList.memberSeq},${orderList.orderSeq},${orderList.storeSeq});"><c:out value="${orderList.name}"/></a></td>
-	                            	<td style="width: 50px;"><c:out value="${orderList.phone}"/></td>
-                            		<c:choose>
-	                           			<c:when test="${orderList.productCode eq '001'}">
-			                            	<td style="width: 50px;">기간제</td>
-			                            	<td><fmt:formatDate value="${orderList.startDay}" pattern="yyyy-MM-dd HH:mm"/></td>
-			                            	<td><fmt:formatDate value="${orderList.expirationDay}" pattern="yyyy-MM-dd HH:mm"/></td>
-			                            	<td>해당없음</td>
-			                            	<td>해당없음</td>
-			                            	<td style="width: 60px;">
-			                            		<c:choose>
-			                            			<c:when test="${orderList.expirationYn eq 'Y'}">만료</c:when>
-			                            			<c:when test="${orderList.expirationYn eq 'N'}">미만료</c:when>
-			                            			<c:otherwise></c:otherwise>
-			                            		</c:choose>
-			                            	</td>
-	                           			</c:when>
-	                            		<c:when test="${orderList.productCode eq '002'}">
-			                            	<td style="width: 50px;">횟수제</td>
-			                            	<td>해당없음</td>
-			                            	<td>해당없음</td>
-			                            	<td><c:out value="${orderList.productCount}"/>회</td>
-			                            	<td><c:out value="${orderList.remainingCount}"/>회</td>
-			                            	<td style="width: 60px;">
-			                            		<c:choose>
-			                            			<c:when test="${orderList.expirationYn eq 'Y'}">만료</c:when>
-			                            			<c:when test="${orderList.expirationYn eq 'N'}">미만료</c:when>
-			                            			<c:otherwise></c:otherwise>
-			                            		</c:choose>
-			                            	</td>
-	                            		</c:when>
-	                            		<c:otherwise>
-			                            	<td style="width: 50px;">기타</td>
-			                            	<td><fmt:formatDate value="${orderList.startDay}" pattern="yyyy-MM-dd HH:mm"/></td>
-			                            	<td><fmt:formatDate value="${orderList.expirationDay}" pattern="yyyy-MM-dd HH:mm"/></td>
-			                            	<td><c:out value="${orderList.productCount}"/>회</td>
-			                            	<td><c:out value="${orderList.remainingCount}"/>회</td>
-			                            	<td style="width: 60px;">
-			                            		<c:choose>
-			                            			<c:when test="${orderList.expirationYn eq 'Y'}">O</c:when>
-			                            			<c:when test="${orderList.expirationYn eq 'N'}">X</c:when>
-			                            			<c:otherwise></c:otherwise>
-			                            		</c:choose>
-			                            	</td>
-	                            		</c:otherwise>
-                            		</c:choose>
-	                            	<td style="width: 30px;">
-	                            		<input type="button" id="delOrder" name="delOrder" onclick="goDelOrder(${orderList.orderSeq},${orderList.storeSeq});" value="삭제"> 
-	                            	</td>
+	                            	<td>${orderList.rowNum}</td>
+	                            	<td>${orderList.storeName}</td>
+	                            	<td>${orderList.itemName}</td>
+	                            	<td><a href="#" onclick="orderDetail(${orderList.memberSeq},${orderList.orderSeq},${orderList.storeSeq});">${orderList.productName}</a></td>
+	                            	<td><a href="#" onclick="orderDetail(${orderList.memberSeq},${orderList.orderSeq},${orderList.storeSeq});">${orderList.name}</a></td>
+	                            	<td>${orderList.phone}</td>
+	                            	<td><fmt:formatDate value="${orderList.startDay}" pattern="yyyy-MM-dd"/></td>
+	                            	<td><fmt:formatDate value="${orderList.expirationDay}" pattern="yyyy-MM-dd"/></td>
+	                            	<td>${orderList.expirationYn}</td>
+	                            	<td><input type="button" id="orderDel" name="orderDel" value="삭제" onclick="goOrderDel(${orderList.orderSeq},${orderList.storeSeq})"></td>
 	                            </tr>
                             </c:forEach>
                             </tbody>
                         </table>
                     </div>
+                    <div style="margin-top: 10px;" id="orderFooter">
+                		<input type="button" value="구매 등록" onclick="goOrderRegister();" style="float: right; width:80px;">
+                	</div>
                 </div>
             </div>
 
@@ -178,11 +137,12 @@
 <script src="/resources/dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
 
-function goDelOrder(orderSeq,storeSeq){
+function goOrderDel(orderSeq,storeSeq){
 	var delConfirm = confirm("구매 내역을 삭제 하시겠습니까?");
 	if(delConfirm){
-		$("#orderSeq").val(orderSeq);
-		$("#storeSeq").val(storeSeq);
+		$("#orderInfo #orderSeq").val(orderSeq);
+		$("#orderInfo #storeSeq").val(storeSeq);
+		$("#orderInfo #memberSeq").val(0);
 		orderDel();		
 	}
 }
@@ -191,7 +151,7 @@ function orderDel(orderSeq,storeSeq){
 	
 	 $.ajax({
 	        type:'POST',
-	        url : "/order/orderDel",
+	        url : "/order/orderDelete",
 	        data:$("#orderInfo").serialize(),
 	        success : function(data){
 	            if(data == 'success')
@@ -214,6 +174,12 @@ function orderDetail(memberSeq,orderSeq,storeSeq){
 	$("#storeSeq").val(storeSeq);
 	$("#orderInfo").submit();
 }
+
+
+function goOrderRegister(){
+	location.href="/order/orderRegister";
+}
+
 </script>
 </body>
 </html>

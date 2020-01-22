@@ -65,99 +65,94 @@
             <div class="col-lg-12">
                 <div>
                     <div>
-                    	<c:set var="memberDetail" value="${memberDetail}" />
-                        <table class="table table-bordered">
-                            <tbody>
-                            <tr>
-                                <th style="width: 60px">회원번호</th>
-                                <th style="width: 80px">회원명</th>
-                                <th style="width: 100px">연락처</th>
-                                <th style="width: 100px">이메일</th>
-                                <th style="width: 150px">생년월일</th>
-                                <th style="width: 60px">성별</th>
-                            </tr>
-                           
-                            <tr id="memberInfo">
-                            	<td><c:out value="${memberDetail.memberSeq}"/></td>
-                            	<td>
-                            		<c:choose>
-                            			<c:when test="${memberDetail.name ne null}"><c:out value="${memberDetail.name}"/></c:when>
-                            			<c:otherwise>
-                            				<input type="text" id="paramName" name="paramName" readonly="readonly">
-                            				<input type="button" id="findName" name="findName" value="이름 찾기" data-toggle="modal" data-target="#findMember">
-                            			</c:otherwise>
-                            		</c:choose>
-                            	</td>
-                            	<td><c:out value="${memberDetail.phone}"/></td>
-                            	<td><c:out value="${memberDetail.email}"/></td>
-                            	<td><c:out value="${memberDetail.birth}"/></td>
-                            	<td>
-	                            	<c:choose>
-	                            		<c:when test="${memberDetail.sex eq 'M'}">남</c:when>
-	                            		<c:when test="${memberDetail.sex eq 'W'}">여</c:when>
-	                            		<c:otherwise></c:otherwise>
-	                            	</c:choose>
-                            	</td>
-                            </tr>
-                           
-                            
-                            </tbody>
-                        </table>
+                    	<c:set var="orderVO" value="${orderVO}" />
+                    	<form:form id="orderInfo" name="orderInfo" modelAttribute="orderVO" method="post">
+	                        <table class="table table-bordered">
+	                            <tbody>
+		                            <tr>
+		                                <th>매장명</th>
+		                                <td id="storeInfo" colspan="3">
+		                                	<c:out value="${orderVO.storeName}"/>
+				                            <input type="hidden" id="storeName" name="storeName" value="${orderVO.storeName}">
+				                            <input type="hidden" id="storeSeq" name="storeSeq" value="${orderVO.storeSeq}">
+		                                </td>
+		                            </tr>
+		                            <tr>
+		                                <th style="width: 15%;">상품<font style="color: red;">&nbsp;*</font></th>
+		                                <td style="width: 30%;">
+		                                	<select id="productSeq" name="productSeq" onchange="goSearchProduct();">
+		                                		<option value="0">상품을 선택해주세요</option>
+		                                		<c:forEach var="productList" items="${productList}">
+			                                		<option value="${productList.productSeq}">${productList.productName}</option>
+		                                		</c:forEach>
+		                                	</select>
+		                                </td>
+		                                <th style="width: 15%;">품목명</th>
+		                                <td id= "itemImfo" style="width: 30%;">               	
+		                                </td>
+		                            </tr>
+		                            <tr>
+		                                <th style="width: 15%;">이름<font style="color: red;">&nbsp;*</font></th>
+		                                <td style="width: 30%;">
+		                                	<input type="text" id="name" name="name" placeholder="검색 버튼을 눌러주세요." data-toggle="modal" data-target="#findMember">
+		                                	<input type="hidden" id="memberSeq" name="memberSeq">
+		                                	<input type="button" id="searchName" name="searchName" value="검색" readonly="readonly" style="margin-left: 5px;" data-toggle="modal" data-target="#findMember">
+		                                </td>
+		                                <th style="width: 15%;">연락처<font style="color: red;">&nbsp;*</font></th>
+		                                <td style="width: 30%;">
+		                                	<input type="text" id="phone1" name="phone1" style="margin-right: 5px; width: 15%;">&nbsp;-
+		                                	<input type="text" id="phone2" name="phone2" style="margin-left: 5px; margin-right: 5px; width: 15%;">&nbsp;-
+		                                	<input type="text" id="phone3" name="phone3" style="margin-left: 5px; width: 15%;">
+		                                	<input type="hidden" id="phone" name="phone">
+		                                </td>
+		                            </tr>
+		                            <tr>
+		                                <th style="width: 15%;">고객 구매 가격</th>
+		                                <td style="width: 30%;">
+		                                	<input type="text" id="customerPrice" name="customerPrice" value="0" style="width: 20%;">
+		                                </td>
+		                                <th id ="productCountInfo1" style="width: 15%;">상품 가격</th>
+		                                <td id ="productCountInfo2" style="width: 30%;">
+		                                	<input type="text" id="productCount" name="productCount" value="0" style="width: 20%;">
+		                                </td>
+		                            </tr>
+		                            <tr id="productCountInfo">
+		                                <th style="width: 15%;">횟수</th>
+		                                <td style="width: 30%;">
+		                                	<input type="text" id="productCount" name="productCount" value="0" style="width: 20%;">
+		                                </td>
+		                            </tr>
+		                            <tr id ="lockerInfo">
+		                                <th style="width: 15%;">락커 번호</th>
+		                                <td  colspan="3">
+		                                	<input type="text" id="lockerSeq" name="lockerSeq" value="0" style="width: 15%;">
+		                                </td>
+		                            </tr>
+		                            <tr>
+		                                <th style="width: 15%;">시작일<font style="color: red;">&nbsp;*</font></th>
+		                                <td style="width: 30%;">
+		                                	<input type="text" id="startDay" name="startDay" readonly="readonly">
+		                                </td>
+		                                <th style="width: 15%;">만료일<font style="color: red;">&nbsp;*</font></th>
+		                                <td style="width: 30%;">
+		                                	<input type="text" id="expirationDay" name="expirationDay" readonly="readonly">
+		                                </td>
+		                            </tr>
+		                            <tr>
+		                                <th style="width: 15%;">메모</th>
+		                                <td colspan="3"><textarea id="memo" name="orderMemo" rows="3" cols="150"></textarea></td>
+		                            </tr>
+		                            <tr>
+				                    	<th colspan="4"><font style="color: red;">* 는 필수 사항입니다.</font></th>
+				                    </tr>
+	                            </tbody>
+	                        </table>
+                        </form:form>
                         
-                        <table class="table table-bordered">
-                            <tbody>
-                            <tr>
-                                <th>출석날짜</th>
-                            	<td>
-                            		<input type="text" id="datepicker" name="datepicker" readonly="readonly">
-                            	</td>
-                            </tr>
-                            <tr>
-                                <th>시간</th>
-                                <td>
-                                	<select id="hour" name="hour"  style="margin-left: 5px;">
-										<c:forEach var="i" begin="0" end="24">
-											<option><c:out value="${i}"/></option>
-										</c:forEach>
-                                	</select>시
-                                	<select id="minute" name="minute"  style="margin-left: 5px;">
-										<c:forEach var="k" begin="0" end="59">
-											<option><c:out value="${k}"/></option>
-										</c:forEach>
-                                	</select>분
-                                </td>
-                            </tr>
-                            <tr id="attendanceProductName">
-                                <th>상품</th>
-                            	<td><c:out value="${orderDetail.productName}"/></td>
-                            </tr>
-                            <tr id="attendanceProductCode">
-                            	<c:choose>
-                            		<c:when test="${orderDetail.productCode eq '001'}"></c:when>
-                            		<c:when test="${orderDetail.productCode eq '002'}">
-	                            		<th>남은 횟수</th>
-	                            		<td><c:out value="${orderDetail.remainingCount}"/>회</td>
-                            		</c:when>
-                            		<c:otherwise></c:otherwise>
-                            	</c:choose>
-                            </tr>
-                            <tr id="attendanceStoreSeq">
-                                <th style="width: 150px;">지점</th>
-                            	<td>
-                            		<c:choose>
-                            			<c:when test="${orderDetail.storeSeq eq '10'}">레이디요가 의정부점</c:when>
-                            			<c:when test="${orderDetail.storeSeq eq null}"></c:when>
-                            			<c:otherwise>준비중입니다.</c:otherwise>
-                            		</c:choose>
-                            	</td>
-                            </tr>
-                            
-                            </tbody>
-                        </table>
                     </div>
-                    <div style="margin-top: 10px;" id="attendanceFooter">
-                		<input type="button" value="목록" onclick="goAttendanceList();" style="float: left; width:80px;">
-                		<input type="button" value="출석 등록" onclick="goAttendanceRegister(${orderDetail.memberSeq},${orderDetail.storeSeq},${orderDetail.orderSeq},'${orderDetail.productCode}');" style="float: right; width:80px;">
+                    <div style="margin-top: 10px;" id="orderFooter">
+                		<input type="button" value="목록" onclick="goOrderList();" style="float: left; width:80px;">
+                		<input type="button" value="구매 등록" onclick="goOrderRegister();" style="float: right; width:80px;">
                 	</div>
                 </div>
             </div>
@@ -181,15 +176,8 @@
     <%@ include file="/WEB-INF/views/include/main_footer.jsp" %>
 </div>
 <!-- ./wrapper -->
-<form:form id="attendanceInfo" name="attendanceInfo" modelAttribute="attendanceVO" method="post">
-	<input type="hidden" id="memberSeq" name="memberSeq">
-	<input type="hidden" id="storeSeq" name="storeSeq">
-	<input type="hidden" id="attendanceDate" name="attendanceDate">
-	<input type="hidden" id="orderSeq" name="orderSeq">
-	<input type="hidden" id="productCode" name="productCode">
-	<input type="hidden" id="name" name="name">
-	<input type="hidden" id="remainingCount" name="remainingCount" value="${orderDetail.remainingCount}">
-</form:form>
+
+
 <!-- REQUIRED SCRIPTS -->
 
 <!-- jQuery -->
@@ -202,7 +190,22 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	
-	$('#datepicker').datepicker({
+	$('#startDay').datepicker({
+		dateFormat: 'yy-mm-dd', 
+		showOtherMonths: true, 
+		showMonthAfterYear:true,
+		changeYear: true,
+		changeMonth: true,
+		showOn: "button",
+		yearSuffix: "년",
+		monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'],
+		monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+		dayNamesMin: ['일','월','화','수','목','금','토'],
+		dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'],
+		buttonImage: "/resources/image/calendar_btn.png" //버튼에 띄워줄 이미지 경로
+	});
+	
+	$('#expirationDay').datepicker({
 		dateFormat: 'yy-mm-dd', 
 		showOtherMonths: true, 
 		showMonthAfterYear:true,
@@ -224,52 +227,140 @@ $(document).ready(function() {
 		}
 	});
 	
+	$("#productCountInfo").show();
+	$("#lockerInfo").hide();
+	
 });
 
-function goAttendanceList(){
-	location.href="/attendance/info";
+function goOrderList(){
+	location.href="/order/orderList";
 }
 
-function goAttendanceRegister(memberSeq,storeSeq,orderSeq,productCode){
+/* 상품 선택 시 품목명 및 데이터 세팅 */
+function goSearchProduct(){
 	
-	if($("#datepicker").val() == ''){
-		alert("출석 날짜를 선택해주세요.");
+	var paramProductSeq = $("#productSeq option:selected").val();
+	var paramStoreSeq = $("#storeSeq").val();
+	
+	
+	if(paramProductSeq == 0){
 		return false;
 	}
-	var insertConfirm = confirm("출석 등록 하시겠습니까?");
-	if(insertConfirm){
-		attendanceRegister(memberSeq,storeSeq,orderSeq,productCode);
-	}
-	
-}
-
-function attendanceRegister(memberSeq,storeSeq,orderSeq,productCode){
-	
-	$("#memberSeq").val(memberSeq);
-	$("#storeSeq").val(storeSeq);
-	$("#orderSeq").val(orderSeq);
-	$("#productCode").val(productCode);
-	
-	
-	var date = $("#datepicker").val();
-	var hour = $("#hour").val();
-	var minute = $("#minute").val();
-	
-	if(hour.length < 2){
-		hour = '0'+ hour;
-	}
-	if(minute.length < 2){
-		minute = '0'+ minute;
-	}
-	
-	var dateSplit = date.split("-");
- 	var attendanceDate = new Date(dateSplit[0],dateSplit[1]-1,dateSplit[2],hour,minute);
-	$("#attendanceDate").val(attendanceDate);
 	
 	$.ajax({
 		type: 'POST',
-        url : "/attendance/insertAttendance",
-        data: $("#attendanceInfo").serialize(),
+        url : "/order/searchProduct",
+        data: {	productSeq 	: 	paramProductSeq,
+        		storeSeq	:	paramStoreSeq
+        		},
+        success : function(data){
+            if(data.result == 'success'){
+            	adjustItemInfo(data.productVO);
+            }else if(data.result == 'noCount'){
+            	alert("검색 결과가 존재하지 않습니다.");
+            	return false;
+            }
+        },
+        error:function(request,status,error){
+            alert("저장에 실패하였습니다. 관리자에게 문의하세요");
+        }
+    });
+	
+}
+
+function adjustItemInfo(productVO){
+	
+	var paramItemInfo  = '';
+	
+	paramItemInfo = productVO.itemName;
+	paramItemInfo += '<input type="hidden" id="itemSeq" name="itemSeq" value="'+productVO.itemSeq+'">';
+	
+	$("#itemImfo").text("");
+	$("#itemImfo").append(paramItemInfo);
+	
+	$("#largeCategory").val(productVO.largeCategory);
+	
+	$("#productPrice").val(productVO.productPrice);
+	
+	if($("customerPrice").val() == 0){
+		$("#customerPrice").val(productVO.productPrice);
+	}else if($("customerPrice").val() == null){
+		$("#customerPrice").val(productVO.productPrice);
+	}else if($("customerPrice").val() == ''){
+		$("#customerPrice").val(productVO.productPrice);
+	}else{
+		
+	}
+	
+	if(productVO.largeCategory == '002'){
+		$("#lockerInfo").show();
+		$("#productCountInfo").hide();
+	}else{
+		$("#lockerInfo").hide();
+		$("#productCountInfo").show();
+	}
+	
+}
+/* 상품 선택 시 품목명 및 데이터 세팅 */
+
+
+/* 구매 등록 */
+function goOrderRegister(){
+	
+	if($("#productSeq option:selected").val() == 0){
+		alert("상품을 선택해주세요.");
+		return false;
+	}
+	
+	if($("#name").val() == ''){
+		alert("이름을 입력해주세요.");
+		return false;
+	}
+	
+	if($("#product").val() == ''){
+		alert("가격을 선택해주세요.");
+		return false;
+	}
+	
+	if($("#startDay").val() == ''){
+		alert("시작일자를 선택해주세요.");
+		return false;
+	}
+	
+	if($("#expirationDay").val() == ''){
+		alert("만료일자를 선택해주세요.");
+		return false;
+	}
+	
+	
+	var insertConfirm = confirm("구매 등록 하시겠습니까?");
+	if(insertConfirm){
+		
+		if($("#largeCategory").val() == '002'){
+			$("#productCount").val(0);
+		}else{
+			$("#lockerSeq").val(0);
+		}
+		orderRegister();
+	}
+	
+}
+
+function orderRegister(){
+	
+	
+	var startDay = $("#startDay").val();
+	var expirationDay = $("#expirationDay").val();
+	
+	var startDateSplit = startDay.split("-");
+	var expirationDateSplit = expirationDay.split("-");
+ 	$("#startDay").val(new Date(startDateSplit[0],startDateSplit[1]-1,startDateSplit[2]));
+ 	$("#expirationDay").val(new Date(expirationDateSplit[0],expirationDateSplit[1]-1,expirationDateSplit[2]));
+ 	
+	$.ajax({
+		type: 'POST',
+        url : "/order/insertOrder",
+        data: $("#orderInfo").serialize(),
         success : function(data){
             if(data == 'success')
             {
@@ -282,7 +373,9 @@ function attendanceRegister(memberSeq,storeSeq,orderSeq,productCode){
         }
     });
 }
+/* 구매 등록 */
 
+/* 검색 팝업 */
 function searchName(){
 	
 	if($("#popName").val() ==''){
@@ -296,7 +389,7 @@ function searchName(){
 	
  	$.ajax({
 		type: 'POST',
-        url : "/attendance/searchMember",
+        url : "/order/searchMember",
         data: {	name : paramName,
         		storeSeq : paramStoreSeq
         		},
@@ -315,7 +408,6 @@ function searchName(){
 }
 
 
-/* 팝업파트 */
 function popMemberList(popMemberList){
 	var paramList = '';
 	
@@ -323,115 +415,36 @@ function popMemberList(popMemberList){
 		var paramMemberSeq = 0;
 		var paramName = '';
 		var paramPhone = '';
-		var paramEmail = '';
-		var paramBirth = '';
 		var paramSex = '';
-		var paramProductName = '';
-		var paramProductCode = '';
-		var paramStoreSeq = 0;
-		var paramStoreName = '';
-		var paramOrderSeq = 0;
-		var paramRemainingCount = 0;
 		
 		paramMemberSeq = popMemberList[i].memberSeq;
 		paramName = popMemberList[i].name;
 		paramPhone = popMemberList[i].phone;
-		paramEmail = popMemberList[i].email;
-		paramBirth = popMemberList[i].birth;
 		paramSex = popMemberList[i].sex;
-		paramProductName = popMemberList[i].productName;
-		paramProductCode = popMemberList[i].productCode;
-		var paramExpirationDay = new Date(popMemberList[i].expirationDay);
-		paramExpirationDay = getFormatDate(paramExpirationDay);
-		paramStoreSeq = popMemberList[i].storeSeq;
-		paramStoreName = popMemberList[i].storeName;
-		paramOrderSeq = popMemberList[i].orderSeq;
-		paramRemainingCount = popMemberList[i].remainingCount;
 		
 		paramList = '<td>'+popMemberList[i].rowNum+'</td>';
 		paramList += '<td>';
- 		paramList += '<a href="#" onclick="popMemberSelect('+paramMemberSeq+', \''+paramName+'\' , \''+paramPhone+'\' , \''+paramEmail+'\' , \''+paramBirth+'\' , \''+paramSex+'\' , \''+paramProductName+'\' , \''+paramProductCode+'\' , \''+paramExpirationDay+'\' , '+paramStoreSeq+' , \''+paramStoreName+'\' , '+paramOrderSeq+', '+paramRemainingCount+');">'; 
+ 		paramList += '<a href="#" onclick="popMemberSelect('+paramMemberSeq+', \''+paramName+'\' , \''+paramPhone+'\');">'; 
 		paramList +=  popMemberList[i].name+'</a>';
 		paramList += '</td>';
 		paramList += '<td>'+popMemberList[i].phone+'</td>';
 		paramList += '<td>'+popMemberList[i].sex+'</td>';
-		paramList += '<td>'+popMemberList[i].productName+'</td>';
 	}
 	
 	$("#memberList").text("");
 	$("#memberList").append(paramList);
 }
 
-function popMemberSelect(memberSeq,name,phone,email,birth,sex,productName,productCode,expirationDay,storeSeq,storeName,orderSeq,remainingCount) {
+function popMemberSelect(memberSeq,name,phone) {
 	
-	var paramMemberInfo = '';
-	paramMemberInfo = '<td>'+memberSeq+'</td>';
-	paramMemberInfo += '<td>';
-	paramMemberInfo += '<input type="text" id="paramName" name="paramName" readonly="readonly" value='+name+'>';
-	paramMemberInfo += '<input type="button" id="findName" name="findName" value="이름찾기" data-toggle="modal" data-target="#findMember">';
-	paramMemberInfo += '</td>';
-	paramMemberInfo += '<td>'+phone+'</td>';
-	paramMemberInfo += '<td>'+email+'</td>';
-	paramMemberInfo += '<td>'+birth+'</td>';
-	paramMemberInfo += '<td>';
-	if(sex == 'M'){
-		paramMemberInfo += '남';
-	}else if(sex == 'W'){
-		paramMemberInfo += '여';
-	}else{
-		paramMemberInfo += '';
-	}
-	paramMemberInfo += '</td>';
+	$("#name").val(name);
+	$("#memberSeq").val(memberSeq);
 	
-	$("#memberInfo").text("");
-	$("#memberInfo").append(paramMemberInfo);
-	
-	/* 상품 정보  */
-	var paramAttendanceProductName = '';
-	paramAttendanceProductName = '<th>상품</th>';
-	paramAttendanceProductName += '<td>'+productName+'</td>';
-	$("#attendanceProductName").text("");
-	$("#attendanceProductName").append(paramAttendanceProductName);
-	
-	
-	/* 상품 정보에 따른 추가 정보  */
-	var paramProductCode = '';
-	
-	if(productCode == '001'){
-		paramProductCode = '<tr id="productState">';
-		paramProductCode +='<th>종료일</th>';
-		paramProductCode +='<td>'+expirationDay+'</td>';
-		paramProductCode +='</tr>';
-	}else if(productCode == '002'){
-		paramProductCode = '<tr id="productState">';
-		paramProductCode +='<th>남은횟수</th>';
- 		paramProductCode +='<td>'+remainingCount+'</td>';
-		paramProductCode +='</tr>';
-		$("#remainingCount").val(remainingCount);
-	}
-	
-	if($("#productState").length == 0){
-		$("#attendanceProductName").after(paramProductCode);
-	}else{
-		$("#productState").remove("");
-		$("#attendanceProductName").after(paramProductCode);
-	}
-	
-	/* 지점 표시 */
-	var paramAttendanceStoreSeq = '';
-	paramAttendanceStoreSeq = '<th style="width: 150px;">지점</th>';
-	paramAttendanceStoreSeq += '<td>'+storeName+'</td>';
-	$("#attendanceStoreSeq").text("");
-	$("#attendanceStoreSeq").append(paramAttendanceStoreSeq);
-	
-	/* 하단 부분 */
-	var paramAttendanceFooter = '';
-	paramAttendanceFooter = '<div style="margin-top: 10px;" id="attendanceFooter">';
-	paramAttendanceFooter += '<input type="button" value="목록" onclick="goAttendanceList();" style="float: left; width:80px;">';
-	paramAttendanceFooter += '<input type="button" value="출석 등록" onclick="goAttendanceRegister('+memberSeq+','+storeSeq+','+orderSeq+',\''+productCode+'\');" style="float: right; width:80px;">';
-	paramAttendanceFooter += '</div>';
-	$("#attendanceFooter").text("");
-	$("#attendanceFooter").append(paramAttendanceFooter);
+	var paramMemberPhoneInfo = phone.split('-');
+	$("#phone1").val(paramMemberPhoneInfo[0]);
+	$("#phone2").val(paramMemberPhoneInfo[1]);
+	$("#phone3").val(paramMemberPhoneInfo[2]);
+	$("#phone").val(phone);
 	
 	popClose();
 	$("#findMember").modal('toggle');
@@ -440,25 +453,15 @@ function popMemberSelect(memberSeq,name,phone,email,birth,sex,productName,produc
 function popClose(){
 	$("#popName").val("");
 	
-	var paramDefaultList = '<th colspan="5" style="text-align: center;">결과가 없습니다.</th>';
+	var paramDefaultList = '<th colspan="4" style="text-align: center;">결과가 없습니다.</th>';
 	
 	$("#memberList").text("");
 	$("#memberList").append(paramDefaultList);
 }
+/* 검색 팝업 */
 
 
-function getFormatDate(date){
-    var year = date.getFullYear();              //yyyy
-    var month = (1 + date.getMonth());          //M
-    month = month >= 10 ? month : '0' + month;  //month 두자리로 저장
-    var day = date.getDate();                   //d
-    day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
-    var hour = date.getHours();                   //d
-    hour = hour >= 10 ? hour : '0' + hour;       //day 두자리로 저장
-    var minutes = date.getMinutes();                   //d
-    minutes = minutes >= 10 ? minutes : '0' + minutes;       //day 두자리로 저장
-    return  year + '-' + month + '-' + day + " "+ hour+":"+minutes;
-}
+
 </script>
 
 
@@ -483,9 +486,8 @@ function getFormatDate(date){
 								<th>이름</th>
 								<th>연락처</th>
 								<th>성별</th>
-								<th>등록상품</th>
 							</tr>
-							<tr id="memberList"><th colspan="5" style="text-align: center;">결과가 없습니다.</th></tr>
+							<tr id="memberList"><th colspan="4" style="text-align: center;">결과가 없습니다.</th></tr>
 						</tbody>
 					</table>
 				</div>

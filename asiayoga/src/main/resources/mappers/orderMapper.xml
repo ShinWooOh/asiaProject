@@ -15,14 +15,12 @@
 				tempA.member_seq,
 				tempA.start_day,
 				tempA.expiration_day,
-				tempA.product_count,
-				tempA.remaining_count,
                 tempA.expiration_yn,
 				tempA.locker_seq,
 				tempA.del_yn,
                 tempA.store_name,
-                tempA.product_code,
                 tempA.product_name,
+                tempA.item_name,
                 tempA.name,
                 tempA.phone
 		FROM (	
@@ -32,22 +30,22 @@
 						ordinfo.member_seq,
 						ordinfo.start_day,
 						ordinfo.expiration_day,
-						ordinfo.product_count,
-						ordinfo.remaining_count,
 		                ordinfo.expiration_yn,
 						ordinfo.locker_seq,
 						ordinfo.del_yn,
 		                ( SELECT store_name FROM STOREINFO WHERE store_Seq = #{storeSeq}) AS store_name,
-		                ( SELECT product_code FROM PRODUCTINFO WHERE product_seq = ordinfo.product_seq) AS product_code,
-                		( SELECT product_name FROM PRODUCTINFO WHERE product_seq = ordinfo.product_seq) As product_name,
+                		prdinfo.product_name,
+                		( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq) As item_name,
 		                mbrinfo.name,
 		                mbrinfo.phone
-		FROM ORDERINFO ordinfo
-        INNER JOIN MEMBERINFO mbrinfo
-        ON ordinfo.member_seq = mbrinfo.member_seq
-		WHERE ordinfo.store_seq = #{storeSeq}
-		AND ordinfo.del_yn = 'N'
-        ORDER By ordinfo.order_seq DESC) AS tempA
+				FROM ORDERINFO ordinfo
+		        INNER JOIN MEMBERINFO mbrinfo
+		        ON ordinfo.member_seq = mbrinfo.member_seq
+		        INNER JOIN PRODUCTINFO prdinfo
+		        ON ordinfo.product_seq = prdinfo.product_Seq
+				WHERE ordinfo.store_seq = #{storeSeq}
+				AND ordinfo.del_yn = 'N'
+		        ORDER By ordinfo.order_seq DESC) AS tempA
         , (SELECT @ROWNUM :=0) AS R ORDER BY row_num DESC;
 	</select>
 	
@@ -86,17 +84,25 @@
 				ordinfo.member_seq,
 				ordinfo.start_day,
 				ordinfo.expiration_day,
+				ordinfo.product_price,
+				ordinfo.customer_price,
 				ordinfo.product_count,
-				ordinfo.remaining_count,
+                ordinfo.remaining_count,
 				ordinfo.locker_seq,
+				ordinfo.order_memo,
 				ordinfo.del_yn,
 				prdinfo.product_name,
-				prdinfo.product_code
+				prdinfo.product_code,
+                prdinfo.item_seq,
+                ( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_name,
+                ( SELECT store_name FROM STOREINFO WHERE store_seq = prdinfo.store_seq ) AS store_name,
+                ( SELECT name FROM MEMBERINFO WHERE member_seq = ordinfo.member_seq ) AS name,
+                ( SELECT phone FROM MEMBERINFO WHERE member_seq = ordinfo.member_seq ) AS phone
 		FROM ORDERINFO ordinfo
 		INNER JOIN PRODUCTINFO prdinfo
 		ON ordinfo.product_seq = prdinfo.product_seq
-		WHERE ordinfo.order_seq = #{orderSeq}
-		AND ordinfo.del_yn = 'N'
+		WHERE ordinfo.order_seq = ${orderSeq}
+		AND ordinfo.del_yn = 'N';
 	</select>
 	
 	<!-- 횟수제 상품일 경우 횟수 업데이트 -->
@@ -109,12 +115,77 @@
 	</update>
 	
 	<!-- 구매내역 삭제 -->
-	<update id="orderDel" parameterType="orderVO">
- 		/* orderMapper.orderDel */
+	<update id="orderDelete" parameterType="orderVO">
+ 		/* orderMapper.orderDelete */
 		UPDATE ORDERINFO
 		SET del_yn = 'Y'
 		WHERE order_seq = #{orderSeq}
 		AND store_seq = #{storeSeq}
+		AND del_yn = 'N'
+	</update>
+	
+	<!-- 구매내역 등록 -->
+	<insert id="insertOrder" parameterType="orderVO">
+ 		/* orderMapper.insertOrder */
+		INSERT INTO ORDERINFO
+				(	store_seq,
+					product_seq,
+					member_seq,
+					start_day,
+					expiration_day,
+					product_count,
+					remaining_count,
+					expiration_yn,
+					product_price,
+					customer_price,
+					order_memo,
+					locker_seq,
+					del_yn,
+					register_date,
+					register_id,
+					modify_date,
+					modify_id
+				)
+		VALUES
+				(
+					#{storeSeq},
+					#{productSeq},
+					#{memberSeq},
+					#{startDay},
+					#{expirationDay},
+					#{productCount},
+					#{productCount},
+					'N',
+					#{productPrice},
+					#{customerPrice},
+					#{orderMemo},
+					#{lockerSeq},
+					'N',
+					now(),
+					'admin',
+					now(),
+					'admin'
+				)
+	</insert>
+	
+	<!-- 구매 내역 업데이트 -->
+	<update id="updateOrder" parameterType="orderVO">
+ 		/* orderMapper.updateOrder */
+ 		UPDATE ORDERINFO
+ 		<set>
+ 			product_seq = ${productSeq},
+ 			start_day = #{startDay},
+ 			expiration_day = #{expirationDay},
+ 			product_price = #{productPrice},
+ 			customer_price = #{customerPrice},
+ 			product_count = #{productCount},
+ 			remaining_count = #{remainingCount},
+ 			order_memo = #{orderMemo},
+ 			locker_seq = #{lockerSeq},
+ 			modify_date = now(),
+ 			modify_id = 'admin'
+ 		</set>
+ 		WHERE order_seq = #{orderSeq}
 		AND del_yn = 'N'
 	</update>
     

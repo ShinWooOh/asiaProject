@@ -21,5 +21,7 @@ public interface MemberService {
 	// 회원 정보 업데이트
 	int memberEdit(MemberVO memberVO) throws Exception;
 	
+	// 회원 찾기 검색 창에서 검색 시 회원 목록
+	List<MemberVO> searchMemberList(MemberVO memberVO) throws Exception;
 
 }
