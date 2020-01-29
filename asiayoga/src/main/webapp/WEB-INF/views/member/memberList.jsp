@@ -67,15 +67,15 @@
                         <table class="table table-bordered">
                             <tbody>
                             <tr>
-                                <th style="width: 40px">No</th>
-                                <th style="width: 40px">회원번호</th>
-                                <th style="width: 90px">회원명</th>
-                                <th style="width: 90px">생년월일</th>
-                                <th style="width: 90px">연락처</th>
-                                <th style="width: 90px">이메일</th>
-                                <th style="width: 50px">성별</th>
-                                <th style="width: 70px">가입일</th>
-                                <th style="width: 50px"></th>
+                                <th style="width: 10%;">No</th>
+                                <th style="width: 10%;">회원번호</th>
+                                <th style="width: 15%;">회원명</th>
+                                <th style="width: 10%;">생년월일</th>
+                                <th style="width: 13%;">연락처</th>
+                                <th style="width: 20%;">이메일</th>
+                                <th style="width: 5%;">성별</th>
+                                <th style="width: 10%;">가입일</th>
+                                <th style="width: 7%;"></th>
                             </tr>
                             <c:forEach var="memberList" items="${memberList}">
                             	<tr>
@@ -91,13 +91,16 @@
 										<c:otherwise>여</c:otherwise>
 										</c:choose>
 									</td>
-									<td><fmt:formatDate value="${memberList.registerDate}" pattern="yyyy-MM-dd HH:mm"/></td>
-									<td><input type="button" onclick="goMemberDel(${memberList.memberSeq},10);" value="삭제"></td>                		
+									<td><fmt:formatDate value="${memberList.registerDate}" pattern="yyyy-MM-dd"/></td>
+									<td><input type="button" class="btn btn-block btn-warning btn-sm" onclick="goMemberDel(${memberList.memberSeq},10);" value="삭제"></td>                		
                             	</tr>
                             </c:forEach>
                             </tbody>
                         </table>
                     </div>
+                     <div id="membereFooter" style="margin-top: 10px;">
+                		<input type="button" class="btn btn-block btn-primary" value="등록" onclick="goMemberRegister();" style="float: right; width:80px;">
+                	</div>
                 </div>
             </div>
 
@@ -117,7 +120,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    <%@ include file="/WEB-INF/views/include/main_footer.jsp" %>
+   <%--  <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
 
@@ -136,6 +139,10 @@
 <!-- AdminLTE App -->
 <script src="/resources/dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
+
+function goMemberRegister(){
+	location.href="/member/memberJoin";
+}
 
 function goMemberDetail(memberSeq,storeSeq){
 	$("#memberSeq").val(memberSeq);

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.company.asiayoga.item.domain.ItemVO;
 import com.company.asiayoga.item.service.ItemService;
+import com.company.asiayoga.manage.domain.ManageVO;
 import com.company.asiayoga.product.domain.ProductVO;
 import com.company.asiayoga.product.service.ProductService;
 
@@ -31,32 +33,54 @@ public class ProductController {
 	@Inject
 	private ItemService itemService;
 	
+	private String menuFirstRoot = "product";
+	
 	// 상품 목록
 	@RequestMapping(value = "productList")
-	public String productList(Model model) throws Exception {
+	public String productList(HttpServletRequest request,Model model) throws Exception {
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		ProductVO productVO = new ProductVO();
-		productVO.setStoreSeq(10);
+		productVO.setStoreSeq(manageVO.getStoreSeq());
 		List<ProductVO> list = productService.productList(productVO);
 		
 		model.addAttribute("productList", list);
+		
+		// 경로 체크
+		String currentPath = (String)request.getSession().getAttribute("nowPath");
+		if(!currentPath.equals(menuFirstRoot)) {
+			request.getSession().removeAttribute("nowPath");
+			request.getSession().setAttribute("nowPath", menuFirstRoot);
+		}
 		
 		return "/product/productList";
 	}
 	
 	// 상품 등록 화면으로 이동
 	@RequestMapping(value = "productRegister")
-	public String productRegister(Model model) throws Exception {
+	public String productRegister(HttpServletRequest request,Model model) throws Exception {
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		ProductVO productVO = new ProductVO();
-		productVO.setStoreSeq(10);
-		productVO.setStoreName("레이디요가 의정부점");
+		productVO.setStoreSeq(manageVO.getStoreSeq());
+		productVO.setStoreName(manageVO.getStoreName());
 		model.addAttribute("productVO", productVO);
 		
 		ItemVO itemVO = new ItemVO();
-		itemVO.setStoreSeq(10);
+		itemVO.setStoreSeq(manageVO.getStoreSeq());
 		List<ItemVO> itemList =  itemService.itemList(itemVO);
 		model.addAttribute("itemList", itemList);
+		
+		// 경로 체크
+		String currentPath = (String)request.getSession().getAttribute("nowPath");
+		if(!currentPath.equals(menuFirstRoot)) {
+			request.getSession().removeAttribute("nowPath");
+			request.getSession().setAttribute("nowPath", menuFirstRoot);
+		}
 		
 		return "/product/productRegister";
 	}
@@ -117,7 +141,7 @@ public class ProductController {
 	
 	// 상품 상세 화면으로 이동
 	@RequestMapping(value = "productDetail")
-	public String productDetail(Model model,ProductVO productVO) throws Exception {
+	public String productDetail(HttpServletRequest request,Model model,ProductVO productVO) throws Exception {
 	
 		// 상품 상세
 		productVO = productService.productDetail(productVO);
@@ -128,6 +152,13 @@ public class ProductController {
 		itemVO.setStoreSeq(productVO.getStoreSeq());
 		List<ItemVO> itemList = itemService.itemList(itemVO);
 		model.addAttribute("itemList", itemList);
+		
+		// 경로 체크
+		String currentPath = (String)request.getSession().getAttribute("nowPath");
+		if(!currentPath.equals(menuFirstRoot)) {
+			request.getSession().removeAttribute("nowPath");
+			request.getSession().setAttribute("nowPath", menuFirstRoot);
+		}
 		
 		return "/product/productDetail";
 	}

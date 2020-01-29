@@ -69,11 +69,11 @@
                             <tr>
                                 <th style="width: 10%">No</th>
                                 <th style="width: 10%">매장번호</th>
-                                <th style="width: 20%">매장명</th>
+                                <th style="width: 18%">매장명</th>
                                 <th style="width: 10%">매장 전화번호</th>
                                 <th style="width: 10%">매장 전화번호<br>(핸드폰)</th>
-                                <th style="width: 30%">매장 주소</th>
-                                <th style="width: 10%"></th>
+                                <th style="width: 35%">매장 주소</th>
+                                <th style="width: 7%"></th>
                             </tr>
                             <c:forEach var="storeList" items="${storeList}">
 	                           	<tr>
@@ -84,7 +84,7 @@
 									<td><c:out value="${storeList.storePhone}"/></td>
 									<td><c:out value="${storeList.storeAddress}"/></td>
 									<td align="center">
-										<input type="button" id="storeDel" name="storeDel" value="삭제" onclick="goStoreDel(${storeList.storeSeq})">
+										<input type="button" class="btn btn-block btn-warning btn-sm" id="storeDel" name="storeDel" value="삭제" onclick="goStoreDel(${storeList.storeSeq})">
 									</td>
 	                           	</tr>
                             </c:forEach>
@@ -92,7 +92,7 @@
                         </table>
                     </div>
                    <div style="margin-top: 10px;" id="storeFooter">
-                		<input type="button" value="매장 등록" onclick="goStoreRegister();" style="float: right; width:80px;">
+                		<input type="button" class="btn btn-block btn-primary" value="등록" onclick="goStoreRegister();" style="float: right; width:80px;">
                 	</div>
                 </div>
             </div>
@@ -113,7 +113,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    <%@ include file="/WEB-INF/views/include/main_footer.jsp" %>
+    <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
 

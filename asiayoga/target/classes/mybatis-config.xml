@@ -20,6 +20,8 @@
 		<typeAlias type="com.company.asiayoga.store.domain.StoreVO" alias="storeVO" />
 		<typeAlias type="com.company.asiayoga.order.domain.OrderVO" alias="orderVO" />
 		<typeAlias type="com.company.asiayoga.item.domain.ItemVO" alias="itemVO" />
+		<typeAlias type="com.company.asiayoga.manage.domain.ManageVO" alias="manageVO" />
+		<typeAlias type="com.company.asiayoga.user.domain.CustomUserDetail" alias="customUserDetail" />
 	</typeAliases>
 
 </configuration>

@@ -11,6 +11,7 @@
 	<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 	<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+
     <title>출석 정보</title>
 
     <!-- Font Awesome Icons -->
@@ -31,6 +32,10 @@
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
             </li>
         </ul>
+        
+        <!-- Right navbar links  -->
+		<%@ include file="/WEB-INF/views/include/main_header.jsp" %>
+        
     </nav>
     <!-- /.navbar -->
 
@@ -49,6 +54,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">출석</li>
                             <li class="breadcrumb-item active">출석 정보</li>
                         </ol>
                     </div><!-- /.col -->
@@ -66,33 +72,51 @@
                         <table class="table table-bordered">
                             <tbody>
                             <tr>
-                                <th style="width: 30px">No</th>
-                                <th style="width: 150px">회원명</th>
-                                <th style="width: 150px">출석일</th>
-                                <th style="width: 150px">연락처</th>
-                                <th style="width: 60px">성별</th>
+                                <th style="width: 10%;">No</th>
+                                <th style="width: 15%;">회원명</th>
+                                <th style="width: 33%;">상품명</th>
+                                <th style="width: 15%;">출석일</th>
+                                <th style="width: 15%;">연락처</th>
+                                <th style="width: 5%;">성별</th>
+                                <th style="width: 7%;"></th>
                             </tr>
-                            <c:forEach var="attendanceList" items="${attendanceList}">
-                            	<tr>
-									<td><c:out value="${attendanceList.rowNum}"/> </td>                            		
-									<td>
-										<a href="javascript:void(0);" onclick="goAttendanceDetail(${attendanceList.memberSeq},10);">${attendanceList.name}</a> 
-									</td>                            		
-									<td>
-										<fmt:formatDate value="${attendanceList.attendanceDate}" pattern="yyyy-MM-dd HH:mm"/>
-									</td>                          		
-									<td><c:out value="${attendanceList.phone}"/></td>                            		
-									<td>
-										<c:choose>
-											<c:when test="${attendanceList.sex eq 'M'}">남</c:when>
-											<c:otherwise>여</c:otherwise>
-										</c:choose>
-									 </td>                            		
-                            	</tr>
-                            </c:forEach>
+                            <c:choose>
+                            	<c:when test="${fn:length(attendanceList) > 0}">
+		                            <c:forEach var="attendanceList" items="${attendanceList}">
+		                            	<tr>
+											<td><c:out value="${attendanceList.rowNum}"/></td>                            		
+											<td>
+												<a href="javascript:void(0);" onclick="goAttendanceDetail(${attendanceList.memberSeq},${attendanceList.storeSeq});"><c:out value="${attendanceList.name}"/></a> 
+											</td>
+											<td>
+												<a href="javascript:void(0);" onclick="goAttendanceDetail(${attendanceList.memberSeq},${attendanceList.storeSeq});"><c:out value="${attendanceList.productName}"/></a>
+											</td>
+											<td>
+												<fmt:formatDate value="${attendanceList.attendanceDate}" pattern="yyyy-MM-dd HH:mm"/>
+											</td>                          		
+											<td><c:out value="${attendanceList.phone}"/></td>                            		
+											<td>
+												<c:choose>
+													<c:when test="${attendanceList.sex eq 'M'}">남</c:when>
+													<c:otherwise>여</c:otherwise>
+												</c:choose>
+											</td>
+											<td align="center">
+												<input type="button" class="btn btn-block btn-warning btn-sm" id="attendanceDel" name="attendanceDel" onclick="goAttendanceDel(${attendanceList.attendanceSeq})" value="삭제">
+											</td>
+		                            	</tr>
+		                            </c:forEach>
+                            	</c:when>
+                            	<c:otherwise>
+                            		<tr><th colspan="5" style="text-align: center;">결과가 없습니다.</th></tr>
+                            	</c:otherwise>
+                            </c:choose>
                             </tbody>
                         </table>
                     </div>
+                    <div id="attendanceFooter" style="margin-top: 10px;">
+                		<input type="button" class="btn btn-block btn-primary" value="등록" onclick="goAttendanceRegister();" style="float: right; width:80px;">
+                	</div>
                 </div>
             </div>
 
@@ -113,7 +137,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    <%@ include file="/WEB-INF/views/include/main_footer.jsp" %>
+    <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
 <form:form action="/attendance/attendanceDetail" id="attendanceInfo" name="attendanceInfo" modelAttribute="attendanceVO" method="post">
@@ -137,6 +161,35 @@ function goAttendanceDetail(memberSeq,storeSeq){
 	$("#storeSeq").val(storeSeq);
 	$("#attendanceInfo").submit();
 	
+}
+
+function goAttendanceRegister(){
+	location.href="/attendance/attendanceRegister";
+}
+
+function goAttendanceDel(attendanceSeq){
+	
+	var delConfirm = confirm("출석 정보를 삭제 하시겠습니까?\n삭제 시 남은 횟수가 존재하는 경우 복구되지 않습니다.");
+	if(!delConfirm){
+		return false;
+	}
+	
+	 $.ajax({
+	        type:'POST',
+	        url : "/attendance/attendanceDelete",
+	        data:{	attendanceSeq : attendanceSeq	},
+	        success : function(data){
+	            if(data == 'success')
+	            {
+	              alert("삭제 하였습니다.");
+	              location.reload();
+	            }
+	        },
+	        error:function(request,status,error){
+	            alert("저장에 실패하였습니다. 관리자에게 문의하세요");
+	       }
+	        
+	    });
 }
 
 </script>

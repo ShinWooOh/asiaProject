@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.company.asiayoga.mapper.manageMapper">
+ 
+ 	<select id="selectUserById" resultType="customUserDetail">
+ 		/* manageMapper.selectUserById */
+		SELECT 	manage_seq,
+				id,
+				passwd,
+				name,
+				authority,
+				enabled,
+				store_seq,
+				use_yn
+		FROM MANAGEINFO 
+		WHERE id = #{id}
+	</select>
+	
+	<!-- 로그인 실패 시 횟수 추가 -->
+	<update id="updateFailureCount">
+ 		/* manageMapper.updateFailureCount */
+ 		UPDATE MANAGEINFO
+ 		SET failure_count = failure_count +1
+ 		WHERE id = #{id}
+	</update>
+	
+	<!-- 실패 횟수 체크  -->
+	<select id="checkFailureCount" resultType="Integer">
+ 		/* manageMapper.checkFailureCount */
+ 		SELECT	failure_count
+ 		FROM MANAGEINFO
+ 		WHERE id = #{id}
+	</select>
+    
+	<!-- 로그인 3회 이상 실패 시 비 활성화로 변경 -->
+	<update id="updateEnabled">
+ 		/* manageMapper.updateEnabled */
+ 		UPDATE MANAGEINFO
+ 		SET enabled = false
+ 		WHERE id = #{id}
+	</update>
+	
+	<!-- 로그인 실패 횟수 초기화 -->
+	<update id="updateFailureCountReset">
+ 		/* manageMapper.updateFailureCountReset */
+ 		UPDATE MANAGEINFO
+ 		SET failure_count = 0
+ 		WHERE id = #{id}
+	</update>
+	
+	<!-- 로그인 시 접속 날자 업데이트 -->
+	<update id="updateAccessDate">
+ 		/* manageMapper.updateAccessDate */
+ 		UPDATE MANAGEINFO
+ 		SET access_date = now()
+ 		WHERE id = #{id}
+	</update>
+	
+	<!-- 로그인 한 관리자 사용 정보  -->
+ 	<select id="manageDetail" resultType="manageVO">
+ 		/* manageMapper.manageDetail */
+		SELECT 	mginfo.manage_seq,
+				mginfo.id,
+				mginfo.passwd,
+				mginfo.name,
+				mginfo.authority,
+				mginfo.enabled,
+				mginfo.store_seq,
+				( SELECT store_name FROM STOREINFO WHERE store_seq = mginfo.store_seq ) AS store_name,
+				use_yn
+		FROM MANAGEINFO mginfo
+		WHERE id = #{id}
+	</select>
+</mapper>

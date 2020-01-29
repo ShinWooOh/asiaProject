@@ -67,16 +67,16 @@
                         <table class="table table-bordered">
                             <tbody>
 	                            <tr>
-	                                <th style="width: 40px">회원번호</th>
-	                                <th style="width: 100px">회원명</th>
-	                                <th style="width: 100px">연락처</th>
-	                                <th style="width: 100px">이메일</th>
-	                                <th style="width: 150px">생년월일</th>
-	                                <th style="width: 60px">성별</th>
+	                                <th style="width: 10%;">회원번호</th>
+	                                <th style="width: 15%">회원명</th>
+	                                <th style="width: 15%">연락처</th>
+	                                <th style="width: 20%">이메일</th>
+	                                <th style="width: 20%">생년월일</th>
+	                                <th style="width: 20%">성별</th>
 	                            </tr>
                             	<c:set var="memberDetail" value="${memberDetail}" />
 	                            <tr>
-	                            	<td><c:out value="${memberDetail.memberSeq}"/></td>
+	                            	<td align="center"><c:out value="${memberDetail.memberSeq}"/></td>
 	                            	<td><c:out value="${memberDetail.name}"/></td>
 	                            	<td><c:out value="${memberDetail.phone}"/></td>
 	                            	<td><c:out value="${memberDetail.email}"/></td>
@@ -94,54 +94,24 @@
                         <table class="table table-bordered">
                             <tbody>
 	                            <tr>
-	                                <th style="width: 150px;">구매상품</th>
-	                              	<th style="width: 40px;">상품구분</th>
-	                              	<th style="width: 80px;">시작일자</th>
-	                              	<th style="width: 80px;">종료일자</th>
-	                              	<th style="width: 50px;">전체횟수</th>
-	                              	<th style="width: 50px;">남은횟수</th>
-	                              	<th style="width: 30px;">출석등록</th>
+	                                <th style="width: 25%;">구매상품</th>
+	                              	<th style="width: 15%">품목구분</th>
+	                              	<th style="width: 15%;">시작일자</th>
+	                              	<th style="width: 15%;">종료일자</th>
+	                              	<th style="width: 10%;">전체횟수</th>
+	                              	<th style="width: 10%;">남은횟수</th>
+	                              	<th style="width: 10%;">출석등록</th>
 	                            </tr>
 	                            <c:forEach var="orderList" items="${orderList}">
 		                            <tr>
 		                            	<td><c:out value="${orderList.productName}"/></td>
+		                            	<td><c:out value="${orderList.itemName}"/></td>
+		                            	<td><fmt:formatDate value="${orderList.startDay}" pattern="yyyy-MM-dd"/></td>
+		                            	<td><fmt:formatDate value="${orderList.expirationDay}" pattern="yyyy-MM-dd"/></td>
+		                            	<td><c:out value="${orderList.productCount}"/></td>
+		                            	<td><c:out value="${orderList.remainingCount}"/></td>
 		                            	<td>
-											<c:choose>
-												<c:when test="${orderList.productCode eq '001'}">기간제</c:when>
-												<c:when test="${orderList.productCode eq '002'}">횟수제</c:when>
-												<c:otherwise>기타</c:otherwise>
-											</c:choose>		                            	
-		                            	</td>
-		                            	<td>
-											<c:choose>
-												<c:when test="${orderList.productCode eq '001'}"><fmt:formatDate value="${orderList.productStartDay}" pattern="yyyy-MM-dd"/></c:when>
-												<c:when test="${orderList.productCode eq '002'}">해당없음</c:when>
-												<c:otherwise>해당없음</c:otherwise>
-											</c:choose>		                            	
-		                            	</td>
-		                            	<td>
-											<c:choose>
-												<c:when test="${orderList.productCode eq '001'}"><fmt:formatDate value="${orderList.productEndDay}" pattern="yyyy-MM-dd"/></c:when>
-												<c:when test="${orderList.productCode eq '002'}">해당없음</c:when>
-												<c:otherwise>해당없음</c:otherwise>
-											</c:choose>		                            	
-		                            	</td>
-		                            	<td>
-											<c:choose>
-												<c:when test="${orderList.productCode eq '001'}">해당없음</c:when>
-												<c:when test="${orderList.productCode eq '002'}">${orderList.productCount}</c:when>
-												<c:otherwise>해당없음</c:otherwise>
-											</c:choose>		                            	
-		                            	</td>
-		                            	<td>
-											<c:choose>
-												<c:when test="${orderList.productCode eq '001'}">해당없음</c:when>
-												<c:when test="${orderList.productCode eq '002'}">${orderList.remainingCount}</c:when>
-												<c:otherwise>해당없음</c:otherwise>
-											</c:choose>		                            	
-		                            	</td>
-		                            	<td>
-					                		<input type="button" value="출석등록" onclick="goAttendanceRegister(${attendanceVO.memberSeq},${attendanceVO.storeSeq},${orderList.orderSeq});" style="width:80px;">
+					                		<input type="button" class="btn btn-block btn-success" value="출석등록" onclick="goAttendanceRegister(${attendanceVO.memberSeq},${attendanceVO.storeSeq},${orderList.orderSeq});" style="width:100px;">
 		                            	</td>
 		                            </tr>
 	                            </c:forEach>
@@ -172,7 +142,7 @@
                         </table>
                     </div>
                     <div style="margin-top: 10px;">
-                		<input type="button" value="목록" onclick="goAttendanceList();" style="float: left; width:80px;">
+                		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goAttendanceList();" style="float: left; width:80px;">
                 	</div>
                 </div>
             </div>
@@ -193,7 +163,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    <%@ include file="/WEB-INF/views/include/main_footer.jsp" %>
+    <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
 <form:form action="/attendance/attendanceRegister" id="attendanceInfo" name="attendanceInfo" modelAttribute="attendanceVO" method="post">

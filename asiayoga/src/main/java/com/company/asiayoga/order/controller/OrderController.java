@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.company.asiayoga.attendance.service.AttendanceService;
+import com.company.asiayoga.manage.domain.ManageVO;
 import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.member.service.MemberService;
 import com.company.asiayoga.order.domain.OrderVO;
@@ -39,16 +41,28 @@ public class OrderController {
 	@Inject
 	private AttendanceService attendanceService;
 	
+	private String menuFirstRoot = "order";
+	
 	// 구매 내역 화면으로 이동
 	@RequestMapping(value = "orderList")
-	public String orderList(Model model) throws Exception{
+	public String orderList(HttpServletRequest request,Model model) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		OrderVO orderVO = new OrderVO();
-		orderVO.setStoreSeq(10); 						// 세션에서 받아올 것 , 현재는 임시로 번호 대입
+		orderVO.setStoreSeq(manageVO.getStoreSeq());
 		
 		
 		List<OrderVO> list = orderService.orderList(orderVO);
 		model.addAttribute("orderList", list);
+		
+		// 경로 체크
+		String currentPath = (String)request.getSession().getAttribute("nowPath");
+		if(!currentPath.equals(menuFirstRoot)) {
+			request.getSession().removeAttribute("nowPath");
+			request.getSession().setAttribute("nowPath", menuFirstRoot);
+		}
 		
 		return "/order/orderList";
 	}
@@ -72,7 +86,7 @@ public class OrderController {
 	
 	// 구매 내역 상세
 	@RequestMapping(value = "orderDetail")
-	public String orderDetail(Model model,@ModelAttribute("orderVO") OrderVO orderVO) throws Exception{
+	public String orderDetail(HttpServletRequest request,Model model,@ModelAttribute("orderVO") OrderVO orderVO) throws Exception{
 
 		// 고객 1명의 구매한 상품의 정보
 		orderVO = orderService.customerOrder(orderVO);
@@ -83,23 +97,39 @@ public class OrderController {
 		productVO.setStoreSeq(orderVO.getStoreSeq());
 		model.addAttribute("productList", productService.productList(productVO));
 		
+		// 경로 체크
+		String currentPath = (String)request.getSession().getAttribute("nowPath");
+		if(!currentPath.equals(menuFirstRoot)) {
+			request.getSession().removeAttribute("nowPath");
+			request.getSession().setAttribute("nowPath", menuFirstRoot);
+		}
+		
 		return "/order/orderDetail";
 	}
 	
 	// 구매 등록 화면으로 이동
 	@RequestMapping(value = "orderRegister")
-	public String orderRegister(Model model) throws Exception{
+	public String orderRegister(HttpServletRequest request,Model model) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		OrderVO orderVO = new OrderVO();
-		orderVO.setStoreSeq(10);
-		orderVO.setStoreName("레이디요가");
+		orderVO.setStoreSeq(manageVO.getStoreSeq());
+		orderVO.setStoreName(manageVO.getStoreName());
 		model.addAttribute("orderVO", orderVO);
 
 		// 상품 리스트
 		ProductVO productVO = new ProductVO();
-		productVO.setStoreSeq(10);
+		productVO.setStoreSeq(manageVO.getStoreSeq());
 		model.addAttribute("productList", productService.productList(productVO));
 		
+		// 경로 체크
+		String currentPath = (String)request.getSession().getAttribute("nowPath");
+		if(!currentPath.equals(menuFirstRoot)) {
+			request.getSession().removeAttribute("nowPath");
+			request.getSession().setAttribute("nowPath", menuFirstRoot);
+		}
 		
 		return "/order/orderRegister";
 	}
@@ -129,12 +159,15 @@ public class OrderController {
 	// 구매 관리에서 회원 검색
 	@RequestMapping(value = "searchMember")
 	@ResponseBody
-	public HashMap<String, Object> searchMember(Model model,OrderVO orderVO) throws Exception{
+	public HashMap<String, Object> searchMember(HttpServletRequest request,Model model,OrderVO orderVO) throws Exception{
 		
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
 		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
 		MemberVO memberVO = new MemberVO();
-		memberVO.setStoreSeq(10);
+		memberVO.setStoreSeq(manageVO.getStoreSeq());
 		memberVO.setName(orderVO.getName());
 		
 		List<MemberVO> memberList = memberService.searchMemberList(memberVO);

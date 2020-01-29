@@ -34,6 +34,11 @@ public class AttendanceDAO {
 		return sqlSession.insert(ATTENDANCE_NAMESPACE+".insertAttendance",attendanceVO);
 	}
 	
+	// 출석 정보 삭제
+	public int attendanceDelete(AttendanceVO attendanceVO) {
+		return sqlSession.update(ATTENDANCE_NAMESPACE+".attendanceDelete",attendanceVO);
+	}
+	
 	// 회원 정보 검색(List 로 리턴)
 	public List<MemberVO> memberSearch(MemberVO memberVO) {
 		return sqlSession.selectList(MEMBER_NAMESPACE+".memberSearchList", memberVO);

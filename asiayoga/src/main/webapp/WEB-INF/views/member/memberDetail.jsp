@@ -121,7 +121,7 @@
                             	</td>
                             </tr>
                             <tr>
-                            	<th>메모</th> 
+                            	<td>메모</td> 
                             	<td>
                             		<textarea rows="5" cols="100" readonly="readonly"><c:out value="${memberDetail.memo}"/></textarea>
                             		<input type="hidden" id="memo" name="memo" value="${memberDetail.memo}">
@@ -136,8 +136,8 @@
                         </table> -->
                     </div>
                     <div style="margin-top: 10px;">
-                		<input type="button" value="목록" onclick="goMemberList();" style="float: left; width:80px;">
-                		<input type="button" value="수정" onclick="goUpdateMember();" style="float: right; width:80px;">
+                		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goMemberList();" style="float: left; width:80px;">
+                		<input type="button" class="btn btn-block btn-success" value="수정" onclick="goUpdateMember();" style="float: right; width:80px;">
                 	</div>
                 </div>
                 </form:form>
@@ -159,7 +159,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    <%@ include file="/WEB-INF/views/include/main_footer.jsp" %>
+    <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
 

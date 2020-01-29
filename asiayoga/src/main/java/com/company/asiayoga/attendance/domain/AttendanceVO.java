@@ -1,6 +1,5 @@
 package com.company.asiayoga.attendance.domain;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 import com.company.asiayoga.member.domain.MemberVO;
@@ -13,16 +12,17 @@ public class AttendanceVO extends MemberVO {
     private String name;							// 회원 이름
     private String phone;							// 연락처
     private String sex;								// 성별
-    private Timestamp attendanceDate;                    // 출석 일자
-    private Timestamp registerDate;                      // 등록 일자
+    private Date attendanceDate;                    // 출석 일자
+    private Date registerDate;                      // 등록 일자
     private String registerId;                      // 등록자 아이디
-    private Timestamp modifyDate;                        // 수정 일자
+    private Date modifyDate;                        // 수정 일자
     private String modifyId;                        // 수정자 아이디
     private String delYn;                           // 삭제여부
     private int storeSeq;	                    	// 매장번호
     private int orderSeq;							// 주문번호
     private String productCode;						// 상품 구분
-	public int getRowNum() {
+	
+    public int getRowNum() {
 		return rowNum;
 	}
 	public void setRowNum(int rowNum) {
@@ -58,16 +58,16 @@ public class AttendanceVO extends MemberVO {
 	public void setSex(String sex) {
 		this.sex = sex;
 	}
-	public Timestamp getAttendanceDate() {
+	public Date getAttendanceDate() {
 		return attendanceDate;
 	}
-	public void setAttendanceDate(Timestamp attendanceDate) {
+	public void setAttendanceDate(Date attendanceDate) {
 		this.attendanceDate = attendanceDate;
 	}
-	public Timestamp getRegisterDate() {
+	public Date getRegisterDate() {
 		return registerDate;
 	}
-	public void setRegisterDate(Timestamp registerDate) {
+	public void setRegisterDate(Date registerDate) {
 		this.registerDate = registerDate;
 	}
 	public String getRegisterId() {
@@ -76,10 +76,10 @@ public class AttendanceVO extends MemberVO {
 	public void setRegisterId(String registerId) {
 		this.registerId = registerId;
 	}
-	public Timestamp getModifyDate() {
+	public Date getModifyDate() {
 		return modifyDate;
 	}
-	public void setModifyDate(Timestamp modifyDate) {
+	public void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
 	}
 	public String getModifyId() {
@@ -137,5 +137,4 @@ public class AttendanceVO extends MemberVO {
 				+ ", getStoreMemo()=" + getStoreMemo() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
 				+ "]";
 	}
-
 }

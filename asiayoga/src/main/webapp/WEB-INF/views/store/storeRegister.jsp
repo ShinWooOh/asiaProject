@@ -124,8 +124,8 @@
                 	</div>
                 </div>
                 	<div style="margin-top: 10px;">
-                		<input type="button" value="목록" onclick="goStoreList();" style="float: left; width:80px;">
-                		<input type="button" value="저장" onclick="goStoreRegister();" style="float: right; width:80px;">
+                		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goStoreList();" style="float: left; width:80px;">
+                		<input type="button" class="btn btn-block btn-success" value="저장" onclick="goStoreRegister();" style="float: right; width:80px;">
                 	</div>
             </div>
         </section>
@@ -144,7 +144,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    <%@ include file="/WEB-INF/views/include/main_footer.jsp" %>
+    <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
 

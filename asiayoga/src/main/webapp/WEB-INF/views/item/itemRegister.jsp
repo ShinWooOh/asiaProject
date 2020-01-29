@@ -103,8 +103,8 @@
                         </form:form>
                     </div>
                     <div style="margin-top: 10px;" id="attendanceFooter">
-                		<input type="button" value="목록" onclick="goItemList();" style="float: left; width:80px;">
-                		<input type="button" value="품목 등록" onclick="goItemRegister();" style="float: right; width:80px;">
+                		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goItemList();" style="float: left; width:80px;">
+                		<input type="button" class="btn btn-block btn-success" value="등록" onclick="goItemRegister();" style="float: right; width:80px;">
                 	</div>
                 </div>
             </div>
@@ -125,7 +125,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    <%@ include file="/WEB-INF/views/include/main_footer.jsp" %>
+    <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
 

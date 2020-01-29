@@ -71,8 +71,8 @@
                                 <th style="width: 15%">등록매장</th>
                                 <th style="width: 10%">품목번호</th>
                                 <th style="width: 15%">품목구분</th>
-                                <th style="width: 45%">품목명</th>
-                                <th style="width: 10%"></th>
+                                <th style="width: 48%">품목명</th>
+                                <th style="width: 7%"></th>
                             </tr>
                             <c:choose>
                             	<c:when test="${fn:length(itemList) > 0}">
@@ -91,7 +91,7 @@
 		                            	</td>
 		                            	<td><a href="#" onclick="goDetailItem(${itemList.itemSeq},${itemList.storeSeq});"><c:out value="${itemList.itemName}"/></a></td>
 		                            	<td align="center">
-		                            		<input type="button" id="itemDelBtn" name="itemDelBtn" onclick="goItemDel(${itemList.itemSeq},${itemList.storeSeq});" value="삭제">
+		                            		<input type="button" class="btn btn-block btn-warning btn-sm" id="itemDelBtn" name="itemDelBtn" onclick="goItemDel(${itemList.itemSeq},${itemList.storeSeq});" value="삭제">
 		                            	</td>
 		                            </tr>
                             		</c:forEach>
@@ -104,7 +104,7 @@
                         </table>
                     </div>
                     <div style="margin-top: 10px;" id="attendanceFooter">
-                		<input type="button" value="품목 등록" onclick="goItemRegister();" style="float: right; width:80px;">
+                		<input type="button" class="btn btn-block btn-primary" value="등록" onclick="goItemRegister();" style="float: right; width:80px;">
                 	</div>
                 </div>
             </div>
@@ -125,7 +125,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    <%@ include file="/WEB-INF/views/include/main_footer.jsp" %>
+    <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
 

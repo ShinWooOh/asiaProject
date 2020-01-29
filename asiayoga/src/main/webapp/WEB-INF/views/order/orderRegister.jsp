@@ -96,7 +96,8 @@
 		                                <td style="width: 30%;">
 		                                	<input type="text" id="name" name="name" placeholder="검색 버튼을 눌러주세요." data-toggle="modal" data-target="#findMember">
 		                                	<input type="hidden" id="memberSeq" name="memberSeq">
-		                                	<input type="button" id="searchName" name="searchName" value="검색" readonly="readonly" style="margin-left: 5px;" data-toggle="modal" data-target="#findMember">
+		                                	<input type="button" id="searchName" name="searchName" value="검색" readonly="readonly" data-toggle="modal" data-target="#findMember">
+<!-- 		                                	<input type="button" id="searchName" name="searchName" value="검색" readonly="readonly" style="margin-left: 5px; background-color: #00c0ef; border-color: #00c0ef; border-radius: 3px; color: white; border: 1px solid; width: 80px;"   data-toggle="modal" data-target="#findMember"> -->
 		                                </td>
 		                                <th style="width: 15%;">연락처<font style="color: red;">&nbsp;*</font></th>
 		                                <td style="width: 30%;">
@@ -151,8 +152,8 @@
                         
                     </div>
                     <div style="margin-top: 10px;" id="orderFooter">
-                		<input type="button" value="목록" onclick="goOrderList();" style="float: left; width:80px;">
-                		<input type="button" value="구매 등록" onclick="goOrderRegister();" style="float: right; width:80px;">
+                		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goOrderList();" style="float: left; width:80px;">
+                		<input type="button" class="btn btn-block btn-success" value="등록" onclick="goOrderRegister();" style="float: right; width:80px;">
                 	</div>
                 </div>
             </div>
@@ -173,7 +174,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    <%@ include file="/WEB-INF/views/include/main_footer.jsp" %>
+    <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
 
@@ -229,6 +230,28 @@ $(document).ready(function() {
 	
 	$("#productCountInfo").show();
 	$("#lockerInfo").hide();
+	
+	$("#searchName").css({
+			"margin-left"		: "5px",
+			"background-color"	: "#00c0ef",
+			"border-color"		: "#00c0ef",
+			"border-radius"		: "3px",
+			"color"				: "white",
+			"border"			: "1px solid",
+			"width"				: "80px",
+			"fontSize"			: "15px"
+	});
+	
+	$("#popFindName").css({
+			"margin-left"		: "5px",
+			"background-color"	: "#00c0ef",
+			"border-color"		: "#00c0ef",
+			"border-radius"		: "3px",
+			"color"				: "white",
+			"border"			: "1px solid",
+			"width"				: "80px",
+			"fontSize"			: "15px"
+	});
 	
 });
 

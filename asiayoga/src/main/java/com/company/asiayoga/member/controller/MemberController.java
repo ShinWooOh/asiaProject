@@ -3,6 +3,7 @@ package com.company.asiayoga.member.controller;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.company.asiayoga.manage.domain.ManageVO;
 import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.member.service.MemberService;
 
@@ -25,42 +27,69 @@ public class MemberController {
 	@Inject
 	MemberService memberService;
 	
+	private String menuFirstRoot = "member";
+	
 	// 회원 목록 화면
 	@RequestMapping(value = "memberList")
-	public String memberList(Model model) throws Exception{
+	public String memberList(HttpServletRequest request,Model model) throws Exception{
 		
-		int storeSeq =10;												// 임시 부여 로그인 한 사용자의 세션 정보의 매장 코드를 받아와야 한다.
-		List<MemberVO> list = memberService.memberList(storeSeq);
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
+		 
+		List<MemberVO> list = memberService.memberList(manageVO.getStoreSeq());
 		model.addAttribute("memberList", list);
+		
+		// 경로 체크
+		String currentPath = (String)request.getSession().getAttribute("nowPath");
+		if(!currentPath.equals(menuFirstRoot)) {
+			request.getSession().removeAttribute("nowPath");
+			request.getSession().setAttribute("nowPath", menuFirstRoot);
+		}
 		
 		return "/member/memberList";
 	}
 	
 	// 회원정보 상세 화면
 	@RequestMapping(value = "memberDetail")
-	public String memberDetail(Model model,@ModelAttribute("memberVO") MemberVO memberVO) throws Exception{
+	public String memberDetail(HttpServletRequest request,Model model,@ModelAttribute("memberVO") MemberVO memberVO) throws Exception{
 		
 		MemberVO vo = new MemberVO();
 		vo = memberService.memberDetail(memberVO);
 		
 		model.addAttribute("memberDetail", vo);
 		
+		// 경로 체크
+		String currentPath = (String)request.getSession().getAttribute("nowPath");
+		if(!currentPath.equals(menuFirstRoot)) {
+			request.getSession().removeAttribute("nowPath");
+			request.getSession().setAttribute("nowPath", menuFirstRoot);
+		}
+		
+		
 		return "/member/memberDetail";
 	}
 	
 	// 회원 정보 등록 화면
 	@RequestMapping(value = "memberJoin")
-	public String memberJoin(Model model) throws Exception{
+	public String memberJoin(HttpServletRequest request,Model model) throws Exception{
 		
-		int storeSeq =10;												// 임시 부여 로그인 한 사용자의 세션 정보의 매장 코드를 받아와야 한다.
-		String storeName ="레이디요가 의정부점";								// 임시 부여 로그인 한 사용자의 세션 정보의 매장 이름을 받아와야 한다.
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		MemberVO memberVO = new MemberVO();
-		memberVO.setStoreSeq(storeSeq);
-		memberVO.setStoreName(storeName);
+		memberVO.setStoreSeq(manageVO.getStoreSeq());
+		memberVO.setStoreName(manageVO.getStoreName());
 		
 		model.addAttribute("memberInfo", memberVO);
+		
+		// 경로 체크
+		String currentPath = (String)request.getSession().getAttribute("nowPath");
+		if(!currentPath.equals(menuFirstRoot)) {
+			request.getSession().removeAttribute("nowPath");
+			request.getSession().setAttribute("nowPath", menuFirstRoot);
+		}
+		
 		return "/member/memberJoin";
 	}
 	
@@ -100,7 +129,7 @@ public class MemberController {
 	
 	// 회원 정보 수정 화면으로 이동
 	@RequestMapping(value = "memberUpdate")
-	public String memberUpdate(Model model,@ModelAttribute("memberVO") MemberVO memberVO) throws Exception{
+	public String memberUpdate(HttpServletRequest request,Model model,@ModelAttribute("memberVO") MemberVO memberVO) throws Exception{
 		
 		String[] arr = memberVO.getPhone().split("-");
 		String phone1 = arr[0];
@@ -121,6 +150,13 @@ public class MemberController {
 	    memberVO.setDay(day);
 		
 		model.addAttribute("memberInfo", memberVO);
+		
+		// 경로 체크
+		String currentPath = (String)request.getSession().getAttribute("nowPath");
+		if(!currentPath.equals(menuFirstRoot)) {
+			request.getSession().removeAttribute("nowPath");
+			request.getSession().setAttribute("nowPath", menuFirstRoot);
+		}
 		
 		return "/member/memberUpdate";
 	}

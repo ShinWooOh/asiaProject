@@ -124,10 +124,10 @@
 						</form:form>
 					</div>
 					<div style="margin-top: 10px;" id="productFooter">
-						<input type="button" value="목록" onclick="goProductList();" style="float: left; width:80px;">
+						<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goProductList();" style="float: left; width:80px;">
 						<c:choose>
 							<c:when test="${fn:length(itemList) > 0}">
-								<input type="button" value="상품 등록" onclick="goProductRegister();" style="float: right; width:80px;">
+								<input type="button" class="btn btn-block btn-success" value="등록" onclick="goProductRegister();" style="float: right; width:80px;">
 							</c:when>
 							<c:otherwise></c:otherwise>
 						</c:choose>
@@ -150,7 +150,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    <%@ include file="/WEB-INF/views/include/main_footer.jsp" %>
+    <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
 

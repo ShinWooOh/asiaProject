@@ -1,12 +1,30 @@
+<%@page import="com.company.asiayoga.manage.domain.ManageVO"%>
+<%@page import="com.mysql.cj.Session"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
+<%@ page import="org.springframework.security.core.Authentication" %>
+<%
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    Object principal = auth.getPrincipal();
+ 
+    String name = "";
+    if(principal != null) {
+        name = auth.getName();
+    }
+    
+    ManageVO manageInfo = (ManageVO)session.getAttribute("manageInfo");
+    String nowPath = (String)session.getAttribute("nowPath");
+%>
 
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="#" class="brand-link">
-        <img src="/resources/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light" style="font-size: 16px;">ASIA 출석 프로그램</span>
-    </a>
+<%--     <a href="#" class="brand-link">
+        <img src="/resources/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-1" style="opacity: .8">
+        <span class="brand-text font-weight-light" style="font-size: 14px;"><%= manageInfo.getStoreName() %></span>
+    </a> --%>
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -16,17 +34,27 @@
                 <img src="/resources/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">관리자님</a>
+            	<sec:authorize access="isAuthenticated()">
+                	<a class="d-block">
+                		<%= manageInfo.getStoreName() %><br>
+                		<%= manageInfo.getName() %>님
+                	</a>
+                </sec:authorize>
             </div>
         </div>
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <!-- Add icons to the links using the .nav-icon class
-                     with font-awesome or any other icon font library -->
-                <li class="nav-item has-treeview">
-<!--                 <li class="nav-item has-treeview menu-open"> -->
+            
+                <c:choose>
+                	<c:when test="${nowPath eq 'member'}">
+		                <li class="nav-item has-treeview menu-open">
+                	</c:when>
+                	<c:otherwise>
+		                <li class="nav-item has-treeview" >
+                	</c:otherwise>
+                </c:choose>
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>회원
@@ -48,7 +76,15 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item has-treeview">
+                
+                <c:choose>
+                	<c:when test="${nowPath eq 'attendance'}">
+		                <li class="nav-item has-treeview menu-open">
+                	</c:when>
+                	<c:otherwise>
+		                <li class="nav-item has-treeview" >
+                	</c:otherwise>
+                </c:choose>
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>출석
@@ -72,7 +108,14 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item has-treeview">
+				<c:choose>
+					<c:when test="${nowPath eq 'order'}">
+						<li class="nav-item has-treeview menu-open">
+					</c:when>
+					<c:otherwise>
+						<li class="nav-item has-treeview" >
+					</c:otherwise>
+				</c:choose>
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>구매 관리
@@ -94,7 +137,14 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item has-treeview">
+				<c:choose>
+					<c:when test="${nowPath eq 'product'}">
+						<li class="nav-item has-treeview menu-open">
+					</c:when>
+					<c:otherwise>
+						<li class="nav-item has-treeview" >
+					</c:otherwise>
+				</c:choose>
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>판매 상품
@@ -116,7 +166,14 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item has-treeview">
+				<c:choose>
+					<c:when test="${nowPath eq 'item'}">
+						<li class="nav-item has-treeview menu-open">
+					</c:when>
+					<c:otherwise>
+						<li class="nav-item has-treeview" >
+					</c:otherwise>
+				</c:choose>
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>상품 품목
@@ -138,7 +195,14 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item has-treeview">
+				<c:choose>
+					<c:when test="${nowPath eq 'store'}">
+						<li class="nav-item has-treeview menu-open">
+					</c:when>
+					<c:otherwise>
+						<li class="nav-item has-treeview" >
+					</c:otherwise>
+				</c:choose>
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>매장

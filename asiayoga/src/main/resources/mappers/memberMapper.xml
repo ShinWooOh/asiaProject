@@ -122,10 +122,11 @@
 	            ( SELECT store_name FROM STOREINFO WHERE store_seq=#{storeSeq} ) AS store_name,
 	            mbinfo.register_date,
 	            ordinfo.order_seq,
-                ordinfo.expiration_day,
+            	ordinfo.product_count,
                 ordinfo.remaining_count,
-            	prdinfo.product_code,
-				prdinfo.product_name
+                prdinfo.product_seq,
+				prdinfo.product_name,
+				( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_name
 		FROM MEMBERINFO mbinfo
         INNER JOIN ORDERINFO ordinfo
         ON mbinfo.member_seq = ordinfo.member_seq

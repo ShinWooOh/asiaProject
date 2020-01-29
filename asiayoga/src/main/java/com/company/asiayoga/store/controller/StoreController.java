@@ -3,6 +3,7 @@ package com.company.asiayoga.store.controller;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,14 +26,23 @@ public class StoreController {
 	@Inject
 	StoreService storeService;
 	
+	private String menuFirstRoot = "store";
+	
 	
 	// 매장 목록
 	@RequestMapping(value = "storeList")
-	public String storeList(Model model) throws Exception {
+	public String storeList(HttpServletRequest request,Model model) throws Exception {
 		
 		List<StoreVO> list = storeService.storeList();
 		
 		model.addAttribute("storeList", list);
+		
+		// 경로 체크
+		String currentPath = (String)request.getSession().getAttribute("nowPath");
+		if(!currentPath.equals(menuFirstRoot)) {
+			request.getSession().removeAttribute("nowPath");
+			request.getSession().setAttribute("nowPath", menuFirstRoot);
+		}
 		
 		return "/store/storeList";
 	}
@@ -56,16 +66,30 @@ public class StoreController {
 	
 	// 매장 상세
 	@RequestMapping(value = "storeDetail")
-	public String storeDetail(Model model,@ModelAttribute("storeVO") StoreVO storeVO) throws Exception {
+	public String storeDetail(HttpServletRequest request,Model model,@ModelAttribute("storeVO") StoreVO storeVO) throws Exception {
 		
 		model.addAttribute("storeDetail", storeService.storeDetail(storeVO));
+		
+		// 경로 체크
+		String currentPath = (String)request.getSession().getAttribute("nowPath");
+		if(!currentPath.equals(menuFirstRoot)) {
+			request.getSession().removeAttribute("nowPath");
+			request.getSession().setAttribute("nowPath", menuFirstRoot);
+		}
 		
 		return "/store/storeDetail";
 	}
 	
 	// 매장 등록 화면으로 이동
 	@RequestMapping(value = "storeRegister")
-	public String storeRegister(Model model,@ModelAttribute("storeVO") StoreVO storeVO) throws Exception {
+	public String storeRegister(HttpServletRequest request,Model model,@ModelAttribute("storeVO") StoreVO storeVO) throws Exception {
+		
+		// 경로 체크
+		String currentPath = (String)request.getSession().getAttribute("nowPath");
+		if(!currentPath.equals(menuFirstRoot)) {
+			request.getSession().removeAttribute("nowPath");
+			request.getSession().setAttribute("nowPath", menuFirstRoot);
+		}
 		
 		return "/store/storeRegister";
 	}

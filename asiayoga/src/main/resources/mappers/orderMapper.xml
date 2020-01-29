@@ -65,7 +65,9 @@
 				ordinfo.modify_date,
 				prdinfo.product_name,
 				prdinfo.product_code,
-				( SELECT store_name FROM STOREINFO WHERE store_Seq = #{storeSeq} ) AS store_name
+				( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} ) AS store_name,
+				( SELECT item_seq FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_seq,
+				( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_name
 		FROM ORDERINFO ordinfo
 		INNER JOIN PRODUCTINFO prdinfo
 		ON ordinfo.product_seq = prdinfo.product_seq

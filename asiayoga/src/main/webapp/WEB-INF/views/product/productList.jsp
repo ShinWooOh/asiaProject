@@ -68,10 +68,10 @@
                             <tr>
                                 <th style="width: 5%">No</th>
                                 <th style="width: 20%">매장명</th>
-                                <th style="width: 10%">품목구분</th>
+                                <th style="width: 13%">품목구분</th>
                                 <th style="width: 40%">상품명</th>
                                 <th style="width: 15%">상품가격</th>
-                                <th style="width: 10%"></th>
+                                <th style="width: 7%"></th>
                             </tr>
                             <c:choose>
                             	<c:when test="${fn:length(productList) > 0}">
@@ -83,7 +83,7 @@
 											<td><a href="#" onclick="goProductDetail(${productList.productSeq},${productList.storeSeq});"><c:out value="${productList.productName}"/></a></td>
 											<td><fmt:formatNumber type="number" maxFractionDigits="3" value="${productList.productPrice}" /></td>
 											<td align="center">
-												<input type="button" id="productDel" name="productDel" value="삭제" onclick="goProductDel(${productList.productSeq},${productList.storeSeq})">
+												<input type="button" class="btn btn-block btn-warning btn-sm" id="productDel" name="productDel" value="삭제" onclick="goProductDel(${productList.productSeq},${productList.storeSeq})">
 											</td>
 			                           	</tr>
 		                            </c:forEach>
@@ -96,7 +96,7 @@
                         </table>
                     </div>
                     <div style="margin-top: 10px;" id="attendanceFooter">
-                		<input type="button" value="상품 등록" onclick="goProductRegister();" style="float: right; width:80px;">
+                		<input type="button" class="btn btn-block btn-primary" value="등록" onclick="goProductRegister();" style="float: right; width:80px;">
                 	</div>
                 </div>
             </div>

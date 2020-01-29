@@ -39,8 +39,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 		// 출석 내역 insert
 		resultParam = attendanceDAO.insertAttendance(attendanceVO);
 		
-		// 상품이 횟수제 상품인 경우 -1 count
-		if(attendanceVO.getProductCode().equals("002")) {
+		// 남은 횟수가 0 이 아닌 경우 남은횟수 에서 1 차감 
+		if(attendanceVO.getRemainingCount() != 0) {
 			int orderParam = 0;
 			OrderVO orderVO = new OrderVO();
 			orderVO.setOrderSeq(attendanceVO.getOrderSeq());
@@ -57,6 +57,11 @@ public class AttendanceServiceImpl implements AttendanceService {
 	@Override
 	public List<MemberVO> memberSearch(MemberVO memberVO) throws Exception {
 		return attendanceDAO.memberSearch(memberVO);
+	}
+
+	@Override
+	public int attendanceDelete(AttendanceVO attendanceVO) throws Exception {
+		return attendanceDAO.attendanceDelete(attendanceVO);
 	}
 	
 }

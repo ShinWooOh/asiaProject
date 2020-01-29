@@ -134,9 +134,9 @@
 						</form:form>
 					</div>
 					<div style="margin-top: 10px;" id="productFooter">
-						<input type="button" value="목록" onclick="goProductList();" style="float: left; width:80px;">
-						<input type="button" value="수정" onclick="goProductUpdate();" style="float: right; width:80px;">
-						<input type="button" value="삭제" onclick="goProductDel();" style="float: right; width:80px; margin-right: 20px;">
+						<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goProductList();" style="float: left; width:80px;">
+						<input type="button" class="btn btn-block btn-success" value="수정" onclick="goProductUpdate();" style="float: right; width:80px;">
+						<input type="button" class="btn btn-block btn-warning" value="삭제" onclick="goProductDel();" style="float: right; width:80px; margin-right: 20px;">
 					</div>
 				</div>
 			</div>
@@ -156,7 +156,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    <%@ include file="/WEB-INF/views/include/main_footer.jsp" %>
+    <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
 

@@ -98,7 +98,7 @@
 		                                <td style="width: 30%;">
 		                                	<input type="text" id="name" name="name" value="${customerOrderDetail.name}" placeholder="검색 버튼을 눌러주세요." data-toggle="modal" data-target="#findMember">
 		                                	<input type="hidden" id="memberSeq" name="memberSeq" value="${customerOrderDetail.memberSeq}">
-		                                	<input type="button" id="searchName" name="searchName" value="검색" readonly="readonly" style="margin-left: 5px;" data-toggle="modal" data-target="#findMember">
+		                                	<input type="button" id="searchName" name="searchName" value="검색" readonly="readonly" data-toggle="modal" data-target="#findMember">
 		                                </td>
 		                                <th style="width: 15%;">연락처<font style="color: red;">&nbsp;*</font></th>
 		                                <td style="width: 30%;">
@@ -155,9 +155,9 @@
                         
                     </div>
                     <div style="margin-top: 10px;" id="orderFooter">
-                		<input type="button" value="목록" onclick="goOrderList();" style="float: left; width:80px;">
-                		<input type="button" value="수정" onclick="goOrderUpdate();" style="float: right; width:80px;">
-						<input type="button" value="삭제" onclick="goOrderDel(${customerOrderDetail.orderSeq},${customerOrderDetail.storeSeq});" style="float: right; width:80px; margin-right: 20px;">
+                		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goOrderList();" style="float: left; width:80px;">
+                		<input type="button" class="btn btn-block btn-success" value="수정" onclick="goOrderUpdate();" style="float: right; width:80px;">
+						<input type="button" class="btn btn-block btn-warning" value="삭제" onclick="goOrderDel(${customerOrderDetail.orderSeq},${customerOrderDetail.storeSeq});" style="float: right; width:80px; margin-right: 20px;">
                 	</div>
                 </div>
             </div>
@@ -178,7 +178,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    <%@ include file="/WEB-INF/views/include/main_footer.jsp" %>
+    <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
 
@@ -235,6 +235,27 @@ $(document).ready(function() {
 	$("#productCountInfo").show();
 	$("#lockerInfo").hide();
 	
+	$("#searchName").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+
+	$("#popFindName").css({
+			"margin-left"		: "5px",
+			"background-color"	: "#00c0ef",
+			"border-color"		: "#00c0ef",
+			"border-radius"		: "3px",
+			"color"				: "white",
+			"border"			: "1px solid",
+			"width"				: "80px",
+			"fontSize"			: "15px"
+	});
 });
 
 function goOrderList(){
@@ -521,7 +542,7 @@ function getFormatDate(date){
 			<div class="modal-body">
 				<div style="margin: 10px;">
 					<input type="text" id="popName" name="popName"  placeholder="이름">
-					<input type="button" id="popFindName" name="popFindName" value="찾기" onclick="searchName();" style="margin-bottom: 10px;">
+					<input type="button" id="popFindName" name="popFindName" value="찾기" onclick="searchName();">
 				</div>
 				<div style="margin: 10px; border-top-style: solid;">
 					<table class="table table-bordered" style="margin-top: 20px;">

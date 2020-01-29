@@ -69,8 +69,8 @@
                             <tr>
                                 <th style="width: 5%;">No</th>
                                 <th style="width: 14%;">매장</th>
-                                <th style="width: 14%;">품목구분</th>
-                                <th style="width: 16%;">상품</th>
+                                <th style="width: 12%;">품목구분</th>
+                                <th style="width: 18%;">상품</th>
                                 <th style="width: 8%;">이름</th>
                                 <th style="width: 10%;">연락처</th>
                                 <th style="width: 8%;">시작일</th>
@@ -89,14 +89,14 @@
 	                            	<td><fmt:formatDate value="${orderList.startDay}" pattern="yyyy-MM-dd"/></td>
 	                            	<td><fmt:formatDate value="${orderList.expirationDay}" pattern="yyyy-MM-dd"/></td>
 	                            	<td>${orderList.expirationYn}</td>
-	                            	<td><input type="button" id="orderDel" name="orderDel" value="삭제" onclick="goOrderDel(${orderList.orderSeq},${orderList.storeSeq})"></td>
+	                            	<td><input type="button" class="btn btn-block btn-warning btn-sm" id="orderDel" name="orderDel" value="삭제" onclick="goOrderDel(${orderList.orderSeq},${orderList.storeSeq})"></td>
 	                            </tr>
                             </c:forEach>
                             </tbody>
                         </table>
                     </div>
                     <div style="margin-top: 10px;" id="orderFooter">
-                		<input type="button" value="구매 등록" onclick="goOrderRegister();" style="float: right; width:80px;">
+                		<input type="button" class="btn btn-block btn-primary" value="등록" onclick="goOrderRegister();" style="float: right; width:80px;">
                 	</div>
                 </div>
             </div>

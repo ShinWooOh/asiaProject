@@ -11,6 +11,8 @@
 		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
 				temp.attendance_seq,
 	            temp.member_seq,
+				temp.product_seq,
+				temp.product_name,
 				temp.name,
 	            temp.phone,
 	            temp.sex,
@@ -23,9 +25,11 @@
 	            temp.store_seq
      	FROM  ( SELECT 	atdinfo.attendance_seq, 
 						atdinfo.member_seq,
-						( SELECT name FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') AS name,
-						( SELECT phone FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') as phone,
-						( SELECT sex FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq AND del_yn='N') as sex,
+						atdinfo.product_seq,
+						( SELECT product_name FROM PRODUCTINFO WHERE product_seq = atdinfo.product_seq ) AS product_name,
+						( SELECT name FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS name,
+						( SELECT phone FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS phone,
+						( SELECT sex FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS sex,
 						atdinfo.attendance_date,
 						atdinfo.register_date,
 						atdinfo.register_id,
@@ -78,30 +82,39 @@
         ORDER BY row_num DESC
 	</select>
 	
+	<!-- 출석 정보 등록 -->
 	<insert id="insertAttendance" parameterType="attendanceVO">
 		/* attendanceMapper.insertAttendance */
-		
 		INSERT INTO ATTENDANCEINFO
-				( member_seq,
-				  attendance_date,
-				  register_date,
-				  register_id,
-				  modify_date,
-				  modify_id,
-				  del_yn,
-				  store_seq
+				( 	member_seq,
+				  	product_seq,
+				  	attendance_date,
+				  	register_date,
+				  	register_id,
+				  	modify_date,
+				  	modify_id,
+				  	del_yn,
+				  	store_seq
 				)
 		VALUES
-				( #{memberSeq},
-				  #{attendanceDate},
-				  now(),
-				  'admin',
-				  now(),
-				  'admin',
-				  'N',
-				  #{storeSeq}
+				( 	#{memberSeq},
+					#{productSeq},
+				  	#{attendanceDate},
+				  	now(),
+				  	'admin',
+				  	now(),
+				  	'admin',
+				  	'N',
+				  	#{storeSeq}
 				)
 	</insert>
 	
-
+	<!-- 출석 정보 삭제 -->
+	<update id="attendanceDelete" parameterType="attendanceVO">
+		/* attendanceMapper.attendanceDelete */
+		UPDATE ATTENDANCEINFO
+		SET del_yn = 'Y'
+		WHERE attendance_seq = #{attendanceSeq}
+		AND del_yn ='N'
+	</update>
 </mapper>

@@ -16,6 +16,9 @@ public interface AttendanceService {
 	// 출석 등록
 	int insertAttendance (AttendanceVO attendanceVO) throws Exception;
 	
+	// 출석 삭제
+	int attendanceDelete (AttendanceVO attendanceVO) throws Exception;
+	
 	// 회원 정보 검색(List 로 리턴)
 	List<MemberVO> memberSearch(MemberVO memberVO)throws Exception;
 }

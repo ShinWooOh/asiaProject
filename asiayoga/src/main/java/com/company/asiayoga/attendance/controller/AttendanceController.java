@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.company.asiayoga.attendance.domain.AttendanceVO;
 import com.company.asiayoga.attendance.service.AttendanceService;
+import com.company.asiayoga.manage.domain.ManageVO;
 import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.member.service.MemberService;
 import com.company.asiayoga.order.domain.OrderVO;
@@ -36,25 +37,37 @@ public class AttendanceController {
     
     @Inject
     private OrderService orderService;
+    
+    
+    private String menuFirstRoot = "attendance";
+    
 
     // 출석 목록
     @RequestMapping(value = "info")
-    public String attendanceInfo(Model model) throws Exception {
+    public String attendanceInfo(HttpServletRequest request,Model model) throws Exception {
 
-        int storeSeq = 10;      							// 매장 번호, 현재는 임시적으로 부여
+    	ManageVO manageVO = new ManageVO();
+    	manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+    	
         AttendanceVO attendanceVO = new AttendanceVO();
-        attendanceVO.setStoreSeq(storeSeq);
+        attendanceVO.setStoreSeq(manageVO.getStoreSeq());
         
         List<AttendanceVO> list = attendanceService.attendanceList(attendanceVO);
-
         model.addAttribute("attendanceList",list);
+        
+        // 경로 체크
+        String currentPath = (String)request.getSession().getAttribute("nowPath");
+        if(!currentPath.equals(menuFirstRoot)) {
+        	request.getSession().removeAttribute("nowPath");
+        	request.getSession().setAttribute("nowPath", menuFirstRoot);
+        }
 
         return "/attendance/attendanceInfo";
     }
     
 	// 출석 상세 정보
 	@RequestMapping(value = "attendanceDetail", method = RequestMethod.POST)
-	public String attdanceDetail(Model model,@ModelAttribute("attendanceVO") AttendanceVO attendanceVO) throws Exception{
+	public String attdanceDetail(HttpServletRequest request,Model model,@ModelAttribute("attendanceVO") AttendanceVO attendanceVO) throws Exception{
 		
 		// 회원 정보
 		MemberVO memberVO = new MemberVO();
@@ -74,26 +87,49 @@ public class AttendanceController {
 		List<OrderVO> orderList= orderService.customerOrderList(orderVO);
 		model.addAttribute("orderList", orderList);
 		
+	    // 경로 체크
+        String currentPath = (String)request.getSession().getAttribute("nowPath");
+        if(!currentPath.equals(menuFirstRoot)) {
+        	request.getSession().removeAttribute("nowPath");
+        	request.getSession().setAttribute("nowPath", menuFirstRoot);
+        }
+		
 		return "/attendance/attendanceDetail";
 	}
 	
 	// 출석 등록 화면으로 이동
 	@RequestMapping(value = "attendanceRegister", method = {RequestMethod.POST,RequestMethod.GET})
-	public String attendanceRegister(Model model,@ModelAttribute("attendanceVO") AttendanceVO attendanceVO) throws Exception{
-		
+	public String attendanceRegister(HttpServletRequest request,Model model,@ModelAttribute("attendanceVO") AttendanceVO attendanceVO) throws Exception{
+
 		// 회원 정보
 		MemberVO memberVO = new MemberVO();
-		memberVO.setMemberSeq(attendanceVO.getMemberSeq());
-		memberVO.setStoreSeq(attendanceVO.getStoreSeq());
-		memberVO = memberService.memberDetail(memberVO);
+		
+		if(attendanceVO.getMemberSeq() == 0 || attendanceVO.getStoreSeq() == 0) {
+			
+		} else {
+			memberVO.setMemberSeq(attendanceVO.getMemberSeq());
+			memberVO.setStoreSeq(attendanceVO.getStoreSeq());
+			memberVO = memberService.memberDetail(memberVO);
+		}
 		model.addAttribute("memberDetail", memberVO);
 		
 		// 고객이 가진 상품 정보(주문번호에 의한, 단품)
 		OrderVO orderVO = new OrderVO();
-		orderVO.setOrderSeq(attendanceVO.getOrderSeq());
-		orderVO= orderService.customerOrder(orderVO);
+		if(attendanceVO.getOrderSeq() == 0) {
+			
+		} else {
+			orderVO.setOrderSeq(attendanceVO.getOrderSeq());
+			orderVO = orderService.customerOrder(orderVO);
+		}
 		model.addAttribute("orderDetail", orderVO);
 		
+		// 경로 체크
+		String currentPath = (String)request.getSession().getAttribute("nowPath");
+		if(!currentPath.equals(menuFirstRoot)) {
+			request.getSession().removeAttribute("nowPath");
+			request.getSession().setAttribute("nowPath", menuFirstRoot);
+		}
+
 		return "/attendance/attendanceRegister";
 	}
 	
@@ -114,6 +150,23 @@ public class AttendanceController {
 		return result;
 	}
 	
+	// 출석 삭제
+	@RequestMapping(value = "attendanceDelete", method = RequestMethod.POST)
+	@ResponseBody
+	public String attendanceDelete(Model model,@ModelAttribute("attendanceVO") AttendanceVO attendanceVO) throws Exception{
+		
+		int resultParam = 0;
+		String result = "fail";
+		
+		resultParam = attendanceService.attendanceDelete(attendanceVO);
+		
+		if(resultParam >= 1) {
+			result = "success"; 
+		}
+		
+		return result;
+	}
+	
 	// 팝업에서의 회원 찾기(List 리턴 , 상품정보 포함)
 	@RequestMapping(value = "searchMember", method = RequestMethod.POST)
 	@ResponseBody
@@ -121,11 +174,8 @@ public class AttendanceController {
 		
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
 		
-		int resultParam = 0;
-		String result = "fail";
-		
 		MemberVO memberVO = new MemberVO();
-		memberVO.setStoreSeq(10);
+		memberVO.setStoreSeq(attendanceVO.getStoreSeq());
 		memberVO.setName(attendanceVO.getName());
 		
 		List<MemberVO> memberList = attendanceService.memberSearch(memberVO);
@@ -139,9 +189,7 @@ public class AttendanceController {
 		} else {
 			
 		}
-		
 		return hashMap;
 	}
-    
 
 }

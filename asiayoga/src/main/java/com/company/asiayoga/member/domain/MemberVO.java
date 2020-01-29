@@ -33,7 +33,10 @@ public class MemberVO extends StoreVO {
     private String productCode;						// 상품코드
     private Date productEndDay;						// 기간제 상품일 경우 종료일
     private int orderSeq;							// 주문 번호
-    private int remainingCount;						// 횟수제 상품인 경우 남은 횟수
+    private int itemSeq;							// 품목 번호
+    private String itemName;						// 품목명
+    private int productCount;						// 등록 횟수
+    private int remainingCount;						// 잔여 횟수
 	public int getRowNum() {
 		return rowNum;
 	}
@@ -190,6 +193,24 @@ public class MemberVO extends StoreVO {
 	public void setOrderSeq(int orderSeq) {
 		this.orderSeq = orderSeq;
 	}
+	public int getItemSeq() {
+		return itemSeq;
+	}
+	public void setItemSeq(int itemSeq) {
+		this.itemSeq = itemSeq;
+	}
+	public String getItemName() {
+		return itemName;
+	}
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
+	}
+	public int getProductCount() {
+		return productCount;
+	}
+	public void setProductCount(int productCount) {
+		this.productCount = productCount;
+	}
 	public int getRemainingCount() {
 		return remainingCount;
 	}
@@ -204,17 +225,19 @@ public class MemberVO extends StoreVO {
 				+ email + ", sex=" + sex + ", memo=" + memo + ", attendanceDate=" + attendanceDate + ", registerDate="
 				+ registerDate + ", registerId=" + registerId + ", modifyDate=" + modifyDate + ", modifyId=" + modifyId
 				+ ", delYn=" + delYn + ", productSeq=" + productSeq + ", productName=" + productName + ", productCode="
-				+ productCode + ", productEndDay=" + productEndDay + ", orderSeq=" + orderSeq + ", remainingCount="
-				+ remainingCount + ", getRowNum()=" + getRowNum() + ", getAttendanceSeq()=" + getAttendanceSeq()
-				+ ", getMemberSeq()=" + getMemberSeq() + ", getName()=" + getName() + ", getBirth()=" + getBirth()
-				+ ", getYear()=" + getYear() + ", getMonth()=" + getMonth() + ", getDay()=" + getDay() + ", getPhone()="
-				+ getPhone() + ", getPhone1()=" + getPhone1() + ", getPhone2()=" + getPhone2() + ", getPhone3()="
-				+ getPhone3() + ", getEmail()=" + getEmail() + ", getSex()=" + getSex() + ", getMemo()=" + getMemo()
+				+ productCode + ", productEndDay=" + productEndDay + ", orderSeq=" + orderSeq + ", itemSeq=" + itemSeq
+				+ ", itemName=" + itemName + ", productCount=" + productCount + ", remainingCount=" + remainingCount
+				+ ", getRowNum()=" + getRowNum() + ", getAttendanceSeq()=" + getAttendanceSeq() + ", getMemberSeq()="
+				+ getMemberSeq() + ", getName()=" + getName() + ", getBirth()=" + getBirth() + ", getYear()="
+				+ getYear() + ", getMonth()=" + getMonth() + ", getDay()=" + getDay() + ", getPhone()=" + getPhone()
+				+ ", getPhone1()=" + getPhone1() + ", getPhone2()=" + getPhone2() + ", getPhone3()=" + getPhone3()
+				+ ", getEmail()=" + getEmail() + ", getSex()=" + getSex() + ", getMemo()=" + getMemo()
 				+ ", getAttendanceDate()=" + getAttendanceDate() + ", getRegisterDate()=" + getRegisterDate()
 				+ ", getRegisterId()=" + getRegisterId() + ", getModifyDate()=" + getModifyDate() + ", getModifyId()="
 				+ getModifyId() + ", getDelYn()=" + getDelYn() + ", getProductSeq()=" + getProductSeq()
 				+ ", getProductName()=" + getProductName() + ", getProductCode()=" + getProductCode()
-				+ ", getProductEndDay()=" + getProductEndDay() + ", getOrderSeq()=" + getOrderSeq()
+				+ ", getProductEndDay()=" + getProductEndDay() + ", getOrderSeq()=" + getOrderSeq() + ", getItemSeq()="
+				+ getItemSeq() + ", getItemName()=" + getItemName() + ", getProductCount()=" + getProductCount()
 				+ ", getRemainingCount()=" + getRemainingCount() + ", getStoreSeq()=" + getStoreSeq()
 				+ ", getStoreName()=" + getStoreName() + ", getStoreTel()=" + getStoreTel() + ", getStoreTel1()="
 				+ getStoreTel1() + ", getStoreTel2()=" + getStoreTel2() + ", getStoreTel3()=" + getStoreTel3()
@@ -223,6 +246,4 @@ public class MemberVO extends StoreVO {
 				+ ", getStoreAddress()=" + getStoreAddress() + ", getStoreMemo()=" + getStoreMemo() + ", toString()="
 				+ super.toString() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + "]";
 	}
-	
-    
 }
