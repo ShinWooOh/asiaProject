@@ -359,8 +359,8 @@ function goOrderUpdate(){
 	}
 	
 	
-	var insertConfirm = confirm("수정 하시겠습니까?");
-	if(insertConfirm){
+	var updateConfirm = confirm("수정 하시겠습니까?");
+	if(updateConfirm){
 		
 		if($("#largeCategory").val() == '002'){
 			$("#productCount").val(0);

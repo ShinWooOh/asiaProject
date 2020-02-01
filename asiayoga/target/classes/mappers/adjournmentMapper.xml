@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.company.asiayoga.mapper.adjournmentMapper">
+ 
+	 <!-- 휴회 회원 목록  -->
+ 	<select id="adjournmentList" parameterType="adjournmentVO" resultType="adjournmentVO">
+ 		/* adjournmentMapper."adjournmentList" */
+		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
+				adjinfo.adjournment_seq,
+				adjinfo.member_seq,
+				adjinfo.store_seq,
+				adjinfo.order_seq,
+				adjinfo.adjournment_start,
+				adjinfo.adjournment_end,
+				adjinfo.adjournment_state,
+				adjinfo.adjournment_memo,
+				adjinfo.del_yn,
+				adjinfo.register_date,
+				adjinfo.register_id,
+				adjinfo.modify_date,
+				adjinfo.modify_id,
+				( SELECT name FROM MEMBERINFO WHERE member_seq = adjinfo.member_seq ) AS name,
+				( SELECT phone FROM MEMBERINFO WHERE member_seq = adjinfo.member_seq ) AS phone,
+				( SELECT store_name FROM STOREINFO WHERE store_seq = adjinfo.store_seq ) AS store_name,
+				( SELECT product_name FROM productinfo where product_seq = ordinfo.product_seq ) as product_name
+		FROM ADJOURNMENTINFO adjinfo
+		INNER JOIN ORDERINFO ordinfo
+		ON adjinfo.order_seq = ordinfo.order_seq
+		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		WHERE adjinfo.store_seq =#{storeSeq}
+		AND adjinfo.del_yn = 'N'
+		ORDER BY adjinfo.modify_date DESC
+	</select>
+    
+    <!-- 휴회 등록  -->
+    <insert id="insertAdjournment" parameterType="adjournmentVO">
+ 		/* adjournmentMapper."insertAdjournment" */
+ 		INSERT INTO ADJOURNMENTINFO
+ 				( 	member_seq,
+ 					store_seq,
+ 					order_seq,
+ 					adjournment_start,
+ 					adjournment_end,
+ 					adjournment_memo,
+ 					register_id,
+ 					modify_id
+ 				)
+ 		VALUES	(
+ 					#{memberSeq},
+ 					#{storeSeq},
+ 					#{orderSeq},
+ 					#{adjournmentStart},
+ 					#{adjournmentEnd},
+ 					#{adjournmentMemo},
+ 					#{registerId},
+ 					#{modifyId}
+ 				)
+    </insert>
+    
+    
+    <!-- 휴회 상태 업데이트  -->
+    <update id="updateAdjournmentState" parameterType="adjournmentVO">
+ 		/* adjournmentMapper.updateAdjournmentState */
+ 		UPDATE ADJOURNMENTINFO
+ 		SET adjournment_state = #{adjournmentState}
+ 		WHERE adjournment_seq = #{adjournmentSeq}
+    </update>
+    
+    <!-- 휴회 상세 내용  -->
+    <select id="adjournmentDetail" parameterType="adjournmentVO" resultType="adjournmentVO">
+ 		/* adjournmentMapper.adjournmentDetail */
+   		SELECT	adjinfo.adjournment_seq,
+           		adjinfo.member_seq,
+           		adjinfo.store_seq,
+	            adjinfo.order_seq,
+	            adjinfo.adjournment_start,
+	            adjinfo.adjournment_end,
+	            adjinfo.adjournment_state,
+	            adjinfo.adjournment_memo,
+				mbrinfo.name,
+	            mbrinfo.phone,
+	            mbrinfo.email,
+	            mbrinfo.birth,
+	            mbrinfo.sex,
+				prdinfo.product_name,
+	            ( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_name,
+	            ordinfo.remaining_count,
+	            ordinfo.product_count,
+	            ( SELECT store_name FROM STOREINFO where store_seq = adjinfo.store_seq ) AS store_name
+		FROM ADJOURNMENTINFO adjinfo
+        INNER JOIN MEMBERINFO mbrinfo
+        ON adjinfo.member_seq = mbrinfo.member_seq
+        INNER JOIN ORDERINFO ordinfo
+        ON adjinfo.order_seq = ordinfo.order_seq
+        INNER JOIN PRODUCTINFO prdinfo
+        ON ordinfo.product_seq = prdinfo.product_seq
+        WHERE adjinfo.adjournment_seq = #{adjournmentSeq}
+    </select>
+    
+    <!-- 휴회 정보 업데이트  -->
+    <update id="updateAdjournment" parameterType="adjournmentVO">
+ 		/* adjournmentMapper.updateAdjournment */
+ 		UPDATE ADJOURNMENTINFO
+ 		SET	adjournment_start = #{adjournmentStart},
+ 			adjournment_end = #{adjournmentEnd},
+ 		 	adjournment_state = #{adjournmentState},
+ 			adjournment_memo = #{adjournmentMemo}
+ 		WHERE adjournment_seq = #{adjournmentSeq}
+    </update>
+    
+</mapper>

@@ -11,7 +11,7 @@
 	<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 	<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-    <title>출석 등록</title>
+    <title>휴회 등록</title>
 
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- Font Awesome Icons -->
@@ -45,13 +45,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">출석 등록</h1>
+                        <h1 class="m-0 text-dark">휴회 등록</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item">출석</li>
-                            <li class="breadcrumb-item active">출석 등록</li>
+                            <li class="breadcrumb-item">휴회</li>
+                            <li class="breadcrumb-item active">휴회 등록</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -79,10 +79,11 @@
                            
 	                            <tr id="memberInfo">
 	                            	<td align="center">
-	                       				<c:choose>
+	                            		<c:choose>
 	                            			<c:when test="${memberDetail.memberSeq > 0}"><c:out value="${memberDetail.memberSeq}"/></c:when>
 	                            			<c:otherwise></c:otherwise>
 	                            		</c:choose>
+	                            	</td>
 	                            	<td>
 	                            		<c:choose>
 	                            			<c:when test="${memberDetail.name ne null}"><c:out value="${memberDetail.name}"/></c:when>
@@ -110,51 +111,35 @@
                         
                         <table class="table table-bordered">
                             <tbody>
-                            <tr>
-                                <th style="width: 10%;">출석날짜</th>
-                            	<td style="width: 40%;">
-                            		<input type="text" id="datepicker" name="datepicker" readonly="readonly">
-                            	</td>
-                                <th style="width: 10%;"></th>
-                            	<td style="width: 40%;"></td>
-                            </tr>
-                            <tr>
-                                <th>시간</th>
-                                <td>
-                                	<select id="hour" name="hour"  style="margin-left: 5px;">
-										<c:forEach var="i" begin="0" end="24">
-											<option><c:out value="${i}"/></option>
-										</c:forEach>
-                                	</select>시
-                                	<select id="minute" name="minute"  style="margin-left: 5px;">
-										<c:forEach var="k" begin="0" end="59">
-											<option><c:out value="${k}"/></option>
-										</c:forEach>
-                                	</select>분
-                                </td>
-                                <th></th>
-                                <td>                              	
-                                </td>
-                            </tr>
-                            <tr id="attendanceProductName">
+                            <tr id="adjournmentProductName">
                                 <th>상품</th>
                             	<td><c:out value="${orderDetail.productName}"/></td>
                                 <th>품목구분</th>
                             	<td><c:out value="${orderDetail.itemName}"/></td>
                             </tr>
-                            <tr id="attendanceProductCount">
+                            <tr id="adjournmentProductCount">
                            		<th>잔여 횟수</th>
                            		<td>
-                           			<c:out value="${orderDetail.remainingCount}"/>회
+                           			<c:choose>
+                           				<c:when test="${orderDetail.remainingCount eq 0 } ">0회</c:when>
+                           				<c:when test="${orderDetail.remainingCount > 0 && orderDetail.remainingCount ne 0} "><c:out value="${orderDetail.remainingCount}"/>회</c:when>
+                           				<c:otherwise></c:otherwise>
+                           			</c:choose>
+                           			<%-- <c:out value="${orderDetail.remainingCount}"/>회 --%>
                            			<input type="hidden" id="remainingCount" name="remainingCount" value="${orderDetail.remainingCount}">
                            		</td>
                            		<th>등록 횟수</th>
                            		<td>
-                           			<c:out value="${orderDetail.productCount}"/>회
+                           			<c:choose>
+                           				<c:when test="${orderDetail.productCount eq 0 } ">0회</c:when>
+                           				<c:when test="${orderDetail.productCount > 0 && orderDetail.productCount ne 0} "><c:out value="${orderDetail.productCount}"/>회</c:when>
+                           				<c:otherwise></c:otherwise>
+                           			</c:choose>
+                           			<%-- <c:out value="${orderDetail.productCount}"/>회 --%>
                            			<input type="hidden" id="productCount" name="productCount" value="${orderDetail.productCount}">
                            		</td>
                             </tr>
-                            <tr id="attendanceStoreSeq">
+                            <tr id="adjournmentStoreSeq">
                                 <th>매장명</th>
                             	<td>
                             		<c:choose>
@@ -167,12 +152,28 @@
                                 <th></th>
                             	<td></td>
                             </tr>
+                            <tr>
+                                <th style="width: 10%;">휴회시작일</th>
+                            	<td style="width: 40%;">
+                            		<input type="text" id="adjournmentStart" name="adjournmentStart" readonly="readonly">
+                            	</td>
+                                <th style="width: 10%;">휴회종료일</th>
+                            	<td style="width: 40%;">
+                            		<input type="text" id="adjournmentEnd" name="adjournmentEnd" readonly="readonly">
+                            	</td>
+                            </tr>
+                          	<tr>
+                          		<th style="width: 10%">메모</th>
+		                        <td colspan="3">
+		                        	<textarea rows="3" cols="130" id="adjournmentMemo" name="adjournmentMemo"></textarea>
+		                        </td>
+                          	</tr>
                             </tbody>
                         </table>
                     </div>
-                    <div id="attendanceFooter" style="margin-top: 10px;">
-                		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goAttendanceList();" style="float: left; width:80px;">
-                		<input type="button" class="btn btn-block btn-success" value="등록" onclick="goAttendanceRegister(${orderDetail.memberSeq},${orderDetail.storeSeq},${orderDetail.orderSeq},${orderDetail.productSeq});" style="float: right; width:80px;">
+                    <div id="adjournmentFooter" style="margin-top: 10px;">
+                		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goAdjournmentList();" style="float: left; width:80px;">
+                		<input type="button" class="btn btn-block btn-success" value="등록" onclick="goAdjournmentRegister();" style="float: right; width:80px;">
                 	</div>
                 </div>
             </div>
@@ -196,14 +197,15 @@
     <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
-<form:form id="attendanceInfo" name="attendanceInfo" modelAttribute="attendanceVO" method="post">
+<form:form id="adjournmentInfo" name="adjournmentInfo" modelAttribute="adjournmentVO" method="post">
 	<input type="hidden" id="memberSeq" name="memberSeq">
 	<input type="hidden" id="storeSeq" name="storeSeq">
 	<input type="hidden" id="orderSeq" name="orderSeq">
 	<input type="hidden" id="productSeq" name="productSeq">
-	<input type="hidden" id="attendanceDate" name="attendanceDate">
-	<input type="hidden" id="name" name="name">
-	<input type="hidden" id="remainingCount" name="remainingCount" value="0">
+	<input type="hidden" id="adjournmentStart" name="adjournmentStart">
+	<input type="hidden" id="adjournmentEnd" name="adjournmentEnd">
+	<input type="hidden" id="adjournmentMemo" name="adjournmentMemo">
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </form:form>
 <!-- REQUIRED SCRIPTS -->
 
@@ -217,7 +219,21 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	
-	$('#datepicker').datepicker({
+	$('#adjournmentStart').datepicker({
+		dateFormat: 'yy-mm-dd', 
+		showOtherMonths: true, 
+		showMonthAfterYear:true,
+		changeYear: true,
+		changeMonth: true,
+		showOn: "button",
+		yearSuffix: "년",
+		monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'],
+		monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+		dayNamesMin: ['일','월','화','수','목','금','토'],
+		dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'],
+		buttonImage: "/resources/image/calendar_btn.png" //버튼에 띄워줄 이미지 경로
+	});
+	$('#adjournmentEnd').datepicker({
 		dateFormat: 'yy-mm-dd', 
 		showOtherMonths: true, 
 		showMonthAfterYear:true,
@@ -239,60 +255,77 @@ $(document).ready(function() {
 		}
 	});
 	
+	$("#findName").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+	
+	$("#popFindName").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+	
 });
 
-function goAttendanceList(){
-	location.href="/attendance/info";
+function goAdjournmentList(){
+	location.href="/adjournment/adjournmentList";
 }
 
-function goAttendanceRegister(memberSeq,storeSeq,orderSeq,productSeq){
+function goAdjournmentRegister(memberSeq,storeSeq,orderSeq){
 	
 	if($("#paramName").val() == ''){
 		alert("'이름 찾기' 버튼을 통하여 회원을 선택해주세요.");
 		return false;
 	}
-	if($("#datepicker").val() == ''){
-		alert("출석 날짜를 선택해주세요.");
+	
+	if($("#adjournmentStart").val() == ''){
+		alert("휴회 시작일을 선택해주세요.");
+		return false;
+	}
+	
+	if($("#adjournmentEnd").val() == ''){
+		alert("휴회 종료일을 선택해주세요.");
 		return false;
 	}
 	var insertConfirm = confirm("출석 등록 하시겠습니까?");
 	if(insertConfirm){
-		attendanceRegister(memberSeq,storeSeq,orderSeq,productSeq);
+		adjournmentRegister(memberSeq,storeSeq,orderSeq);
 	}
 	
 }
 
-function attendanceRegister(memberSeq,storeSeq,orderSeq,productSeq){
+function adjournmentRegister(memberSeq,storeSeq,orderSeq){
 	
-	$("#attendanceInfo #memberSeq").val(memberSeq);
-	$("#attendanceInfo #storeSeq").val(storeSeq);
-	$("#attendanceInfo #orderSeq").val(orderSeq);
-	$("#attendanceInfo #productSeq").val(productSeq);
-	$("#attendanceInfo #productSeq").val(productSeq);
+	$("#adjournmentInfo #memberSeq").val(memberSeq);
+	$("#adjournmentInfo #storeSeq").val(storeSeq);
+	$("#adjournmentInfo #orderSeq").val(orderSeq);
 	
+	var adjournmentStartDay = $("#adjournmentStart").val();
+	var adjournmentEndDay = $("#adjournmentEnd").val();
 	
-	var date = $("#datepicker").val();
-	var hour = $("#hour").val();
-	var minute = $("#minute").val();
+	var startDateSplit = adjournmentStartDay.split("-");
+	var endDateSplit = adjournmentEndDay.split("-");
+ 	$("#adjournmentInfo #adjournmentStart").val(new Date(startDateSplit[0],startDateSplit[1]-1,startDateSplit[2]));
+ 	$("#adjournmentInfo #adjournmentEnd").val(new Date(endDateSplit[0],endDateSplit[1]-1,endDateSplit[2]));
 	
-	if(hour.length < 2){
-		hour = '0'+ hour;
-	}
-	if(minute.length < 2){
-		minute = '0'+ minute;
-	}
-	
-	var dateSplit = date.split("-");
- 	var attendanceDate = new Date(dateSplit[0],dateSplit[1]-1,dateSplit[2],hour,minute);
-	$("#attendanceDate").val(attendanceDate);
-	
-	var paramCount = $("#attendanceProductCount #remainingCount").val();
-	$("#attendanceInfo #remainingCount").val(paramCount);
+	$("#adjournmentInfo #adjournmentMemo").val($("#adjournmentMemo").val());
 	
 	$.ajax({
 		type: 'POST',
-        url : "/attendance/insertAttendance",
-        data: $("#attendanceInfo").serialize(),
+        url : "/adjournment/insertAdjournment",
+        data: $("#adjournmentInfo").serialize(),
         success : function(data){
             if(data == 'success')
             {
@@ -317,12 +350,14 @@ function searchName(){
 	var paramName = $("#popName").val();
 	var paramStoreSeq = 10;
 	
+	var adjournmentVO = { name : paramName,
+				storeSeq : paramStoreSeq
+	};
+	
  	$.ajax({
 		type: 'get',
-        url : "/attendance/searchMember",
-        data: {	name : paramName,
-        		storeSeq : paramStoreSeq
-        		},
+        url : "/adjournment/searchMember",
+        data: adjournmentVO,
         success : function(data){
             if(data.result == 'success'){
             	popMemberList(data.popMemberList);
@@ -394,7 +429,9 @@ function popMemberSelect(memberSeq,name,phone,email,birth,sex,productSeq,product
 	paramMemberInfo = '<td>'+memberSeq+'</td>';
 	paramMemberInfo += '<td>';
 	paramMemberInfo += '<input type="text" id="paramName" name="paramName" readonly="readonly" value='+name+'>';
-	paramMemberInfo += '<input type="button" id="findName" name="findName" value="이름찾기" data-toggle="modal" data-target="#findMember">';
+	paramMemberInfo += '<input type="button"';
+	paramMemberInfo += ' style="margin-left: 5px; background-color : #00c0ef; border-color : #00c0ef; border-radius : 3px; color : white; border : 1px solid; width : 80px; fontSize : 15px;"';
+	paramMemberInfo += 'id="findName" name="findName" value="이름찾기" data-toggle="modal" data-target="#findMember">';
 	paramMemberInfo += '</td>';
 	paramMemberInfo += '<td>'+phone+'</td>';
 	paramMemberInfo += '<td>'+email+'</td>';
@@ -414,12 +451,12 @@ function popMemberSelect(memberSeq,name,phone,email,birth,sex,productSeq,product
 	
 	/* 상품 정보  */
 	var paramAttendanceProductName = '';
-	paramAttendanceProductName = '<th>상품</th>';
-	paramAttendanceProductName += '<td>'+productName+'</td>';
-	paramAttendanceProductName += '<th>품목구분</th>';
-	paramAttendanceProductName += '<td>'+itemName+'</td>';
-	$("#attendanceProductName").text("");
-	$("#attendanceProductName").append(paramAttendanceProductName);
+	paramAdjournmentProductName = '<th>상품</th>';
+	paramAdjournmentProductName += '<td>'+productName+'</td>';
+	paramAdjournmentProductName += '<th>품목구분</th>';
+	paramAdjournmentProductName += '<td>'+itemName+'</td>';
+	$("#adjournmentProductName").text("");
+	$("#adjournmentProductName").append(paramAdjournmentProductName);
 	
 	
 	/* 상품 횟수 정보  */
@@ -433,31 +470,31 @@ function popMemberSelect(memberSeq,name,phone,email,birth,sex,productSeq,product
 	paramProductCount += '<input type="hidden" id="productCount" name="productCount" value='+productCount+'>';
 	paramProductCount += '</td>';
 	
-	$("#attendanceProductCount").text("");
-	$("#attendanceProductCount").append(paramProductCount);
+	$("#adjournmentProductCount").text("");
+	$("#adjournmentProductCount").append(paramProductCount);
 	
 	
 	/* 지점 표시 */
-	var paramAttendanceStoreSeq = '';
-	paramAttendanceStoreSeq = '<th>매장명</th>';
-	paramAttendanceStoreSeq += '<td>'+storeName+'</td>';
-	paramAttendanceStoreSeq += '<th></th>';
-	paramAttendanceStoreSeq += '<td></td>';
-	$("#attendanceStoreSeq").text("");
-	$("#attendanceStoreSeq").append(paramAttendanceStoreSeq);
+	var paramAdjournmentStoreSeq = '';
+	paramAdjournmentStoreSeq = '<th>매장명</th>';
+	paramAdjournmentStoreSeq += '<td>'+storeName+'</td>';
+	paramAdjournmentStoreSeq += '<th></th>';
+	paramAdjournmentStoreSeq += '<td></td>';
+	$("#adjournmentStoreSeq").text("");
+	$("#adjournmentStoreSeq").append(paramAdjournmentStoreSeq);
 	
 	/* 하단 부분 */
-	var paramAttendanceFooter = '';
-	paramAttendanceFooter = '<div style="margin-top: 10px;" id="attendanceFooter">';
-	paramAttendanceFooter += '<input type="button" value="목록" onclick="goAttendanceList();" style="float: left; width:80px;">';
-	paramAttendanceFooter += '<input type="button" value="출석 등록" onclick="goAttendanceRegister('+memberSeq+','+storeSeq+','+orderSeq+');" style="float: right; width:80px;">';
-	paramAttendanceFooter += '</div>';
-	$("#attendanceFooter").text("");
-	$("#attendanceFooter").append(paramAttendanceFooter);
+	var paramAdjournmentFooter = '';
+	paramAdjournmentFooter = '<div style="margin-top: 10px;" id="attendanceFooter">';
+	paramAdjournmentFooter += '<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goAdjournmentList();" style="float: left; width:80px;">';
+	paramAdjournmentFooter += '<input type="button" class="btn btn-block btn-success" value="등록" onclick="goAdjournmentRegister('+memberSeq+','+storeSeq+','+orderSeq+');" style="float: right; width:80px;">';
+	paramAdjournmentFooter += '</div>';
+	$("#adjournmentFooter").text("");
+	$("#adjournmentFooter").append(paramAdjournmentFooter);
 	
 	/* 기타 값 설정  */
-	$("#attendanceInfo #productSeq").val(productSeq);
-	$("#attendanceInfo #remainingCount").val(remainingCount);
+	$("#adjournmentInfo #productSeq").val(productSeq);
+	$("#adjournmentInfo #remainingCount").val(remainingCount);
 	
 	popClose();
 	$("#findMember").modal('toggle');

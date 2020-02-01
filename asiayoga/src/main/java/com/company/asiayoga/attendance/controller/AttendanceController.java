@@ -168,7 +168,7 @@ public class AttendanceController {
 	}
 	
 	// 팝업에서의 회원 찾기(List 리턴 , 상품정보 포함)
-	@RequestMapping(value = "searchMember", method = RequestMethod.POST)
+	@RequestMapping(value = "searchMember", method = RequestMethod.GET)
 	@ResponseBody
 	public HashMap<String, Object> searchMember(Model model,AttendanceVO attendanceVO) throws Exception{
 		

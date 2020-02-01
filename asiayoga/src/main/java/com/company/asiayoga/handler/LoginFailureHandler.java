@@ -12,6 +12,7 @@ import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import com.company.asiayoga.user.service.UserService;
@@ -44,7 +45,9 @@ public class LoginFailureHandler implements AuthenticationFailureHandler{
 			errormsg = MessageUtils.getMessage("error.Disabled");
 		} else if(exception instanceof CredentialsExpiredException) {
 			errormsg = MessageUtils.getMessage("error.CredentialsExpired");
-		} 
+		} else if(exception instanceof UsernameNotFoundException) {
+			errormsg = MessageUtils.getMessage("error.BadCredentials");
+		}
 		
 		request.setAttribute(loginIdName, userName);
 		request.setAttribute(loginPasswdName, passwd);
