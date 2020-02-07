@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -76,25 +77,6 @@ public class AdjournmentController {
  	@RequestMapping(value = "adjournmentRegister", method = {RequestMethod.POST,RequestMethod.GET})
  	public String attendanceRegister(HttpServletRequest request,Model model,@ModelAttribute("adjournmentVO") AdjournmentVO adjournmentVO) throws Exception{
 
- 		// 회원 정보
-		/*
-		 * MemberVO memberVO = new MemberVO();
-		 * 
-		 * if(adjournmentVO.getMemberSeq() == 0 || adjournmentVO.getStoreSeq() == 0) {
-		 * 
-		 * } else { memberVO.setMemberSeq(adjournmentVO.getMemberSeq());
-		 * memberVO.setStoreSeq(adjournmentVO.getStoreSeq()); memberVO =
-		 * memberService.memberDetail(memberVO); } model.addAttribute("memberDetail",
-		 * memberVO);
-		 * 
-		 * // 고객이 가진 상품 정보(주문번호에 의한, 단품) OrderVO orderVO = new OrderVO();
-		 * if(adjournmentVO.getOrderSeq() == 0) {
-		 * 
-		 * } else { orderVO.setOrderSeq(adjournmentVO.getOrderSeq()); orderVO =
-		 * orderService.customerOrder(orderVO); } model.addAttribute("orderDetail",
-		 * orderVO);
-		 */
- 		
  		// 경로 체크
  		String currentPath = (String)request.getSession().getAttribute("nowPath");
  		if(!currentPath.equals(menuFirstRoot)) {
@@ -128,7 +110,7 @@ public class AdjournmentController {
 		return result;
 	}
 	
-	// 휴회 등록 화면으로 이동
+	// 휴회 상세 화면으로 이동
 	@RequestMapping(value = "adjournmentDetail", method = {RequestMethod.POST,RequestMethod.GET})
 	public String adjournmentDetail(HttpServletRequest request,Model model,@ModelAttribute("adjournmentVO") AdjournmentVO adjournmentVO) throws Exception{
 		
@@ -149,9 +131,14 @@ public class AdjournmentController {
 	 // 휴회 상태 수정
 	 @RequestMapping(value = "updateAdjournmentState")
 	 @ResponseBody
-	 public String updateAdjournmentState(Model model, @ModelAttribute("adjournmentVO") AdjournmentVO adjournmentVO) throws Exception {
+	 public String updateAdjournmentState(HttpServletRequest request,Model model, @ModelAttribute("adjournmentVO") AdjournmentVO adjournmentVO) throws Exception {
 		 
 		 String result = "fail";
+		 
+		 ManageVO  manageVO = new ManageVO();
+		 manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		 
+		 adjournmentVO.setModifyId(manageVO.getId());
 		 
 		 int paramResult = 0;
 		 paramResult = adjournmentService.updateAdjournmentState(adjournmentVO);
@@ -163,14 +150,18 @@ public class AdjournmentController {
 	 }
 	 
 	 // 휴회 정보 수정
-	 @RequestMapping(value = "updateAdjournment")
+	 @RequestMapping(value = "updateAdjournment", method = RequestMethod.GET)
 	 @ResponseBody
-	 public String updateAdjournment(Model model, @ModelAttribute("adjournmentVO") AdjournmentVO adjournmentVO) throws Exception {
+	 public String updateAdjournment(HttpServletRequest request,Model model, @ModelAttribute("adjournmentVO") AdjournmentVO adjournmentVO) throws Exception {
 		 
-		 logger.info("확인 seq : "+adjournmentVO.getAdjournmentSeq());
+		 ManageVO  manageVO = new ManageVO();
+		 manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		 
+		 adjournmentVO.setModifyId(manageVO.getId());
 		 
 		 String result = "fail";
 		 
+		 // 휴회 정보 저장
 		 int paramResult = 0;
 		 paramResult = adjournmentService.updateAdjournment(adjournmentVO);
 		 

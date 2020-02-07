@@ -8,7 +8,8 @@ public class ManageVO {
 	private String id;								// 아이디
 	private String passwd;							// 비밀번호
 	private String name;							// 이름
-	private String authority;						// 권한
+	private String authority;						// 권한(영문)
+	private String authorityName;					// 권한(한글)
 	private int failreCount;						// 로그인 실패 횟수
 	private boolean enabled;						// 활성화 여부
 	private Date accessDate;						// 접속 일자
@@ -19,6 +20,7 @@ public class ManageVO {
     private String registerId;                      // 등록자 아이디
     private Date modifyDate;                        // 수정 일자
     private String modifyId;                        // 수정자 아이디
+    private int rowNum;								// 번호
     
 	public int getManageSeq() {
 		return manageSeq;
@@ -49,6 +51,12 @@ public class ManageVO {
 	}
 	public void setAuthority(String authority) {
 		this.authority = authority;
+	}
+	public String getAuthorityName() {
+		return authorityName;
+	}
+	public void setAuthorityName(String authorityName) {
+		this.authorityName = authorityName;
 	}
 	public int getFailreCount() {
 		return failreCount;
@@ -110,19 +118,11 @@ public class ManageVO {
 	public void setModifyId(String modifyId) {
 		this.modifyId = modifyId;
 	}
-	@Override
-	public String toString() {
-		return "ManageVO [manageSeq=" + manageSeq + ", id=" + id + ", passwd=" + passwd + ", name=" + name
-				+ ", authority=" + authority + ", failreCount=" + failreCount + ", enabled=" + enabled + ", accessDate="
-				+ accessDate + ", storeSeq=" + storeSeq + ", storeName=" + storeName + ", useYn=" + useYn
-				+ ", registerDate=" + registerDate + ", registerId=" + registerId + ", modifyDate=" + modifyDate
-				+ ", modifyId=" + modifyId + ", getManageSeq()=" + getManageSeq() + ", getId()=" + getId()
-				+ ", getPasswd()=" + getPasswd() + ", getName()=" + getName() + ", getAuthority()=" + getAuthority()
-				+ ", getFailreCount()=" + getFailreCount() + ", isEnabled()=" + isEnabled() + ", getAccessDate()="
-				+ getAccessDate() + ", getStoreSeq()=" + getStoreSeq() + ", getStoreName()=" + getStoreName()
-				+ ", getUseYn()=" + getUseYn() + ", getRegisterDate()=" + getRegisterDate() + ", getRegisterId()="
-				+ getRegisterId() + ", getModifyDate()=" + getModifyDate() + ", getModifyId()=" + getModifyId()
-				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
-				+ "]";
+	public int getRowNum() {
+		return rowNum;
 	}
+	public void setRowNum(int rowNum) {
+		this.rowNum = rowNum;
+	}
+	
 }

@@ -254,6 +254,48 @@
                         </li>
                     </ul>
                 </li>
+                
+				<c:choose>
+					<c:when test="${nowPath eq 'manage'}">
+						<li class="nav-item has-treeview menu-open">
+					</c:when>
+					<c:otherwise>
+						<li class="nav-item has-treeview" >
+					</c:otherwise>
+				</c:choose>
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>직원 관리
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/manage/manageList" class="nav-link active">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>직원 목록</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/manage/manageRegister" class="nav-link active">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>직원 등록</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/manage/manageGroupList" class="nav-link active">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>직원 그룹 목록</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/manage/manageGroupRegister" class="nav-link active">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>직원 그룹 등록</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
               <%--  <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-th"></i>

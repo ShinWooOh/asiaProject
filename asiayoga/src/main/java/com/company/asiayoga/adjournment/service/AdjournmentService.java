@@ -2,6 +2,8 @@ package com.company.asiayoga.adjournment.service;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.company.asiayoga.adjournment.domain.AdjournmentVO;
 import com.company.asiayoga.member.domain.MemberVO;
 
@@ -20,6 +22,7 @@ public interface AdjournmentService {
 	AdjournmentVO adjournmentDetail(AdjournmentVO adjournmentVO) throws Exception;
 	
 	// 휴회 정보 업데이트
+	@Transactional(rollbackFor =Exception.class)
 	int updateAdjournment(AdjournmentVO adjournmentVO) throws Exception;
 	
 	// 회원 정보 검색(List 로 리턴)

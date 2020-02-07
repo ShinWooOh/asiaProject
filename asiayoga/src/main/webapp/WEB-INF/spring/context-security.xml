@@ -10,11 +10,13 @@
         <context:component-scan base-package="com.company.asiayoga"/>
         
         <security:http auto-config="true">
-            <security:intercept-url pattern="/attendance/**" access="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')" />
-            <security:intercept-url pattern="/item/**" access="hasAnyRole('ROLE_ADMIN')" />
-            <security:intercept-url pattern="/member/**" access="hasAnyRole('ROLE_ADMIN')" />
-            <security:intercept-url pattern="/order/**" access="hasAnyRole('ROLE_ADMIN')" />
-            <security:intercept-url pattern="/product/**" access="hasAnyRole('ROLE_ADMIN')" />
+            <security:intercept-url pattern="/attendance/**" access="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_STAFF')" />
+            <security:intercept-url pattern="/member/**" access="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_STAFF')" />
+            <security:intercept-url pattern="/order/**" access="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_STAFF')" />
+            <security:intercept-url pattern="/item/**" access="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')" />
+            <security:intercept-url pattern="/product/**" access="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')" />
+            <security:intercept-url pattern="/adjournment/**" access="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')" />
+            <security:intercept-url pattern="/store/**" access="hasAnyRole('ROLE_ADMIN')" />
             <security:intercept-url pattern="/**" access="permitAll" />
             
             <security:form-login

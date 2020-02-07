@@ -190,5 +190,17 @@
  		WHERE order_seq = #{orderSeq}
 		AND del_yn = 'N'
 	</update>
+	
+	<!-- 휴회 상태 변경 -->
+	<update id="updateAdjournmentState" parameterType="orderVO">
+ 		/* orderMapper.updateAdjournmentState */
+ 		UPDATE ORDERINFO
+ 		<set>
+ 			adjournment_state = #{adjournmentState},
+ 			modify_date = now(),
+ 			modify_id = #{modifyId}
+ 		</set>
+ 		WHERE order_seq = #{orderSeq}
+	</update>
     
 </mapper>

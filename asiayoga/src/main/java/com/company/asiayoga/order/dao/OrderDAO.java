@@ -53,5 +53,10 @@ public class OrderDAO {
 		return sqlSession.update(ORDER_NAMESPACE+".updateOrder",orderVO);
 	}
 	
+	// 휴회 상태 업데이트
+	public int updateAdjournmentState(OrderVO orderVO) {
+		return sqlSession.update(ORDER_NAMESPACE+".updateAdjournmentState",orderVO);
+	}
+	
 	
 }

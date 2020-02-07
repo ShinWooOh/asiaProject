@@ -149,7 +149,7 @@
                     </div>
                     <div id="adjournmentFooter" style="margin-top: 10px;">
                 		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goAdjournmentList();" style="float: left; width:80px;">
-                		<input type="button" class="btn btn-block btn-success" value="수정" onclick="goAdjournmentUpdate(${adjournmentDetail.adjournmentSeq});" style="float: right; width:80px;">
+                		<input type="button" class="btn btn-block btn-success" value="수정" onclick="goAdjournmentUpdate(${adjournmentDetail.adjournmentSeq},${adjournmentDetail.orderSeq});" style="float: right; width:80px;">
                 	</div>
                 </div>
             </div>
@@ -173,8 +173,9 @@
     <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
-<form:form id="adjournmentInfo" name="adjournmentInfo" modelAttribute="adjournmentVO" method="post">
+<form:form id="adjournmentInfo" name="adjournmentInfo" modelAttribute="adjournmentVO">
 	<input type="hidden" id="adjournmentSeq" name="adjournmentSeq">
+	<input type="hidden" id="orderSeq" name="orderSeq">
 	<input type="hidden" id="adjournmentStart" name="adjournmentStart">
 	<input type="hidden" id="adjournmentEnd" name="adjournmentEnd">
 	<input type="hidden" id="adjournmentState" name="adjournmentState">
@@ -230,7 +231,7 @@ function goAdjournmentList(){
 	location.href="/adjournment/adjournmentList";
 }
 
-function goAdjournmentUpdate(adjournmentSeq){
+function goAdjournmentUpdate(adjournmentSeq,orderSeq){
 	
 	if($("#adjournmentStart").val() == ''){
 		alert("휴회 시작일을 선택해주세요.");
@@ -249,14 +250,15 @@ function goAdjournmentUpdate(adjournmentSeq){
 	
 	var updateConfirm = confirm("휴회 정보를 수정 하시겠습니까?");
 	if(updateConfirm){
-		adjournmentUpdate(adjournmentSeq);
+		adjournmentUpdate(adjournmentSeq,orderSeq);
 	}
 	
 }
 
-function adjournmentUpdate(adjournmentSeq){
+function adjournmentUpdate(adjournmentSeq,orderSeq){
 	
 	$("#adjournmentInfo #adjournmentSeq").val(adjournmentSeq);
+	$("#adjournmentInfo #orderSeq").val(orderSeq);
 	
 	var adjournmentStartDay = $("#adjournmentStart").val();
 	var adjournmentEndDay = $("#adjournmentEnd").val();
@@ -272,7 +274,7 @@ function adjournmentUpdate(adjournmentSeq){
 	$("#adjournmentInfo #adjournmentMemo").val($("#adjournmentMemo").val());
 	
 	$.ajax({
-		type: 'POST',
+		type: 'get',
         url : "/adjournment/updateAdjournment",
         data: $("#adjournmentInfo").serialize(),
         success : function(data){

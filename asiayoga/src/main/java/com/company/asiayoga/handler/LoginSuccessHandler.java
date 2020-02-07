@@ -51,6 +51,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 		// 로그인 성공 시 실패횟수 초기화
 		userService.updateFailureCountReset(userName);
 		
+		// 로그인 성공 시 최근 접속 시간 update
+		userService.updateAccessDate(userName);
+		
 		//에러 세션 지우기
 		clearAuthenticationAttributes(request);
 		

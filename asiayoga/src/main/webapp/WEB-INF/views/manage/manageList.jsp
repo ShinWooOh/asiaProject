@@ -12,7 +12,7 @@
 	<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 
-    <title>휴회 목록</title>
+    <title>직원 목록</title>
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="/resources/plugins/fontawesome-free/css/all.min.css">
@@ -49,13 +49,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">휴회 목록</h1>
+                        <h1 class="m-0 text-dark">직원 목록</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">휴회</li>
-                            <li class="breadcrumb-item active">휴회 목록</li>
+                            <li class="breadcrumb-item active">직원 관리</li>
+                            <li class="breadcrumb-item active">직원 목록</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -73,30 +73,28 @@
                             <tbody>
                             <tr>
                                 <th style="width: 10%;">No</th>
-                                <th style="width: 15%;">회원명</th>
-                                <th style="width: 15%;">연락처</th>
-                                <th style="width: 33%;">상품명</th>
-                                <th style="width: 10%;">휴회 시작일</th>
-                                <th style="width: 10%;">휴회 종료일</th>
-                                <th style="width: 7%;" align="center">상태</th>
+                                <th style="width: 20%;">관리자명</th>
+                                <th style="width: 15%;">권한</th>
+                                <th style="width: 20%;">최종 접속 일자</th>
+                                <th style="width: 25%;">매장명</th>
+                                <th style="width: 10%;">상태</th>
                             </tr>
                             <c:choose>
-                            	<c:when test="${fn:length(adjournmentList) > 0}">
-		                            <c:forEach var="adjournmentList" items="${adjournmentList}">
+                            	<c:when test="${fn:length(manageList) > 0}">
+		                            <c:forEach var="manageList" items="${manageList}">
 		                            	<tr>
-		                            		<td><c:out value="${adjournmentList.rowNum}"/></td>
-		                            		<td><a href="#" onclick="goAdjournmentDetail(${adjournmentList.adjournmentSeq});"><c:out value="${adjournmentList.name}"/></a></td>
-		                            		<td><a href="#" onclick="goAdjournmentDetail(${adjournmentList.adjournmentSeq});"><c:out value="${adjournmentList.phone}"/></a></td>
-		                            		<td><a href="#" onclick="goAdjournmentDetail(${adjournmentList.adjournmentSeq});"><c:out value="${adjournmentList.productName}"/></a></td>
-		                            		<td><fmt:formatDate value="${adjournmentList.adjournmentStart}" pattern="yyyy-MM-dd"/></td>
-		                            		<td><fmt:formatDate value="${adjournmentList.adjournmentEnd}" pattern="yyyy-MM-dd"/></td>
+		                            		<td align="center"><c:out value="${manageList.rowNum}"/></td>
+		                            		<td><a href="#" onclick="goManageDetail(${manageList.manageSeq});"><c:out value="${manageList.name}"/></a></td>
+		                            		<td><a href="#" onclick="goManageDetail(${manageList.manageSeq});"><c:out value="${manageList.authorityName}"/></a></td>
+		                            		<td><fmt:formatDate value="${manageList.accessDate}" pattern="yyyy-MM-dd HH:mm"/></td>
+		                            		<td><c:out value="${manageList.storeName}"/></td>
 		                            		<td>
 		                            			<c:choose>
-		                            				<c:when test="${adjournmentList.adjournmentState eq 'Y'}">
-					                            		<input type="button" class="btn btn-block btn-warning btn-sm" onclick="goAdjournmentStateChange(${adjournmentList.adjournmentSeq},'${adjournmentList.adjournmentState}',${adjournmentList.orderSeq});" id="adjournmentState" name="adjournmentState" value="휴회중"> 
+		                            				<c:when test="${manageList.enabled eq true}">
+					                            		<input type="button" class="btn btn-block btn-warning btn-sm" onclick="goEnableStateChange(${manageList.manageSeq},${manageList.enabled});" id="enabled" name="enabled" value="활성화"> 
 		                            				</c:when>
-		                            				<c:when test="${adjournmentList.adjournmentState eq 'N'}">
-					                            		<input type="button" class="btn btn-block btn-info btn-sm" onclick="goAdjournmentStateChange(${adjournmentList.adjournmentSeq},'${adjournmentList.adjournmentState}',${adjournmentList.orderSeq});" id="adjournmentState" name="adjournmentState" value="미휴회"> 
+		                            				<c:when test="${manageList.enabled eq false}">
+					                            		<input type="button" class="btn btn-block btn-info btn-sm" onclick="goEnableStateChange(${manageList.manageSeq},${manageList.enabled});" id="enabled" name="enabled" value="비활성화"> 
 		                            				</c:when>
 		                            				<c:otherwise></c:otherwise>
 		                            			</c:choose>
@@ -112,7 +110,7 @@
                         </table>
                     </div>
                     <div id="attendanceFooter" style="margin-top: 10px;">
-                		<input type="button" class="btn btn-block btn-primary" value="등록" onclick="goAdjournmentRegister();" style="float: right; width:80px;">
+                		<input type="button" class="btn btn-block btn-primary" value="등록" onclick="goManageRegister();" style="float: right; width:80px;">
                 	</div>
                 </div>
             </div>
@@ -137,8 +135,8 @@
     <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
-<form:form action="/adjournment/adjournmentDetail" id="adjournmentInfo" name="adjournmentInfo" modelAttribute="adjournmentVO" method="post">
-	<input type="hidden" id="adjournmentSeq" name="adjournmentSeq">
+<form:form action="/manage/manageDetail" id="manageInfo" name="manageInfo" modelAttribute="manageVO" method="post">
+	<input type="hidden" id="manageSeq" name="manageSeq">
 </form:form>
 
 
@@ -152,29 +150,39 @@
 <script src="/resources/dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
 
-function goAdjournmentDetail(adjournmentSeq){
-	$("#adjournmentSeq").val(adjournmentSeq);
-	$("#adjournmentInfo").submit();
+function goManageDetail(manageSeq){
+	$("#manageInfo #manageSeq").val(manageSeq);
+	$("#manageInfo").submit();
 	
 }
 
-function goAdjournmentRegister(){
-	location.href="/adjournment/adjournmentRegister";
+function goManageRegister(){
+	location.href="/manage/manageRegister";
 }
 
-function goAdjournmentStateChange(adjournmentSeq,adjournmentState,orderSeq){
+function goEnableStateChange(manageSeq,enableState){
 	
-	var changeConfirm = confirm("휴회 상태를 변경 하시겠습니까?");
+	var paramEnable = "";
+	if(enableState == '1'){
+		paramEnable = "비활성화";
+		enableState = "0";
+	}else if(enableState == '0'){
+		paramEnable = "활성화";
+		enableState = "1";
+	}else {
+		alert("해당 계정은 변경 할 수 없습니다. \n 관리자에게 문의 주세요.");
+	}
+	
+	var changeConfirm = confirm("해당 계정을 "+paramEnable+" 하시겠습니까?");
 	if(!changeConfirm){
 		return false;
 	}
 	
 	 $.ajax({
 	        type:'get',
-	        url : "/adjournment/updateAdjournmentState",
-	        data:{	adjournmentSeq 		: 	adjournmentSeq,
-	        		adjournmentState	:	adjournmentState,
-	        		orderSeq			:	orderSeq},
+	        url : "/manage/updateEnableState",
+	        data:{	manageSeq	:	manageSeq,
+	        		enabled		:	enableState},
 	        success : function(data){
 	            if(data == 'success')
 	            {

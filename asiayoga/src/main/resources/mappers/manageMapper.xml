@@ -55,7 +55,9 @@
 	<update id="updateAccessDate">
  		/* manageMapper.updateAccessDate */
  		UPDATE MANAGEINFO
- 		SET access_date = now()
+ 		SET access_date = now(),
+ 			modify_date = now(),
+ 			modify_id = #{id}
  		WHERE id = #{id}
 	</update>
 	
@@ -74,4 +76,58 @@
 		FROM MANAGEINFO mginfo
 		WHERE id = #{id}
 	</select>
+	
+	<!-- 매장 직원 목록  -->
+ 	<select id="manageList" resultType="manageVO">
+ 		/* manageMapper.manageList */
+		SELECT 	@ROWNUM:=@ROWNUM+1 as row_num,
+				mginfo.manage_seq,
+				mginfo.id,
+				mginfo.passwd,
+				mginfo.name,
+				mginfo.authority,
+                CASE WHEN mginfo.authority = 'ROLE_ADMIN' THEN '관리자'
+					 WHEN mginfo.authority = 'ROLE_MANAGER' THEN '매장관리자'
+                     WHEN mginfo.authority = 'ROLE_STAFF' THEN '직원'
+                     ELSE '기타'
+				END AS authority_name,
+				mginfo.access_date,
+				mginfo.enabled,
+				mginfo.store_seq,
+				( SELECT store_name FROM STOREINFO WHERE store_seq = mginfo.store_seq ) AS store_name,
+				mginfo.use_yn
+		FROM MANAGEINFO mginfo
+		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND mginfo.store_seq = #{storeSeq}
+				AND mginfo.authority NOT IN ('ROLE_ADMIN')
+			</when>
+			<otherwise></otherwise>
+		</choose>
+		ORDER BY mginfo.store_seq DESC;
+	</select>
+	
+	<!-- 직원 계정 활성화 여부 변경   -->
+ 	<update id="updateEnableState" parameterType="manageVO">
+ 		/* manageMapper.updateEnableState */
+		UPDATE MANAGEINFO
+		SET enabled = #{enabled},
+			modify_date = now(),
+			modify_id = #{id}
+		WHERE manage_seq = #{manageSeq}
+	</update>
+	
+	<!-- 계정 중복 여부 확인   -->
+ 	<select id="manageDupIdCheck" resultType="manageVO">
+ 		/* manageMapper.manageDupIdCheck */
+		SELECT	manage_seq,
+				id,
+				name,
+				authority
+		FROM	MANAGEINFO
+		WHERE	id = #{id} 
+	</select>
+
 </mapper>

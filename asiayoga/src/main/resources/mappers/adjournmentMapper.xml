@@ -65,7 +65,9 @@
     <update id="updateAdjournmentState" parameterType="adjournmentVO">
  		/* adjournmentMapper.updateAdjournmentState */
  		UPDATE ADJOURNMENTINFO
- 		SET adjournment_state = #{adjournmentState}
+ 		SET adjournment_state = #{adjournmentState},
+ 			modify_date = now(),
+ 			modify_id = #{modifyId}
  		WHERE adjournment_seq = #{adjournmentSeq}
     </update>
     
@@ -107,7 +109,9 @@
  		SET	adjournment_start = #{adjournmentStart},
  			adjournment_end = #{adjournmentEnd},
  		 	adjournment_state = #{adjournmentState},
- 			adjournment_memo = #{adjournmentMemo}
+ 			adjournment_memo = #{adjournmentMemo},
+ 			modify_date =  now(),
+ 			modify_id = #{modifyId}
  		WHERE adjournment_seq = #{adjournmentSeq}
     </update>
     
