@@ -38,9 +38,7 @@ public class AttendanceController {
     @Inject
     private OrderService orderService;
     
-    
     private String menuFirstRoot = "attendance";
-    
 
     // 출석 목록
     @RequestMapping(value = "info")
@@ -55,6 +53,15 @@ public class AttendanceController {
         List<AttendanceVO> list = attendanceService.attendanceList(attendanceVO);
         model.addAttribute("attendanceList",list);
         
+		// 출석 목록 갯수
+		int paramTotalCount = 0;
+		paramTotalCount = attendanceService.attendanceTotalCount(attendanceVO);
+		attendanceVO.setTotalCount(paramTotalCount);
+		attendanceVO.setTotalPage(this.totalPage(paramTotalCount, attendanceVO));
+		attendanceVO.setEndPage(this.endPage(attendanceVO));
+		
+		model.addAttribute("attendanceVO", attendanceVO);
+        
         // 경로 체크
         String currentPath = (String)request.getSession().getAttribute("nowPath");
         if(!currentPath.equals(menuFirstRoot)) {
@@ -64,6 +71,62 @@ public class AttendanceController {
 
         return "/attendance/attendanceInfo";
     }
+    
+    // 출석 정보 화면에서의 검색
+ 	@RequestMapping(value = "searchAttendanceInfo")
+ 	@ResponseBody
+ 	public HashMap<String, Object> searchAttendanceInfo(HttpServletRequest request,Model model,AttendanceVO attendanceVO) throws Exception{
+ 		
+ 		ManageVO manageVO = new ManageVO();
+ 		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+ 		
+ 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+
+ 		attendanceVO.setParamPage((attendanceVO.getTotalRow()*attendanceVO.getPageNum())-attendanceVO.getTotalRow());
+ 		attendanceVO.setStoreSeq(manageVO.getStoreSeq());
+ 		List<AttendanceVO> list = attendanceService.attendanceList(attendanceVO);
+
+ 		int paramTotalCount = 0;
+ 		paramTotalCount = attendanceService.attendanceTotalCount(attendanceVO);
+ 		
+ 		if(list.size() == 0) {
+ 			attendanceVO.setParamPage(0);
+ 			attendanceVO.setPageNum(1);
+ 			attendanceVO.setPageRow(0);
+
+ 			if(paramTotalCount != 0) {
+ 				attendanceVO.setStartPage(1);
+ 				attendanceVO.setTotalPage(this.totalPage(paramTotalCount, attendanceVO));
+ 				attendanceVO.setEndPage(this.endPage(attendanceVO));
+ 				list = attendanceService.attendanceList(attendanceVO);
+ 				hashMap.put("result", "success");
+ 				hashMap.put("attendanceList", list);
+ 			}else {
+ 				hashMap.put("result", "noCount");
+ 			}
+ 			
+ 		} else if(list.size() > 0) {
+ 			int paramStartPage = 0;
+ 			int paramEndPage = 0;
+ 			paramStartPage = (attendanceVO.getPageRow()*5)+1;
+ 			
+ 			attendanceVO.setTotalCount(paramTotalCount);
+ 			attendanceVO.setTotalPage(this.totalPage(paramTotalCount, attendanceVO));
+ 			paramEndPage = this.endPage(attendanceVO);
+ 			attendanceVO.setStartPage(paramStartPage);
+ 			attendanceVO.setEndPage(paramEndPage);
+ 			hashMap.put("result", "success");
+ 			hashMap.put("attendanceList", list);
+ 		} else {
+ 			attendanceVO.setParamPage(0);
+ 			attendanceVO.setPageNum(1);
+ 			attendanceVO.setPageRow(0);
+ 			hashMap.put("result", "fail");
+ 		}
+ 		hashMap.put("attendanceVO", attendanceVO);
+ 		
+ 		return hashMap;
+ 	}
     
 	// 출석 상세 정보
 	@RequestMapping(value = "attendanceDetail", method = RequestMethod.POST)
@@ -190,6 +253,36 @@ public class AttendanceController {
 			
 		}
 		return hashMap;
+	}
+	
+	// 마지막 페이지 점검 
+	public int endPage(AttendanceVO attendanceVO) {
+		
+		int paramEndPage = 0;
+		int paramTotalPage = 0;
+		
+		paramEndPage = attendanceVO.getPageRow()*5+5;
+		paramTotalPage = attendanceVO.getTotalPage();
+		
+		if(paramEndPage >= paramTotalPage) {
+			paramEndPage = paramTotalPage;
+		}
+		
+		return paramEndPage;
+	}
+		
+	// 전체 페이지 설정
+	public int totalPage(int totalCount,AttendanceVO attendanceVO) {
+		
+		int paramTotalPage = 0;
+		
+		if(totalCount%attendanceVO.getTotalRow() == 0) {
+			paramTotalPage = totalCount/attendanceVO.getTotalRow();
+		} else {
+			paramTotalPage = (totalCount/attendanceVO.getTotalRow())+1;
+		}
+		
+		return paramTotalPage;
 	}
 
 }

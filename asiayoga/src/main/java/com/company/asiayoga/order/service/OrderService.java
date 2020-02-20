@@ -9,6 +9,9 @@ public interface OrderService {
 	// 구매 목록
 	List<OrderVO> orderList(OrderVO orderVO) throws Exception;
 	
+	// 구매 목록 갯수
+	int orderTotalCount(OrderVO orderVO) throws Exception;
+	
 	// 고객 1명에 대한 구매 목록
 	List<OrderVO> customerOrderList(OrderVO orderVO) throws Exception;
 	

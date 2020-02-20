@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="/resources/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/resources/dist/css/adminlte.min.css">
+    
+    <link rel="stylesheet" href="/resources/common/css/common.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
@@ -216,6 +218,29 @@
 <script src="/resources/dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
+	
+	$("#findName").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+	
+	$("#popFindName").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+	
 	
 	$('#datepicker').datepicker({
 		dateFormat: 'yy-mm-dd', 

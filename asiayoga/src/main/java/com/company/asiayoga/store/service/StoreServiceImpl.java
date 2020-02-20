@@ -16,10 +16,14 @@ public class StoreServiceImpl implements StoreService{
 	private StoreDAO storeDAO;
 	
 	@Override
-	public List<StoreVO> storeList() throws Exception {
-		return storeDAO.storeList();
+	public List<StoreVO> storeList(StoreVO storeVO) throws Exception {
+		return storeDAO.storeList(storeVO);
 	}
-
+	
+	@Override
+	public int storeTotalCount(StoreVO storeVO) throws Exception {
+		return storeDAO.storeTotalCount(storeVO);
+	}
 	
 	@Override
 	public StoreVO storeDetail(StoreVO storeVO) throws Exception {
@@ -62,6 +66,7 @@ public class StoreServiceImpl implements StoreService{
 	public int updateStore(StoreVO storeVO) throws Exception {
 		return storeDAO.updateStore(storeVO);
 	}
+
 
 
 

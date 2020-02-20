@@ -24,6 +24,11 @@ public class AdjournmentDAO {
 		return sqlSession.selectList(ADJOURNMENT_NAMESPACE+".adjournmentList", adjournmentVO);
 	}
 	
+	// ÈÞÈ¸ È¸¿ø ¸ñ·Ï °¹¼ö
+	public int adjournmentTotalCount(AdjournmentVO adjournmentVO){
+		return sqlSession.selectOne(ADJOURNMENT_NAMESPACE+".adjournmentTotalCount", adjournmentVO);
+	}
+	
 	// ÈÞÈ¸ È¸¿ø µî·Ï
 	public int insertAdjournment(AdjournmentVO adjournmentVO) {
 		return sqlSession.insert(ADJOURNMENT_NAMESPACE+".insertAdjournment",adjournmentVO);

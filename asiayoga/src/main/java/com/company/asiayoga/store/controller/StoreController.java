@@ -1,5 +1,6 @@
 package com.company.asiayoga.store.controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.company.asiayoga.manage.domain.ManageVO;
+import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.store.domain.StoreVO;
 import com.company.asiayoga.store.service.StoreService;
 
@@ -33,9 +36,18 @@ public class StoreController {
 	@RequestMapping(value = "storeList")
 	public String storeList(HttpServletRequest request,Model model) throws Exception {
 		
-		List<StoreVO> list = storeService.storeList();
+		StoreVO storeVO = new StoreVO();
 		
+		List<StoreVO> list = storeService.storeList(storeVO);
 		model.addAttribute("storeList", list);
+		
+		int paramTotalCount = 0;
+		paramTotalCount = storeService.storeTotalCount(storeVO);
+		storeVO.setTotalCount(paramTotalCount);
+		storeVO.setTotalPage(this.totalPage(paramTotalCount, storeVO));
+		storeVO.setEndPage(this.endPage(storeVO));
+		
+		model.addAttribute("storeVO", storeVO);
 		
 		// 경로 체크
 		String currentPath = (String)request.getSession().getAttribute("nowPath");
@@ -45,6 +57,58 @@ public class StoreController {
 		}
 		
 		return "/store/storeList";
+	}
+
+	// 회원 목록 화면에서의 검색
+	@RequestMapping(value = "searchStoreList")
+	@ResponseBody
+	public HashMap<String, Object> searchStoreList(HttpServletRequest request,Model model,StoreVO storeVO) throws Exception{
+		
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+
+		storeVO.setParamPage((storeVO.getTotalRow()*storeVO.getPageNum())-storeVO.getTotalRow());
+		List<StoreVO> list = storeService.storeList(storeVO);
+
+		int paramTotalCount = 0;
+		paramTotalCount = storeService.storeTotalCount(storeVO);
+		
+		if(list.size() == 0) {
+			storeVO.setParamPage(0);
+			storeVO.setPageNum(1);
+			storeVO.setPageRow(0);
+
+			if(paramTotalCount != 0) {
+				storeVO.setStartPage(1);
+				storeVO.setTotalPage(this.totalPage(paramTotalCount, storeVO));
+				storeVO.setEndPage(this.endPage(storeVO));
+				list = storeService.storeList(storeVO);
+				hashMap.put("result", "success");
+				hashMap.put("storeList", list);
+			}else {
+				hashMap.put("result", "noCount");
+			}
+			
+		} else if(list.size() > 0) {
+			int paramStartPage = 0;
+			int paramEndPage = 0;
+			paramStartPage = (storeVO.getPageRow()*5)+1;
+			
+			storeVO.setTotalCount(paramTotalCount);
+			storeVO.setTotalPage(this.totalPage(paramTotalCount, storeVO));
+			paramEndPage = this.endPage(storeVO);
+			storeVO.setStartPage(paramStartPage);
+			storeVO.setEndPage(paramEndPage);
+			hashMap.put("result", "success");
+			hashMap.put("storeList", list);
+		} else {
+			storeVO.setParamPage(0);
+			storeVO.setPageNum(1);
+			storeVO.setPageRow(0);
+			hashMap.put("result", "fail");
+		}
+		hashMap.put("storeVO", storeVO);
+		
+		return hashMap;
 	}
 	
 	// 매장 삭제
@@ -127,5 +191,36 @@ public class StoreController {
 		
 		return result;
 	}
+	
+	// 마지막 페이지 점검 
+	public int endPage(StoreVO storeVO) {
+		
+		int paramEndPage = 0;
+		int paramTotalPage = 0;
+		
+		paramEndPage = storeVO.getPageRow()*5+5;
+		paramTotalPage = storeVO.getTotalPage();
+		
+		if(paramEndPage >= paramTotalPage) {
+			paramEndPage = paramTotalPage;
+		}
+		
+		return paramEndPage;
+	}
+	
+	// 전체 페이지 설정
+	public int totalPage(int totalCount,StoreVO storeVO) {
+		
+		int paramTotalPage = 0;
+		
+		if(totalCount%storeVO.getTotalRow() == 0) {
+			paramTotalPage = totalCount/storeVO.getTotalRow();
+		} else {
+			paramTotalPage = (totalCount/storeVO.getTotalRow())+1;
+		}
+		
+		return paramTotalPage;
+	}
+		
 
 }

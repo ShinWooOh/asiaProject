@@ -23,6 +23,11 @@ public class ItemDAO {
 		return sqlSession.selectList(ITEM_NAMESPACE+".itemList", itemVO);
 	}
 	
+	// 前格 格废 肮荐
+	public int itemTotalCount(ItemVO itemVO){
+		return sqlSession.selectOne(ITEM_NAMESPACE+".itemTotalCount", itemVO);
+	}
+	
 	// 前格 历厘
 	public int insertItem(ItemVO itemVO){
 		return sqlSession.insert(ITEM_NAMESPACE+".insertItem", itemVO);

@@ -21,6 +21,11 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
+	public int itemTotalCount(ItemVO itemVO) throws Exception {
+		return itemDAO.itemTotalCount(itemVO);
+	}
+	
+	@Override
 	public int insertItem(ItemVO itemVO) throws Exception {
 		return itemDAO.insertItem(itemVO);
 	}
@@ -39,5 +44,8 @@ public class ItemServiceImpl implements ItemService {
 	public int updateItem(ItemVO itemVO) throws Exception {
 		return itemDAO.updateItem(itemVO);
 	}
+
+	
+	
 
 }

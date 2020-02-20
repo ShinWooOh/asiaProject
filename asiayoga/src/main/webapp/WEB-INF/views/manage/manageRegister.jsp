@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="/resources/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/resources/dist/css/adminlte.min.css">
+    
+    <link rel="stylesheet" href="/resources/common/css/common.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
@@ -65,14 +67,14 @@
             <div class="col-lg-12">
                 <div>
                     <div>
-                    	<c:set var="memberDetail" value="${memberDetail}" />
                         <table class="table table-bordered">
                             <tbody>
     							<tr>
 	                                <th style="width: 10%;">아이디</th>
 	                                <td>
 	                                	<input type="text" id="id" name="id">
-	                                	<input type="hidden" id="paramIdDup" name="paramIdDup" value="0">
+	                                	<input type="hidden" id="paramId" name="paramId" value="">
+	                                	<input type="hidden" id="dupCheckYn" name="dupCheckYn" value="N">
 	                                	<input type="button" id="dupCheck" name="dupCheck" onclick="goDupCheck();" value="중복체크">
 	                                	&nbsp;<font id="idMent" style="color:red; display: none;"></font>
 	                                </td>
@@ -86,24 +88,43 @@
 	                                <td><input type="text" id="name" name="name"></td>
 	                            </tr>
 	                            <tr>
-	                                <th style="width: 10%">권한</th>
+	                                <th style="width: 10%">연락처</th>
 	                                <td>
-	                                	<select>
-	                                		<option value="000">권한을 선택하세요</option>
-	                                		<option value="ROLE_MANAGER">매장관리자</option>
-	                                		<option value="ROLE_STAFF">직원</option>
+	                               	 	<select id="phone1" name="phone1" style="width: 70px; margin-right: 3px;">
+	               							<option value="010">010</option>
+	               							<option value="011">011</option>
+	               							<option value="016">016</option>
+	               							<option value="017">017</option>
+	               							<option value="018">018</option>
+	               							<option value="019">019</option>
+	               						</select>
+									    -<input type="number" id="phone2" name="phone2" style="width: 70px; margin-left: 5px;">
+									    -<input type="number" id="phone3" name="phone3" style="width: 70px; margin-left: 5px;">
+	                                </td>
+	                            </tr>
+	                            <tr>
+	                                <th style="width: 10%">직급</th>
+	                                <td>
+	                                	<select id="manageGroupSeq" name="manageGroupSeq" style="width: 250px;">
+	                                		<option value="000">직급을 선택하세요</option>
+	                                		<c:forEach var="manageGroupList" items="${manageGroupList}">
+		                                		<option value="${manageGroupList.manageGroupSeq}">${manageGroupList.groupName}</option>
+	                                		</c:forEach>
 	                                	</select>
 	                                </td>
 	                            </tr>
 	                            <tr>
-	                                <th style="width: 20%">매장명</th>
+	                                <th style="width: 10%">매장명</th>
 	                                <td><%= manageInfo.getStoreName() %></td>
 	                            </tr>
-                           
+                           		<tr>
+                					<th style="width: 10%">메모</th>
+                					<td><textarea id="memo" name="memo" rows="3" cols="150"></textarea></td>
+	                			</tr>
                             </tbody>
                         </table>
                     </div>
-                    <div id="adjournmentFooter" style="margin-top: 10px;">
+                    <div id="manageFooter" style="margin-top: 10px;">
                 		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goManageList();" style="float: left; width:80px;">
                 		<input type="button" class="btn btn-block btn-success" value="등록" onclick="goManageRegister();" style="float: right; width:80px;">
                 	</div>
@@ -129,14 +150,13 @@
     <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
-<form:form id="adjournmentInfo" name="adjournmentInfo" modelAttribute="adjournmentVO" method="post">
-	<input type="hidden" id="memberSeq" name="memberSeq">
-	<input type="hidden" id="storeSeq" name="storeSeq">
-	<input type="hidden" id="orderSeq" name="orderSeq">
-	<input type="hidden" id="productSeq" name="productSeq">
-	<input type="hidden" id="adjournmentStart" name="adjournmentStart">
-	<input type="hidden" id="adjournmentEnd" name="adjournmentEnd">
-	<input type="hidden" id="adjournmentMemo" name="adjournmentMemo">
+<form:form id="manageInfo" name="manageInfo" modelAttribute="manageVO">
+	<input type="hidden" id="id" name="id">
+	<input type="hidden" id="passwd" name="passwd">
+	<input type="hidden" id="name" name="name">
+	<input type="hidden" id="phone" name="phone">
+	<input type="hidden" id="manageGroupSeq" name="manageGroupSeq">
+	<input type="hidden" id=memo name="memo">
 	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </form:form>
 <!-- REQUIRED SCRIPTS -->
@@ -169,35 +189,59 @@ function goManageList(){
 	location.href="/manage/manageList";
 }
 
-function goManageRegister(memberSeq,storeSeq,orderSeq){
+function goManageRegister(){
 	
 	if($("#paramName").val() == ''){
 		alert("'이름 찾기' 버튼을 통하여 회원을 선택해주세요.");
 		return false;
 	}
 	
+	if($("#id").val() == ''){
+		alert("아이디를 입력해주세요.");
+		$("#id").focus();
+		return false;
+	}
+	
+	var tempId = $("#id").val();
+	if($("#paramId").val() == tempId){
+		$("#dupCheckYn").val('Y'); 
+	}else{
+		$("#dupCheckYn").val('N'); 
+	}
+	
+	if($("#dupCheckYn").val() == 'N'){
+		alert("아이디 중복체크를 해주세요.");
+		return false;
+	}
+	
 	var insertConfirm = confirm("직원 등록 하시겠습니까?");
 	if(insertConfirm){
-		manageRegister(memberSeq,storeSeq,orderSeq);
+		manageRegister();
 	}
 	
 }
 
-function manageRegister(memberSeq,storeSeq,orderSeq){
+function manageRegister(){
 	
-	$("#adjournmentInfo #memberSeq").val(memberSeq);
-	$("#adjournmentInfo #storeSeq").val(storeSeq);
-	$("#adjournmentInfo #orderSeq").val(orderSeq);
+	var phone1 = $("#phone1").val();
+	var phone2 = $("#phone2").val();
+	var phone3 = $("#phone3").val();
+	var phone = '';
 	
-	var adjournmentStartDay = $("#adjournmentStart").val();
-	var adjournmentEndDay = $("#adjournmentEnd").val();
+	phone = phone1 +'-'+ phone2 +'-'+ phone3;
+	$("#manageInfo #phone").val(phone);
+	$("#manageInfo #id").val($("#id").val());
+	$("#manageInfo #passwd").val($("#passwd").val());
+	$("#manageInfo #name").val($("#name").val());
 	
-	$("#adjournmentInfo #adjournmentMemo").val($("#adjournmentMemo").val());
+	var manageGroupSeq = $("#manageGroupSeq").val();
+	$("#manageInfo #manageGroupSeq").val(manageGroupSeq);
+	$("#manageInfo #memo").val($("#memo").val());
 	
 	$.ajax({
 		type: 'POST',
-        url : "/adjournment/insertAdjournment",
-        data: $("#adjournmentInfo").serialize(),
+        url : "/manage/insertManage",
+        data: $("#manageInfo").serialize(),
         success : function(data){
             if(data == 'success')
             {
@@ -232,18 +276,18 @@ function goDupCheck() {
         data: {	id	:	paramId},
         success : function(data){
             if(data == 'success') {
-              /* alert("사용가능한 아이디입니다."); */
               $("#idMent").text("*사용가능한 아이디입니다.");
               $("#idMent").show();
-              $("#paramIdDup").val(1);
+              $("#paramId").val(paramId);
+              $("#dupCheckYn").val('Y');
             } else if(data == 'dupId'){
               $("#idMent").text("*중복된 아이디입니다. 다시 입력해주세요.");
               $("#idMent").show();
-              $("#paramIdDup").val(0);
+              $("#dupCheckYn").val('N');
             } else if(data == 'admin'){
               $("#idMent").text("*해당 아이디로는 사용하실 수 없습니다. 다시 입력해 주세요.");
               $("#idMent").show();
-              $("#paramIdDup").val(0);
+              $("#dupCheckYn").val('N');
             }
         },
         error:function(request,status,error){

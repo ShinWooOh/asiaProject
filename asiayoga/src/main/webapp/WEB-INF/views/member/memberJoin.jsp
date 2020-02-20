@@ -13,10 +13,13 @@
 
     <title>회원 정보 등록</title>
 
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="/resources/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/resources/dist/css/adminlte.min.css">
+    
+    <link rel="stylesheet" href="/resources/common/css/common.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
@@ -107,8 +110,6 @@
 					                				<option><c:out value="${k}"/></option>
 					                			</c:forEach>
 					                		</select>일
-					                		<!-- <input type="text" id="memberBirth2" name="memberBirth2" maxlength="2" size="4" style="margin-left: 5px;">월
-					                		<input type="text" id="memberBirth3" name="memberBirth3" maxlength="2" size="4" style="margin-left: 5px;">일 -->
 					                		<input type="hidden" id="birth" name="birth">
 	                					</td>
 	                				</tr>
@@ -222,9 +223,16 @@ function insertMember(){
 	
 	var birth1 = $("#memberBirth1").val();
 	var birth2 = $("#memberBirth2").val();
-	var birth3 = $("#memberBirth2").val();
-	var birth = '';
+	var birth3 = $("#memberBirth3").val();
+
+	if(birth2 < 10){
+		birth2 = '0'+birth2;
+	}
+	if(birth3 < 10){
+		birth3 = '0'+birth3;
+	}
 	
+	var birth = '';
 	birth = birth1 +'-'+ birth2 +'-'+ birth3;
 	$("#birth").val(birth);
 	

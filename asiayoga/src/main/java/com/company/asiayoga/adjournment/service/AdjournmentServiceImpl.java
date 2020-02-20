@@ -30,6 +30,11 @@ public class AdjournmentServiceImpl implements AdjournmentService{
 	}
 	
 	@Override
+	public int adjournmentTotalCount(AdjournmentVO adjournmentVO) throws Exception {
+		return adjournmentDAO.adjournmentTotalCount(adjournmentVO);
+	}
+	
+	@Override
 	public int insertAdjournment(AdjournmentVO adjournmentVO) throws Exception {
 		return adjournmentDAO.insertAdjournment(adjournmentVO);
 	}
@@ -90,6 +95,7 @@ public class AdjournmentServiceImpl implements AdjournmentService{
 	public List<MemberVO> memberSearch(MemberVO memberVO) throws Exception {
 		return adjournmentDAO.memberSearch(memberVO);
 	}
+
 
 
 

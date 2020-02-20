@@ -27,6 +27,11 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	@Override
+	public int attendanceTotalCount(AttendanceVO attendanceVO) throws Exception {
+		return attendanceDAO.attendanceTotalCount(attendanceVO);
+	}
+	
+	@Override
 	public List<AttendanceVO> attendanceDetail(AttendanceVO attendanceVO) throws Exception {
 		return attendanceDAO.attendanceDetail(attendanceVO);
 	}
@@ -63,5 +68,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	public int attendanceDelete(AttendanceVO attendanceVO) throws Exception {
 		return attendanceDAO.attendanceDelete(attendanceVO);
 	}
+
+	
 	
 }

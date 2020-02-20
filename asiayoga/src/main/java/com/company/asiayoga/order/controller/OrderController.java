@@ -53,9 +53,16 @@ public class OrderController {
 		OrderVO orderVO = new OrderVO();
 		orderVO.setStoreSeq(manageVO.getStoreSeq());
 		
-		
 		List<OrderVO> list = orderService.orderList(orderVO);
 		model.addAttribute("orderList", list);
+		
+		int paramTotalCount = 0;
+		paramTotalCount = orderService.orderTotalCount(orderVO);
+		orderVO.setTotalCount(paramTotalCount);
+		orderVO.setTotalPage(this.totalPage(paramTotalCount, orderVO));
+		orderVO.setEndPage(this.endPage(orderVO));
+		
+		model.addAttribute("orderVO", orderVO);
 		
 		// 경로 체크
 		String currentPath = (String)request.getSession().getAttribute("nowPath");
@@ -65,6 +72,62 @@ public class OrderController {
 		}
 		
 		return "/order/orderList";
+	}
+	
+	// 회원 목록 화면에서의 검색
+	@RequestMapping(value = "searchOrderList")
+	@ResponseBody
+	public HashMap<String, Object> searchOrderList(HttpServletRequest request,Model model,OrderVO orderVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+	
+		orderVO.setParamPage((orderVO.getTotalRow()*orderVO.getPageNum())-orderVO.getTotalRow());
+		orderVO.setStoreSeq(manageVO.getStoreSeq());
+		List<OrderVO> list = orderService.orderList(orderVO);
+	
+		int paramTotalCount = 0;
+		paramTotalCount = orderService.orderTotalCount(orderVO);
+		
+		if(list.size() == 0) {
+			orderVO.setParamPage(0);
+			orderVO.setPageNum(1);
+			orderVO.setPageRow(0);
+	
+			if(paramTotalCount != 0) {
+				orderVO.setStartPage(1);
+				orderVO.setTotalPage(this.totalPage(paramTotalCount, orderVO));
+				orderVO.setEndPage(this.endPage(orderVO));
+				list = orderService.orderList(orderVO);
+				hashMap.put("result", "success");
+				hashMap.put("orderList", list);
+			}else {
+				hashMap.put("result", "noCount");
+			}
+			
+		} else if(list.size() > 0) {
+			int paramStartPage = 0;
+			int paramEndPage = 0;
+			paramStartPage = (orderVO.getPageRow()*5)+1;
+			
+			orderVO.setTotalCount(paramTotalCount);
+			orderVO.setTotalPage(this.totalPage(paramTotalCount, orderVO));
+			paramEndPage = this.endPage(orderVO);
+			orderVO.setStartPage(paramStartPage);
+			orderVO.setEndPage(paramEndPage);
+			hashMap.put("result", "success");
+			hashMap.put("orderList", list);
+		} else {
+			orderVO.setParamPage(0);
+			orderVO.setPageNum(1);
+			orderVO.setPageRow(0);
+			hashMap.put("result", "fail");
+		}
+		hashMap.put("orderVO", orderVO);
+		
+		return hashMap;
 	}
 	
 	// 구매 내역 삭제
@@ -217,6 +280,36 @@ public class OrderController {
 		}
 		
 		return result;
+	}
+	
+	// 마지막 페이지 점검 
+	public int endPage(OrderVO orderVO) {
+		
+		int paramEndPage = 0;
+		int paramTotalPage = 0;
+		
+		paramEndPage = orderVO.getPageRow()*5+5;
+		paramTotalPage = orderVO.getTotalPage();
+		
+		if(paramEndPage >= paramTotalPage) {
+			paramEndPage = paramTotalPage;
+		}
+		
+		return paramEndPage;
+	}
+		
+		// 전체 페이지 설정
+	public int totalPage(int totalCount,OrderVO orderVO) {
+		
+		int paramTotalPage = 0;
+		
+		if(totalCount%orderVO.getTotalRow() == 0) {
+			paramTotalPage = totalCount/orderVO.getTotalRow();
+		} else {
+			paramTotalPage = (totalCount/orderVO.getTotalRow())+1;
+		}
+		
+		return paramTotalPage;
 	}
 
 }

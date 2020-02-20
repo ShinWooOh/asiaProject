@@ -16,8 +16,13 @@ public class MemberServiceImpl implements MemberService {
 	private MemberDAO memberDAO;
 
 	@Override
-	public List<MemberVO> memberList(int storeSeq) throws Exception {
-		return memberDAO.memberList(storeSeq);
+	public List<MemberVO> memberList(MemberVO memberVO) throws Exception {
+		return memberDAO.memberList(memberVO);
+	}
+	
+	@Override
+	public int memberTotalCount(MemberVO memberVO) throws Exception {
+		return memberDAO.memberTotalCount(memberVO);
 	}
 
 	@Override
@@ -44,6 +49,7 @@ public class MemberServiceImpl implements MemberService {
 	public List<MemberVO> searchMemberList(MemberVO memberVO) throws Exception {
 		return memberDAO.searchMemberList(memberVO);
 	}
+
 	
 
 }

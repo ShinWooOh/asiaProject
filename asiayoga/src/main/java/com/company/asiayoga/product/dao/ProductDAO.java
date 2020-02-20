@@ -22,6 +22,11 @@ public class ProductDAO {
 		return sqlSession.selectList(PRODUCT_NAMESPACE+".productList", productVO);
 	}
 	
+	// 상품 목록 갯수
+	public int productTotalCount(ProductVO productVO) throws Exception{
+		return sqlSession.selectOne(PRODUCT_NAMESPACE+".productTotalCount", productVO);
+	}
+	
 	// 상품 등록
 	public int insertProduct(ProductVO productVO) throws Exception{
 		return sqlSession.insert(PRODUCT_NAMESPACE+".insertProduct", productVO);

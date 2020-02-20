@@ -11,13 +11,15 @@
 	<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 	<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-    <title>직원 그룹 상세</title>
+    <title>직급 상세</title>
 
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="/resources/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/resources/dist/css/adminlte.min.css">
+    
+    <link rel="stylesheet" href="/resources/common/css/common.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
@@ -45,13 +47,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">직원 그룹 등록</h1>
+                        <h1 class="m-0 text-dark">직급 등록</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item">직원 그룹 관리</li>
-                            <li class="breadcrumb-item active">직원 그룹 상세</li>
+                            <li class="breadcrumb-item">직급 관리</li>
+                            <li class="breadcrumb-item active">직급 상세</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -76,7 +78,7 @@
 	                                </td>
 	                            </tr>
 	                            <tr>
-	                                <th style="width: 10%">그룹명</th>
+	                                <th style="width: 10%">직급명</th>
 	                                <td>
 	                                	<input type="text" id="groupName" name="groupName" value="${manageGroupDetail.groupName}">
 	                                	<input type="hidden" id="paramName" name="paramName" value="${manageGroupDetail.groupName}">
@@ -191,13 +193,13 @@ function goUpdateManageGroup(manageGroupSeq){
 	} else {
 		if($("#tempName").val() != groupName){
 			if($("#paramName").val() != groupName){
-				alert("그룹명 중복체크를 해주세요.");
+				alert("직급명 중복체크를 해주세요.");
 				return false;
 			}
 		}
 	}
 	
-	var updateConfirm = confirm("그룹을 수정 하시겠습니까?");
+	var updateConfirm = confirm("직급을 수정 하시겠습니까?");
 	if(updateConfirm){
 		updateManageGroup(manageGroupSeq);
 	}
@@ -232,19 +234,19 @@ function goDupCheck() {
 
 	var paramName = $("#groupName").val();
 	if($("#groupName").val() == ''){
-		$("#idMent").text("*그룹명을 입력해 주세요.");
+		$("#idMent").text("*직급명을 입력해 주세요.");
         $("#idMent").show();
 		return false;
 	}
 	
 	if($("#paramName").val() == paramName){
-		$("#idMent").text("*이름이 같은 그룹명은 중복체크 할 수 없습니다.");
+		$("#idMent").text("*이름이 같은 직급명은 중복체크 할 수 없습니다.");
         $("#idMent").show();
         return false;
 	}
 	
 	if(paramName == 'admin'){
-		$("#idMent").text("*해당 그룹명으로는 사용하실 수 없습니다. 다시 입력해 주세요.");
+		$("#idMent").text("*해당 직급명으로는 사용하실 수 없습니다. 다시 입력해 주세요.");
         $("#idMent").show();
 		return false;
 	}
@@ -255,16 +257,16 @@ function goDupCheck() {
         data: {	groupName	:	paramName},
         success : function(data){
             if(data == 'success') {
-              $("#idMent").text("*사용가능한 그룹명 입니다.");
+              $("#idMent").text("*사용가능한 직급명 입니다.");
               $("#idMent").show();
               $("#dupCheckYn").val('Y');
               $("#tempName").val(paramName);
             } else if(data == 'dupName'){
-              $("#idMent").text("*중복된 그룹명 입니다. 다시 입력해주세요.");
+              $("#idMent").text("*중복된 직급명 입니다. 다시 입력해주세요.");
               $("#idMent").show();
               $("#dupCheckYn").val('N');
             } else if(data == 'admin'){
-              $("#idMent").text("*해당 그룹명으로는 사용하실 수 없습니다. 다시 입력해 주세요.");
+              $("#idMent").text("*해당 직급명으로는 사용하실 수 없습니다. 다시 입력해 주세요.");
               $("#idMent").show();
               $("#dupCheckYn").val('N');
             }

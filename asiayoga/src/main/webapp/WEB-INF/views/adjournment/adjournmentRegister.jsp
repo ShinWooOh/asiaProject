@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="/resources/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/resources/dist/css/adminlte.min.css">
+    
+    <link rel="stylesheet" href="/resources/common/css/common.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
@@ -409,7 +411,7 @@ function popMemberList(popMemberList){
 		paramProductCount = popMemberList[i].productCount;
 		paramRemainingCount = popMemberList[i].remainingCount;
 		
-		paramList = '<td>'+popMemberList[i].rowNum+'</td>';
+		paramList += '<td>'+popMemberList[i].rowNum+'</td>';
 		paramList += '<td>';
  		paramList += '<a href="#" onclick="popMemberSelect('+paramMemberSeq+', \''+paramName+'\' , \''+paramPhone+'\' , \''+paramEmail+'\' , \''+paramBirth+'\' , \''+paramSex+'\' , '+paramProductSeq+' , \''+paramProductName+'\' , '+paramStoreSeq+' , \''+paramStoreName+'\' , '+paramOrderSeq+' , \''+paramItemName+'\' , '+paramProductCount+' , '+paramRemainingCount+');">'; 
 		paramList +=  popMemberList[i].name+'</a>';

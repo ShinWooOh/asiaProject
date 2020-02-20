@@ -23,6 +23,11 @@ public class OrderDAO {
 		return sqlSession.selectList(ORDER_NAMESPACE+".orderList", orderVO);
 	}
 	
+	// 구매 목록 갯수
+	public int orderTotalCount(OrderVO orderVO){
+		return sqlSession.selectOne(ORDER_NAMESPACE+".orderTotalCount", orderVO);
+	}
+	
 	// 고객 1명에 대한 구매 목록
 	public List<OrderVO> customerOrderList(OrderVO orderVO){
 		return sqlSession.selectList(ORDER_NAMESPACE+".customerOrderList", orderVO);

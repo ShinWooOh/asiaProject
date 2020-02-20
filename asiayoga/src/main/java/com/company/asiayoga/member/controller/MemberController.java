@@ -1,5 +1,6 @@
 package com.company.asiayoga.member.controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -8,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Repository;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,14 +33,22 @@ public class MemberController {
 	
 	// 회원 목록 화면
 	@RequestMapping(value = "memberList")
-	public String memberList(HttpServletRequest request,Model model) throws Exception{
+	public String memberList(HttpServletRequest request,Model model,MemberVO memberVO) throws Exception{
 		
 		ManageVO manageVO = new ManageVO();
 		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
-		 
-		List<MemberVO> list = memberService.memberList(manageVO.getStoreSeq());
+		memberVO.setStoreSeq(manageVO.getStoreSeq());
+		List<MemberVO> list = memberService.memberList(memberVO);
 		model.addAttribute("memberList", list);
+		
+		int paramTotalCount = 0;
+		paramTotalCount = memberService.memberTotalCount(memberVO);
+		memberVO.setTotalCount(paramTotalCount);
+		memberVO.setTotalPage(this.totalPage(paramTotalCount, memberVO));
+		memberVO.setEndPage(this.endPage(memberVO));
+		
+		model.addAttribute("memberVO", memberVO);
 		
 		// 경로 체크
 		String currentPath = (String)request.getSession().getAttribute("nowPath");
@@ -48,6 +58,62 @@ public class MemberController {
 		}
 		
 		return "/member/memberList";
+	}
+	
+	// 회원 목록 화면에서의 검색
+	@RequestMapping(value = "searchMemberList")
+	@ResponseBody
+	public HashMap<String, Object> searchMemberList(HttpServletRequest request,Model model,MemberVO memberVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+
+		memberVO.setParamPage((memberVO.getTotalRow()*memberVO.getPageNum())-memberVO.getTotalRow());
+		memberVO.setStoreSeq(manageVO.getStoreSeq());
+		List<MemberVO> list = memberService.memberList(memberVO);
+
+		int paramTotalCount = 0;
+		paramTotalCount = memberService.memberTotalCount(memberVO);
+		
+		if(list.size() == 0) {
+			memberVO.setParamPage(0);
+			memberVO.setPageNum(1);
+			memberVO.setPageRow(0);
+
+			if(paramTotalCount != 0) {
+				memberVO.setStartPage(1);
+				memberVO.setTotalPage(this.totalPage(paramTotalCount, memberVO));
+				memberVO.setEndPage(this.endPage(memberVO));
+				list = memberService.memberList(memberVO);
+				hashMap.put("result", "success");
+				hashMap.put("memberList", list);
+			}else {
+				hashMap.put("result", "noCount");
+			}
+			
+		} else if(list.size() > 0) {
+			int paramStartPage = 0;
+			int paramEndPage = 0;
+			paramStartPage = (memberVO.getPageRow()*5)+1;
+			
+			memberVO.setTotalCount(paramTotalCount);
+			memberVO.setTotalPage(this.totalPage(paramTotalCount, memberVO));
+			paramEndPage = this.endPage(memberVO);
+			memberVO.setStartPage(paramStartPage);
+			memberVO.setEndPage(paramEndPage);
+			hashMap.put("result", "success");
+			hashMap.put("memberList", list);
+		} else {
+			memberVO.setParamPage(0);
+			memberVO.setPageNum(1);
+			memberVO.setPageRow(0);
+			hashMap.put("result", "fail");
+		}
+		hashMap.put("memberVO", memberVO);
+		
+		return hashMap;
 	}
 	
 	// 회원정보 상세 화면
@@ -195,4 +261,34 @@ public class MemberController {
 		return result;
 	}
 
+	// 마지막 페이지 점검 
+	public int endPage(MemberVO memberVO) {
+		
+		int paramEndPage = 0;
+		int paramTotalPage = 0;
+		
+		paramEndPage = memberVO.getPageRow()*5+5;
+		paramTotalPage = memberVO.getTotalPage();
+		
+		if(paramEndPage >= paramTotalPage) {
+			paramEndPage = paramTotalPage;
+		}
+		
+		return paramEndPage;
+	}
+	
+	// 전체 페이지 설정
+	public int totalPage(int totalCount,MemberVO memberVO) {
+		
+		int paramTotalPage = 0;
+		
+		if(totalCount%memberVO.getTotalRow() == 0) {
+			paramTotalPage = totalCount/memberVO.getTotalRow();
+		} else {
+			paramTotalPage = (totalCount/memberVO.getTotalRow())+1;
+		}
+		
+		return paramTotalPage;
+	}
+		
 }

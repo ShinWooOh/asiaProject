@@ -2,7 +2,7 @@ package com.company.asiayoga.manage.domain;
 
 import java.util.Date;
 
-public class ManageGroupVO {
+public class ManageGroupVO extends ManageVO {
 	
 	private int manageGroupSeq;						// 관리자 그룹 번호
 	private String groupName;						// 그룹명

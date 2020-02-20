@@ -21,6 +21,11 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
+	public int productTotalCount(ProductVO productVO) throws Exception {
+		return productDAO.productTotalCount(productVO);
+	}
+	
+	@Override
 	public int insertProduct(ProductVO productVO) throws Exception {
 		return productDAO.insertProduct(productVO);
 	}
@@ -39,5 +44,6 @@ public class ProductServiceImpl implements ProductService {
 	public int updateProduct(ProductVO productVO) throws Exception {
 		return productDAO.updateProduct(productVO);
 	}
+
 
 }

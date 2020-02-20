@@ -2,7 +2,9 @@ package com.company.asiayoga.adjournment.domain;
 
 import java.util.Date;
 
-public class AdjournmentVO {
+import com.company.asiayoga.common.domain.PagingVO;
+
+public class AdjournmentVO extends PagingVO {
 	
 	private int adjournmentSeq; 							// 휴회번호
 	private int memberSeq;									// 회원번호

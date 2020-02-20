@@ -5,6 +5,10 @@
 
 <mapper namespace="com.company.asiayoga.mapper.itemMapper">
 
+	<sql id="commomPaging">
+  		LIMIT #{totalRow} OFFSET #{paramPage};
+  	</sql>
+
 	<!-- 품목 목록  -->
 	<select id="itemList" parameterType="itemVO" resultType="itemVO">
 		/* itemMapper.itemList */
@@ -35,7 +39,43 @@
 				AND del_yn ='N'
 				ORDER BY modify_date ASC
 			 ) AS tempA , (SELECT @ROWNUM :=0) AS R
-		ORDER BY row_num DESC;
+		WHERE 1=1
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		tempA.store_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.item_name LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
+		ORDER BY row_num DESC
+		<include refid="commomPaging"/>
+	</select>
+	
+	<!-- 품목 목록  갯수-->
+	<select id="itemTotalCount" parameterType="itemVO" resultType="int">
+		/* itemMapper.itemTotalCount */
+		SELECT COUNT(*)
+		FROM (	SELECT	item_seq,
+						store_seq,
+						( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} AND del_yn ='N') AS store_name,
+						large_category,
+						item_name,
+						del_yn,
+						register_date, 
+						register_id,
+						modify_date,
+						modify_id
+				FROM PRODUCTITEM 
+				WHERE store_seq= #{storeSeq}
+				AND del_yn ='N'
+				ORDER BY modify_date ASC
+			 ) AS tempA , (SELECT @ROWNUM :=0) AS R
+		WHERE 1=1
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		tempA.store_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.item_name LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
 	</select>
 	
 	<!-- 품목 저장  -->

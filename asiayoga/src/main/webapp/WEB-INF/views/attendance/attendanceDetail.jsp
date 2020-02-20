@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="/resources/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/resources/dist/css/adminlte.min.css">
+    
+    <link rel="stylesheet" href="/resources/common/css/common.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
@@ -110,8 +112,8 @@
 		                            	<td><fmt:formatDate value="${orderList.expirationDay}" pattern="yyyy-MM-dd"/></td>
 		                            	<td><c:out value="${orderList.productCount}"/></td>
 		                            	<td><c:out value="${orderList.remainingCount}"/></td>
-		                            	<td>
-					                		<input type="button" class="btn btn-block btn-success" value="출석등록" onclick="goAttendanceRegister(${attendanceVO.memberSeq},${attendanceVO.storeSeq},${orderList.orderSeq});" style="width:100px;">
+		                            	<td align="center">
+					                		<input type="button" class="btn btn-block btn-success btn-sm" value="출석등록" onclick="goAttendanceRegister(${attendanceVO.memberSeq},${attendanceVO.storeSeq},${orderList.orderSeq});" style="width: 80px;">
 		                            	</td>
 		                            </tr>
 	                            </c:forEach>
@@ -180,6 +182,19 @@
 <!-- AdminLTE App -->
 <script src="/resources/dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
+
+$(document).ready(function() {
+
+	$(".table > tbody > tr > th").css({
+		"padding"			: "5px",
+		"vertical-align"	: "middle"
+	});
+	$(".table > tbody > tr > td").css({
+		"padding"			: "5px",
+		"vertical-align"	: "middle"
+	});
+	
+});
 
 function goAttendanceList(){
 	location.href="/attendance/info";

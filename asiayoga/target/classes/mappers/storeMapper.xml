@@ -5,6 +5,10 @@
 
 <mapper namespace="com.company.asiayoga.mapper.storeMapper">
 
+	<sql id="commomPaging">
+  		LIMIT #{totalRow} OFFSET #{paramPage};
+  	</sql>
+
 	<!-- 매장 목록  -->
 	<select id="storeList" parameterType="storeVO" resultType="storeVO">
 		/* storeMapper.storeList */
@@ -18,7 +22,32 @@
 			store_memo
 		FROM STOREINFO, (SELECT @ROWNUM :=0) AS R
 		WHERE del_yn = 'N'
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		store_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	store_tel LIKE CONCAT('%',#{searchWord},'%')
+				OR 	store_phone LIKE CONCAT('%',#{searchWord},'%')
+				OR 	store_address LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
 		ORDER BY store_seq DESC
+		<include refid="commomPaging"/>
+	</select>
+	
+	<!-- 매장 목록  갯수-->
+	<select id="storeTotalCount" parameterType="storeVO" resultType="int">
+		/* storeMapper.storeTotalCount */
+		SELECT	COUNT(*)		
+		FROM STOREINFO
+		WHERE del_yn = 'N'
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		store_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	store_tel LIKE CONCAT('%',#{searchWord},'%')
+				OR 	store_phone LIKE CONCAT('%',#{searchWord},'%')
+				OR 	store_address LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
 	</select>
 	
 	<!-- 매장 상세  -->

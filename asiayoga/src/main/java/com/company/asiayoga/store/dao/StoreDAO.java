@@ -18,8 +18,13 @@ public class StoreDAO {
 	private static final String STORE_NAMESPACE = "com.company.asiayoga.mapper.storeMapper";
 	
 	// 매장 목록
-	public List<StoreVO> storeList() throws Exception{
-		return sqlSession.selectList(STORE_NAMESPACE+".storeList");
+	public List<StoreVO> storeList(StoreVO storeVO) throws Exception{
+		return sqlSession.selectList(STORE_NAMESPACE+".storeList",storeVO);
+	}
+	
+	// 메장 목록 갯수
+	public int storeTotalCount(StoreVO storeVO) throws Exception{
+		return sqlSession.selectOne(STORE_NAMESPACE+".storeTotalCount",storeVO);
 	}
 	
 	// 매장 상세

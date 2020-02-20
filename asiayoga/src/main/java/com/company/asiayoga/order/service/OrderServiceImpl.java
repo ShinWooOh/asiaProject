@@ -23,6 +23,11 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Override
+	public int orderTotalCount(OrderVO orderVO) throws Exception {
+		return orderDAO.orderTotalCount(orderVO);
+	}
+	
+	@Override
 	public List<OrderVO> customerOrderList(OrderVO orderVO) throws Exception {
 		return orderDAO.customerOrderList(orderVO);
 	}
@@ -59,6 +64,7 @@ public class OrderServiceImpl implements OrderService {
 	public int updateOrder(OrderVO orderVO) throws Exception {
 		return orderDAO.updateOrder(orderVO);
 	}
+
 	
 	
 	

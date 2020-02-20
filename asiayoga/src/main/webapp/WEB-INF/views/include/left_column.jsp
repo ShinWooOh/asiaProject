@@ -285,13 +285,13 @@
                         <li class="nav-item">
                             <a href="/manage/manageGroupList" class="nav-link active">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>직원 그룹 목록</p>
+                                <p>직급 목록</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="/manage/manageGroupRegister" class="nav-link active">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>직원 그룹 등록</p>
+                                <p>직급 등록</p>
                             </a>
                         </li>
                     </ul>

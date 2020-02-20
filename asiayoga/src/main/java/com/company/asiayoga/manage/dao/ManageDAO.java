@@ -24,9 +24,14 @@ public class ManageDAO {
 		return sqlSession.selectOne(MANAGE_NAMESPACE+".manageDetail", id);
 	}
 	
-	// 매장 직원 목록
+	// 직원 목록
 	public List<ManageVO> manageList(ManageVO manageVO) throws Exception {
 		return sqlSession.selectList(MANAGE_NAMESPACE+".manageList", manageVO);
+	}
+	
+	// 직원 목록 갯수
+	public int manageTotalCount(ManageVO manageVO) throws Exception {
+		return sqlSession.selectOne(MANAGE_NAMESPACE+".manageTotalCount", manageVO);
 	}
 	
 	// 직원 계정 활성화 여부 변경 
@@ -38,10 +43,30 @@ public class ManageDAO {
 	public List<ManageVO> manageDupIdCheck(ManageVO manageVO) throws Exception{
 		return sqlSession.selectList(MANAGE_NAMESPACE+".manageDupIdCheck",manageVO);
 	}
-
+	
+	// 직원 등록
+	public int insertManage(ManageVO manageVO) throws Exception{
+		return sqlSession.insert(MANAGE_NAMESPACE+".insertManage", manageVO);
+	}
+	
+	// 직원 정보
+	public ManageVO manageInfo(ManageVO manageVO) throws Exception{
+		return sqlSession.selectOne(MANAGE_NAMESPACE+".manageInfo", manageVO);
+	}
+	
+	// 직원 정보 업데이트
+	public int updateManage(ManageVO manageVO) throws Exception{
+		return sqlSession.update(MANAGE_NAMESPACE+".updateManage", manageVO);
+	}
+	
 	// 직원 그룹 목록
 	public List<ManageGroupVO> manageGroupList(ManageGroupVO manageGroupVO) throws Exception {
 		return sqlSession.selectList(MANAGE_GROUP_NAMESPACE+".manageGroupList", manageGroupVO);
+	}
+	
+	// 직원 그룹 목록 갯수
+	public int manageGroupTotalCount(ManageGroupVO manageGroupVO) throws Exception {
+		return sqlSession.selectOne(MANAGE_GROUP_NAMESPACE+".manageGroupTotalCount", manageGroupVO);
 	}
 	
 	// 직원 그룹  사용 여부 변경 

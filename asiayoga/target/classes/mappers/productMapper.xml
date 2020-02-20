@@ -4,6 +4,10 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.company.asiayoga.mapper.productMapper">
+	
+	<sql id="commomPaging">
+  		LIMIT #{totalRow} OFFSET #{paramPage};
+  	</sql>
 
 	<!-- 상품 목록  -->
 	<select id="productList" parameterType="productVO" resultType="productVO">
@@ -19,14 +23,49 @@
 			prdinfo.register_id,
 			prdinfo.modify_date,
 			prdinfo.modify_id,
-            ( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} ) AS store_name,
+            stinfo.store_name,
             prdinfo.item_seq,
-            ( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_name
+            prditem.item_name
 		FROM PRODUCTINFO prdinfo
         INNER JOIN (SELECT @ROWNUM :=0) AS R
+        INNER JOIN STOREINFO stinfo
+        ON prdinfo.store_seq = stinfo.store_seq
+        INNER JOIN PRODUCTITEM prditem
+        ON prdinfo.item_seq = prditem.item_seq
 		WHERE prdinfo.store_seq = #{storeSeq}
 		AND	prdinfo.del_yn = 'N'
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		store_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	item_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	product_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	product_price LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
 		ORDER BY row_num DESC
+		<include refid="commomPaging"/>
+	</select>
+	
+	<!-- 상품 목록  갯수-->
+	<select id="productTotalCount" parameterType="productVO" resultType="int">
+		/* productMapper.productTotalCount */
+		SELECT	COUNT(*)
+		FROM PRODUCTINFO prdinfo
+		INNER JOIN STOREINFO stinfo
+        ON prdinfo.store_seq = stinfo.store_seq
+        INNER JOIN PRODUCTITEM prditem
+        ON prdinfo.item_seq = prditem.item_seq
+		WHERE prdinfo.store_seq = #{storeSeq}
+		AND	prdinfo.del_yn = 'N'
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		store_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	item_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	product_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	product_price LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
+		<include refid="commomPaging"/>
 	</select>
 	
 	<!-- 상품 등록  -->

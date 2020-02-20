@@ -5,6 +5,10 @@
  
 <mapper namespace="com.company.asiayoga.mapper.orderMapper">
  
+ 	<sql id="commomPaging">
+		LIMIT #{totalRow} OFFSET #{paramPage};
+  	</sql>
+ 
  	<!-- 해당 매장의 주문 전체 정보  -->
  	<select id="orderList" parameterType="orderVO" resultType="orderVO">
  		/* orderMapper.orderList */
@@ -46,7 +50,62 @@
 				WHERE ordinfo.store_seq = #{storeSeq}
 				AND ordinfo.del_yn = 'N'
 		        ORDER By ordinfo.order_seq DESC) AS tempA
-        , (SELECT @ROWNUM :=0) AS R ORDER BY row_num DESC;
+        , (SELECT @ROWNUM :=0) AS R 
+        WHERE 1=1
+        <if test="searchWord != null and searchWord != ''">
+			AND 
+			(		tempA.store_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.item_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.product_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.phone LIKE CONCAT('%',#{searchWord},'%')
+				OR 	DATE_FORMAT(tempA.start_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+				OR 	DATE_FORMAT(tempA.expiration_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
+        ORDER BY row_num DESC
+        <include refid="commomPaging"/>
+	</select>
+	
+ 	<!-- 해당 매장의 주문 전체 갯수  -->
+ 	<select id="orderTotalCount" parameterType="orderVO" resultType="int">
+ 		/* orderMapper.orderTotalCount */
+		SELECT 	COUNT(*)
+		FROM (	
+				SELECT	ordinfo.order_seq,
+						ordinfo.store_seq,
+						ordinfo.product_seq,
+						ordinfo.member_seq,
+						ordinfo.start_day,
+						ordinfo.expiration_day,
+		                ordinfo.expiration_yn,
+						ordinfo.locker_seq,
+						ordinfo.del_yn,
+		                ( SELECT store_name FROM STOREINFO WHERE store_Seq = #{storeSeq}) AS store_name,
+                		prdinfo.product_name,
+                		( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq) As item_name,
+		                mbrinfo.name,
+		                mbrinfo.phone
+				FROM ORDERINFO ordinfo
+		        INNER JOIN MEMBERINFO mbrinfo
+		        ON ordinfo.member_seq = mbrinfo.member_seq
+		        INNER JOIN PRODUCTINFO prdinfo
+		        ON ordinfo.product_seq = prdinfo.product_Seq
+				WHERE ordinfo.store_seq = #{storeSeq}
+				AND ordinfo.del_yn = 'N'
+		        ORDER By ordinfo.order_seq DESC) AS tempA
+       WHERE 1=1
+       		<if test="searchWord != null and searchWord != ''">
+				AND 
+				(		tempA.store_name LIKE CONCAT('%',#{searchWord},'%')
+					OR 	tempA.item_name LIKE CONCAT('%',#{searchWord},'%')
+					OR 	tempA.product_name LIKE CONCAT('%',#{searchWord},'%')
+					OR 	tempA.name LIKE CONCAT('%',#{searchWord},'%')
+					OR 	tempA.phone LIKE CONCAT('%',#{searchWord},'%')
+					OR 	DATE_FORMAT(tempA.start_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+					OR 	DATE_FORMAT(tempA.expiration_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+				)
+			</if>
 	</select>
 	
 	<!-- 고객 1명의 구매 목록  -->

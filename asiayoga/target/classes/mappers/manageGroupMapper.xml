@@ -5,6 +5,10 @@
  
 <mapper namespace="com.company.asiayoga.mapper.manageGroupMapper">
  
+ 	<sql id="commomPaging">
+  		LIMIT #{totalRow} OFFSET #{paramPage};
+  	</sql>
+ 
 	<!-- 직원 그룹 목록  -->
  	<select id="manageGroupList" parameterType="manageGroupVO" resultType="manageGroupVO">
  		/* manageGroupMapper.manageGroupList */
@@ -18,13 +22,16 @@
 				END AS authority_name,
 				mnggrp.group_name,
 				mnggrp.store_seq,
-				( SELECT store_name FROM STOREINFO WHERE store_seq = mnggrp.store_seq ) AS store_name,
+				stinfo.store_name,
 				mnggrp.register_date,
 				mnggrp.register_id,
 				mnggrp.modify_date, 
 				mnggrp.modify_id,
 				mnggrp.use_yn
-		FROM MANAGEGROUP mnggrp	, (SELECT @ROWNUM :=0) AS R
+		FROM MANAGEGROUP mnggrp	
+		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		INNER JOIN STOREINFO stinfo
+		ON mnggrp.store_seq = stinfo.store_seq
 		WHERE 1=1
 		<choose>
 			<when test="authority != 'ROLE_ADMIN'">
@@ -33,7 +40,38 @@
 			</when>
 			<otherwise></otherwise>
 		</choose>
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		mnggrp.group_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	stinfo.store_name LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
 		ORDER BY mnggrp.modify_date DESC
+		<include refid="commomPaging"/>
+	</select>
+	
+	<!-- 직원 그룹 목록 갯수 -->
+ 	<select id="manageGroupTotalCount" parameterType="manageGroupVO" resultType="int">
+ 		/* manageGroupMapper.manageGroupTotalCount */
+		SELECT	COUNT(*)
+		FROM MANAGEGROUP mnggrp
+		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		INNER JOIN STOREINFO stinfo
+		ON mnggrp.store_seq = stinfo.store_seq
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND mnggrp.store_seq = #{storeSeq}
+				AND mnggrp.authority NOT IN ('ROLE_ADMIN')
+			</when>
+			<otherwise></otherwise>
+		</choose>
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		mnggrp.group_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	stinfo.store_name LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
 	</select>
 	
 	<!-- 직원 그룹 활성화 여부 변경   -->

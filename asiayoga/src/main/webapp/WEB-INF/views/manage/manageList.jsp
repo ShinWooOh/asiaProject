@@ -14,10 +14,13 @@
 
     <title>직원 목록</title>
 
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="/resources/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/resources/dist/css/adminlte.min.css">
+    
+    <link rel="stylesheet" href="/resources/common/css/common.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
@@ -65,56 +68,139 @@
 
         <!-- Main content -->
         <section class="content container-fluid" style="background-color: #FFFFFF">
-
-            <div class="col-lg-12">
-                <div>
-                    <div>
-                        <table class="table table-bordered">
-                            <tbody>
-                            <tr>
-                                <th style="width: 10%;">No</th>
-                                <th style="width: 20%;">관리자명</th>
-                                <th style="width: 15%;">권한</th>
-                                <th style="width: 20%;">최종 접속 일자</th>
-                                <th style="width: 25%;">매장명</th>
-                                <th style="width: 10%;">상태</th>
-                            </tr>
-                            <c:choose>
-                            	<c:when test="${fn:length(manageList) > 0}">
-		                            <c:forEach var="manageList" items="${manageList}">
-		                            	<tr>
-		                            		<td align="center"><c:out value="${manageList.rowNum}"/></td>
-		                            		<td><a href="#" onclick="goManageDetail(${manageList.manageSeq});"><c:out value="${manageList.name}"/></a></td>
-		                            		<td><a href="#" onclick="goManageDetail(${manageList.manageSeq});"><c:out value="${manageList.authorityName}"/></a></td>
-		                            		<td><fmt:formatDate value="${manageList.accessDate}" pattern="yyyy-MM-dd HH:mm"/></td>
-		                            		<td><c:out value="${manageList.storeName}"/></td>
-		                            		<td>
-		                            			<c:choose>
-		                            				<c:when test="${manageList.enabled eq true}">
-					                            		<input type="button" class="btn btn-block btn-warning btn-sm" onclick="goEnableStateChange(${manageList.manageSeq},${manageList.enabled});" id="enabled" name="enabled" value="활성화"> 
-		                            				</c:when>
-		                            				<c:when test="${manageList.enabled eq false}">
-					                            		<input type="button" class="btn btn-block btn-info btn-sm" onclick="goEnableStateChange(${manageList.manageSeq},${manageList.enabled});" id="enabled" name="enabled" value="비활성화"> 
-		                            				</c:when>
-		                            				<c:otherwise></c:otherwise>
-		                            			</c:choose>
-		                            		</td>
-		                            	</tr>
-		                            </c:forEach>
-                            	</c:when>
-                            	<c:otherwise>
-                            		<tr><th colspan="6" style="text-align: center;">결과가 없습니다.</th></tr>
-                            	</c:otherwise>
-                            </c:choose>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="attendanceFooter" style="margin-top: 10px;">
-                		<input type="button" class="btn btn-block btn-primary" value="등록" onclick="goManageRegister();" style="float: right; width:80px;">
-                	</div>
-                </div>
-            </div>
-
+			<div class="dataTables_wrapper form-inline">
+				<div class="row" style="width: 100%; margin: 10px;">
+					<div class="col-sm-6">
+						<div class="dataTables_length" style="float: left; margin-left: -10px;">
+							<label>Show  &nbsp;
+								<select class="form-control input-sm" id="manageRow" onchange="goChangeManageList();">
+									<option value="10">10</option>
+									<option value="20">20</option>
+									<option value="30">30</option>
+									<option value="50">50</option>
+								</select> &nbsp;
+								entries
+							</label>
+						</div>	
+					</div>
+					<div class="col-sm-6">
+						<div class="dataTables_filter" style="float: right;">
+							<label>Search : &nbsp;
+								<input type="search" id="searchWord" name="searchWord" class="form-control input-sm"  oninput="goChangeManageList();">
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class="row" style="width: 100%; padding: 5px;">
+		            <div class="col-lg-12">
+		                <div>
+		                    <div>
+		                        <table class="table table-bordered">
+		                            <tbody id="manageHeader" style="vertical-align: middle;">
+			                            <tr>
+			                                <th style="width: 10%;">No</th>
+			                                <th style="width: 20%;">관리자명</th>
+			                                <th style="width: 10%;">권한</th>
+			                                <th style="width: 15%;">직급</th>
+			                                <th style="width: 15%;">최종 접속 일자</th>
+			                                <th style="width: 20%;">매장명</th>
+			                                <th style="width: 10%;">상태</th>
+			                            </tr>
+			                            <c:choose>
+			                            	<c:when test="${fn:length(manageList) > 0}">
+					                            <c:forEach var="manageList" items="${manageList}">
+					                            	<tr>
+					                            		<td align="center"><c:out value="${manageList.rowNum}"/></td>
+					                            		<td><a href="#" onclick="goManageInfo(${manageList.manageSeq});"><c:out value="${manageList.name}"/></a></td>
+					                            		<td><a href="#" onclick="goManageInfo(${manageList.manageSeq});"><c:out value="${manageList.authorityName}"/></a></td>
+					                            		<td><a href="#" onclick="goManageInfo(${manageList.manageSeq});"><c:out value="${manageList.groupName}"/></a></td>
+					                            		<td><fmt:formatDate value="${manageList.accessDate}" pattern="yyyy-MM-dd HH:mm"/></td>
+					                            		<td><c:out value="${manageList.storeName}"/></td>
+					                            		<td>
+					                            			<c:choose>
+					                            				<c:when test="${manageList.enabled eq true}">
+								                            		<input type="button" class="btn btn-block btn-warning btn-sm" onclick="goEnableStateChange(${manageList.manageSeq},${manageList.enabled});" id="enabled" name="enabled" value="활성화"> 
+					                            				</c:when>
+					                            				<c:when test="${manageList.enabled eq false}">
+								                            		<input type="button" class="btn btn-block btn-info btn-sm" onclick="goEnableStateChange(${manageList.manageSeq},${manageList.enabled});" id="enabled" name="enabled" value="비활성화"> 
+					                            				</c:when>
+					                            				<c:otherwise></c:otherwise>
+					                            			</c:choose>
+					                            		</td>
+					                            	</tr>
+					                            </c:forEach>
+			                            	</c:when>
+			                            	<c:otherwise>
+			                            		<tr><th colspan="6" style="text-align: center;">결과가 없습니다.</th></tr>
+			                            	</c:otherwise>
+			                            </c:choose>
+		                            </tbody>
+		                        </table>
+		                    </div>
+		                </div>
+		            </div>
+				</div>
+				<div class="row"  style="width: 100%; padding: 5px; margin-top: -25px;">
+					<div class="col-sm-5">
+						<div class="dataTables_info" role="status" aria-live="polite">
+						<ul class="pagination">
+							<li class="paginate_button active">
+								총 100개 중 1번 부터10번까지의 게시물
+							</li>
+						</ul>
+						</div>
+					</div>
+					<div class="col-sm-7">
+						<div class="dataTables_paginate paging_simple_numbers" style="text-align: right;">
+						<input type="hidden" id="pageNum" name="pageNum" value="${manageVO.pageNum}">
+						<input type="hidden" id="pageRow" name="pageRow" value="${manageVO.pageRow}">
+						<input type="hidden" id="totalPage" name="totalPage" value="${manageVO.totalPage}">
+						<ul class="pagination" id="rowList">
+							<c:choose>
+								<c:when test="${manageVO.pageRow > 0}">
+									<li class="paginate_button previous disabled">
+										<a href="#" onclick="goPreviousPage(${manageVO.pageNum});">Previous</a>
+									</li>
+								</c:when>
+								<c:otherwise></c:otherwise>
+							</c:choose>
+							
+							<c:set var="loopFlag" value="false"/>
+							<c:forEach begin="${manageVO.startPage}" end="${manageVO.endPage}" step="1" var="i">
+								<c:if test="${not loopFlag}">
+									<li class="paginate_button active">
+										<a href="#"  style="text-decoration: <c:if test="${manageVO.pageNum eq i}">underline;</c:if>"  onclick="goClickPage(${i});">${i}</a>
+									</li>
+									<c:if test="${manageVO.startPage eq manageVO.totalPage}">
+										<c:set var="loopFlag" value="true"/>
+									</c:if>
+								</c:if>
+				 			</c:forEach>
+				 			
+				 			<c:choose>
+				 				<c:when test="${manageVO.endPage < manageVO.totalPage}">
+									<li class="paginate_button next">
+										<a href="#" onclick="goNextPage(${manageVO.pageRow});">Next</a>
+									</li>
+				 				</c:when>
+				 				<c:otherwise></c:otherwise>
+				 			</c:choose>
+						</ul>
+						</div>
+					</div>
+				</div>
+				<div class="row" style="width: 100%; margin-top: 10px; padding: 5px;">
+					<div class="col-sm-6">
+						<div style="float: left;">
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div style="float: right;">
+							<input type="button" class="btn btn-block btn-primary" value="등록" onclick="goManageRegister();" style="float: right; width:80px;">
+						</div>
+					</div>
+				</div>
+			</div>
         </section>
 
         <!-- /.content -->
@@ -135,7 +221,7 @@
     <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
-<form:form action="/manage/manageDetail" id="manageInfo" name="manageInfo" modelAttribute="manageVO" method="post">
+<form:form action="/manage/manageInfo" id="manageInfo" name="manageInfo" modelAttribute="manageVO" method="post">
 	<input type="hidden" id="manageSeq" name="manageSeq">
 </form:form>
 
@@ -150,7 +236,11 @@
 <script src="/resources/dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
 
-function goManageDetail(manageSeq){
+$(document).ready(function() {
+	defaultCss();
+});
+
+function goManageInfo(manageSeq){
 	$("#manageInfo #manageSeq").val(manageSeq);
 	$("#manageInfo").submit();
 	
@@ -195,6 +285,241 @@ function goEnableStateChange(manageSeq,enableState){
 	       }
 	        
 	    });
+}
+
+/* 검색 조건에 의한 목록  */
+function goChangeManageList() {
+	
+	var paramTotalRow = $("#manageRow option:selected").val();
+	var paramSearchWord = $("#searchWord").val();
+	var paramPageNum = $("#pageNum").val();
+	var paramPageRow = $("#pageRow").val();
+	
+	$.ajax({
+        type:'get',
+        url : "/manage/searchManageList",
+        data:{ 	totalRow	:	paramTotalRow,
+        		searchWord	:	paramSearchWord,
+        		pageNum		:	paramPageNum,
+        		pageRow		:	paramPageRow
+        	},
+        success : function(data){
+            if(data.result == 'success') {
+            	goRefreshManageList(data.manageList);
+            	goRefreshPage(data.manageVO);
+            } else if(data.result == 'noCount'){
+            	goRefreshManageNoCount();
+            } else {
+	            alert("검색에 실패하였습니다. 관리자에게 문의하세요");
+	            return false;
+            }
+        },
+        error:function(request,status,error){
+            alert("검색에 실패하였습니다. 관리자에게 문의하세요");
+       }
+	});
+}
+
+
+function goRefreshManageList(manageList) {
+    
+	var paramManageList = '';
+	paramManageList += '<tr>';
+	paramManageList += '<th style="width: 10%;">No</th>';
+	paramManageList += '<th style="width: 20%;">관리자명</th>';
+	paramManageList += '<th style="width: 10%;">권한</th>';
+	paramManageList += '<th style="width: 15%;">직급</th>';
+	paramManageList += '<th style="width: 15%;">최종 접속 일자</th>';
+	paramManageList += '<th style="width: 20%;">매장명</th>';
+	paramManageList += '<th style="width: 10%;">상태</th>';
+	paramManageList += '</tr>';
+	
+	for(var i = 0 ;  i < manageList.length ; i++){
+		var paramRowNum = 0;
+		var paramManageSeq = 0;
+		var paramStoreSeq = 0;
+		var paramName ='';
+		var paramAuthority = '';
+		var paramAuthorityName = '';
+		var paramGroupName = '';
+		var paramAccessDate = '';
+		var paramStoreName = '';
+		var paramEnabled= '';
+		
+		paramRowNum = manageList[i].rowNum;
+		paramManageSeq = manageList[i].manageSeq;
+		paramStoreSeq = manageList[i].storeSeq;
+		paramName = manageList[i].name;
+		paramAuthority = manageList[i].authority;
+		paramAuthorityName = manageList[i].authorityName;
+		paramGroupName = manageList[i].groupName;
+		paramAccessDate = manageList[i].accessDate;
+		paramStoreName = manageList[i].storeName;
+		paramEnabled = manageList[i].enabled;
+		
+		paramManageList += '<tr>';
+		paramManageList += '<td>'+paramRowNum+'</td>';
+		paramManageList += '<td><a href="javascript:void(0);" onclick="goMemberDetail('+paramManageSeq+')">'+paramName+'</a></td>';
+		paramManageList += '<td><a href="javascript:void(0);" onclick="goMemberDetail('+paramManageSeq+')">'+paramAuthorityName+'</a></td>';
+		paramManageList += '<td><a href="javascript:void(0);" onclick="goMemberDetail('+paramManageSeq+')">'+paramGroupName+'</a></td>';
+		
+		var accessDate = new Date(paramAccessDate);
+		var year = accessDate.getFullYear();
+		var month = accessDate.getMonth()+1;
+		var day = accessDate.getDate();
+		var hour = accessDate.getHours();
+		var min = accessDate.getMinutes();
+		
+		if(month < 10){	
+			month = '0'+month; 
+		}
+		if(day < 10){ 
+			day = '0'+day; 
+		}
+		if(hour < 10) {
+			hour = '0'+hour; 
+		}
+		if(min < 10) {
+			min = '0'+min; 
+		}
+		var resultAccessDate= year+'-'+month+'-'+day+' '+hour+':'+min;
+		
+		paramManageList += '<td>'+resultAccessDate+'</td>';
+		
+		paramManageList += '<td>'+paramStoreName+'</td>';
+		
+		if(paramEnabled == true){
+			paramManageList += '<td><input type="button" class="btn btn-block btn-warning btn-sm" onclick="goEnableStateChange('+paramManageSeq+','+paramEnabled+');"  id="enabled" name="enabled" value="활성화"></td>';
+		} else {
+			paramManageList += '<td><input type="button" class="btn btn-block btn-info btn-sm" onclick="goEnableStateChange('+paramManageSeq+','+paramEnabled+');"  id="enabled" name="enabled" value="비활성화"></td>';
+		}
+		paramManageList += '</tr>';
+	}
+		$("#manageHeader").text("");
+		$("#manageHeader").append(paramManageList);
+}
+
+function goRefreshPage(manageVO) {
+	var paramPageList = '';
+	
+	if(manageVO.pageRow > 0){
+		
+		paramPageList += '<li class="paginate_button previous disabled">';
+		paramPageList += '<a href="#" onclick="goPreviousPage('+manageVO.pageRow+');">Previous</a>';
+		paramPageList += '</li>';
+	}
+	
+	for(var i= manageVO.startPage; i <= manageVO.endPage ; i++ ){
+		paramPageList += '<li class="paginate_button active">';
+		
+		if(manageVO.pageNum == i){
+			paramPageList += '<a href="#"  style="text-decoration: underline;"  onclick="goClickPage('+i+');">'+i+'</a>';
+		} else {
+			paramPageList += '<a href="#" onclick="goClickPage('+i+');">'+i+'</a>';
+		}
+		
+		paramPageList += '</li>';
+		
+		if(manageVO.startPage == manageVO.totalPage){
+			break;
+		}
+	}
+
+	if(manageVO.endPage != manageVO.totalPage){
+		paramPageList += '<li class="paginate_button next">';
+		paramPageList += '<a href="#" onclick="goNextPage('+manageVO.pageRow+');">Next</a>';
+		paramPageList += '</li>';
+		
+	}
+	$("#rowList").text("");
+	$("#rowList").append(paramPageList);
+	
+	$("#pageNum").val(manageVO.pageNum);
+	$("#pageRow").val(manageVO.pageRow);
+	$("#totalPage").val(manageVO.totalPage);
+	
+	defaultCss();
+	
+}
+
+/* 검색 조건들에서 결과가 없는 경우  */
+function goRefreshManageNoCount() {
+	var paramManageList = '';
+	paramManageList += '<tr>';
+	paramManageList += '<th style="width: 10%;">No</th>';
+	paramManageList += '<th style="width: 20%;">관리자명</th>';
+	paramManageList += '<th style="width: 10%;">권한</th>';
+	paramManageList += '<th style="width: 15%;">직급</th>';
+	paramManageList += '<th style="width: 15%;">최종 접속 일자</th>';
+	paramManageList += '<th style="width: 20%;">매장명</th>';
+	paramManageList += '<th style="width: 10%;">상태</th>';
+	paramManageList += '</tr>';
+	paramManageList += '<tr><th colspan="7" style="text-align: center;">결과가 없습니다.</th></tr>';
+	
+	$("#manageHeader").text("");
+	$("#manageHeader").append(paramManageList);
+	defaultCss();
+}
+
+/* Previous 버튼 눌렀을 경우(이전 버튼) */
+function goPreviousPage(pageRow) {
+
+	$("#pageNum").val(pageRow*5-4);
+	$("#pageRow").val(pageRow-1);
+	goChangeManageList();
+}
+
+/* Next 버튼 눌렀을 경우(다음 버튼) */
+function goNextPage(pageRow) {
+	
+	$("#pageNum").val(pageRow*5+6);
+	$("#pageRow").val(pageRow+1);
+	goChangeManageList();
+}
+
+/* 해당 페이지 숫자 버튼 눌렀을 경우(페이지 이동 버튼) */
+function goClickPage(pageNum) {
+	
+	$("#pageNum").val(pageNum);
+	goChangeManageList();
+}
+
+function defaultCss() {
+	$(".table > tbody > tr > th").css({
+		"padding"			: "5px",
+		"vertical-align"	: "middle"
+	});
+	$(".table > tbody > tr > td").css({
+		"padding"			: "5px",
+		"vertical-align"	: "middle"
+	});
+	$(".pagination").css({
+		"display"			: "inline-block",
+		"margin"			: "20px 0"
+	});
+	$(".pagination > li").css({
+		"display"			: "inline"
+	});
+	$(".pagination > li > a").css({
+		"background"		: "#fafafa",
+		"position"			: "relative",
+		"margin-left"		: "-3px",
+		"margin-right"		: "1px",
+		"padding"			: "6px 12px",
+		"border"			: "1px solid #ddd"
+	});
+	$(".pagination > .disabled > a").css({
+		"background"		: "#fff"
+	});
+	$(".pagination > li:first-child > a").css({
+		"border-top-left-radius"	: "4px",
+		"border-bottom-left-radius"	: "4px"
+	});
+	
+	$(".pagination > li:last-child > a").css({
+		"border-top-right-radius"		: "4px",
+		"border-bottom-right-radius"	: "4px"
+	});
 }
 
 </script>

@@ -18,8 +18,13 @@ public class MemberDAO {
 	private static final String MEMBER_NAMESPACE = "com.company.asiayoga.mapper.memberMapper";
 	
 	// 회원 정보 목록
-	public List<MemberVO> memberList(int storeSeq){
-		return sqlSession.selectList(MEMBER_NAMESPACE+".memberList", storeSeq);
+	public List<MemberVO> memberList(MemberVO memberVO){
+		return sqlSession.selectList(MEMBER_NAMESPACE+".memberList", memberVO);
+	}
+	
+	// 회원 정보 목록 갯수
+	public int memberTotalCount(MemberVO memberVO){
+		return sqlSession.selectOne(MEMBER_NAMESPACE+".memberTotalCount", memberVO);
 	}
 	
 	// 회원 정보 상세

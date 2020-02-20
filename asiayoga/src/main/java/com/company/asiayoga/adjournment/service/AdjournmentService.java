@@ -10,7 +10,10 @@ import com.company.asiayoga.member.domain.MemberVO;
 public interface AdjournmentService {
 
 	// ÈÞÈ¸ È¸¿ø ¸ñ·Ï
-	List<AdjournmentVO> adjournmentList(AdjournmentVO adjournmentVO) throws Exception; 
+	List<AdjournmentVO> adjournmentList(AdjournmentVO adjournmentVO) throws Exception;
+	
+	// ÈÞÈ¸ È¸¿ø ¸ñ·Ï °¹¼ö
+	int adjournmentTotalCount(AdjournmentVO adjournmentVO) throws Exception;
 	
 	// ÈÞÈ¸ È¸¿ø µî·Ï
 	int insertAdjournment(AdjournmentVO adjournmentVO) throws Exception;

@@ -24,6 +24,11 @@ public class AttendanceDAO {
         return sqlSession.selectList(ATTENDANCE_NAMESPACE+".attendanceList",attendanceVO);
     }
 	
+	// 출석 정보 갯수
+	public int attendanceTotalCount(AttendanceVO attendanceVO){
+		return sqlSession.selectOne(ATTENDANCE_NAMESPACE+".attendanceTotalCount",attendanceVO);
+	}
+	
 	// 출석 정보 상세
 	public List<AttendanceVO> attendanceDetail(AttendanceVO attendanceVO) {
 		return sqlSession.selectList(ATTENDANCE_NAMESPACE+".attendanceDetail",attendanceVO);

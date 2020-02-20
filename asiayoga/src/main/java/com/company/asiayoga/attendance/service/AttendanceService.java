@@ -9,6 +9,9 @@ public interface AttendanceService {
 
 	// 출석 목록
 	List<AttendanceVO> attendanceList(AttendanceVO attendanceVO) throws Exception;
+	
+	// 출석 목록 갯수
+	public int attendanceTotalCount(AttendanceVO attendanceVO) throws Exception;
 
 	// 출석 상세
 	List<AttendanceVO> attendanceDetail(AttendanceVO attendanceVO) throws Exception;

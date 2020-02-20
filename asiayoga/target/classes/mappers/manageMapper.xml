@@ -4,6 +4,10 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
  
 <mapper namespace="com.company.asiayoga.mapper.manageMapper">
+
+	<sql id="commomPaging">
+  		LIMIT #{totalRow} OFFSET #{paramPage};
+  	</sql>
  
  	<select id="selectUserById" resultType="customUserDetail">
  		/* manageMapper.selectUserById */
@@ -91,6 +95,9 @@
                      WHEN mginfo.authority = 'ROLE_STAFF' THEN '직원'
                      ELSE '기타'
 				END AS authority_name,
+                CASE WHEN mginfo.authority = 'ROLE_ADMIN' THEN '관리자'
+                     ELSE mnggrp.group_name
+				END AS group_name,
 				mginfo.access_date,
 				mginfo.enabled,
 				mginfo.store_seq,
@@ -98,6 +105,8 @@
 				mginfo.use_yn
 		FROM MANAGEINFO mginfo
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		INNER JOIN MANAGEGROUP mnggrp
+		ON mginfo.manage_group_seq = mnggrp.manage_group_seq
 		WHERE 1=1
 		<choose>
 			<when test="authority != 'ROLE_ADMIN'">
@@ -106,7 +115,37 @@
 			</when>
 			<otherwise></otherwise>
 		</choose>
-		ORDER BY mginfo.store_seq DESC;
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		mginfo.name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mnggrp.group_name LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
+		ORDER BY mginfo.store_seq DESC
+		<include refid="commomPaging"/>
+	</select>
+	
+ 	<select id="manageTotalCount"  parameterType="manageVO" resultType="int">
+ 		/* manageMapper.manageTotalCount */
+		SELECT 	COUNT(*)
+		FROM MANAGEINFO mginfo
+		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		INNER JOIN MANAGEGROUP mnggrp
+		ON mginfo.manage_group_seq = mnggrp.manage_group_seq
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND mginfo.store_seq = #{storeSeq}
+				AND mginfo.authority NOT IN ('ROLE_ADMIN')
+			</when>
+			<otherwise></otherwise>
+		</choose>
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		mginfo.name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mnggrp.group_name LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
 	</select>
 	
 	<!-- 직원 계정 활성화 여부 변경   -->
@@ -129,5 +168,69 @@
 		FROM	MANAGEINFO
 		WHERE	id = #{id} 
 	</select>
+	
+	<!-- 직원 등록  -->
+	<insert id="insertManage" parameterType="manageVO">
+ 		/* manageMapper.insertManage */
+ 		INSERT INTO MANAGEINFO
+ 				(	id,
+ 					passwd,
+ 					name,
+ 					phone,
+ 					manage_group_seq,
+ 					memo,
+ 					store_seq,
+ 					authority,
+ 					register_id,
+ 					modify_id
+ 				)
+ 		VALUES	(
+ 					#{id},
+ 					#{passwd},
+ 					#{name},
+ 					#{phone},
+ 					#{manageGroupSeq},
+ 					#{memo},
+ 					#{storeSeq},
+ 					( SELECT authority FROM MANAGEGROUP WHERE manage_group_seq = #{manageGroupSeq}),
+ 					#{registerId},
+ 					#{modifyId}
+ 				)
+	
+	</insert>
 
+	<!-- 직원 정보   -->
+ 	<select id="manageInfo" resultType="manageVO">
+ 		/* manageMapper.manageInfo */
+		SELECT	manage_seq,
+				id,
+				passwd,
+				name,
+				phone,
+				authority,
+                CASE WHEN authority = 'ROLE_ADMIN' THEN '관리자'
+					 WHEN authority = 'ROLE_MANAGER' THEN '매장관리자'
+                     WHEN authority = 'ROLE_STAFF' THEN '직원'
+                     ELSE '기타'
+				END AS authority_name,
+				manage_group_seq,
+				access_date,
+				memo,
+				use_yn
+		FROM	MANAGEINFO
+		WHERE	manage_seq = #{manageSeq} 
+	</select>
+	
+	<!-- 직원 정보 업데이트   -->
+ 	<update id="updateManage" parameterType="manageVO">
+ 		/* manageMapper.updateManage */
+		UPDATE	MANAGEINFO
+		SET	name = #{name},
+			phone = #{phone},
+			manage_group_seq = #{manageGroupSeq},
+			memo = #{memo},
+			modify_date = now(),
+			modify_id = #{modifyId}
+		WHERE	manage_seq = #{manageSeq} 
+	</update>
 </mapper>

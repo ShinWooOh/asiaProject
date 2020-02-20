@@ -8,6 +8,9 @@ public interface ItemService {
 	
 	// 前格 包府
 	List<ItemVO> itemList(ItemVO itemVO) throws Exception;
+	
+	// 前格 包府 肮荐
+	int itemTotalCount(ItemVO itemVO) throws Exception;
 
 	// 前格 历厘
 	int insertItem(ItemVO itemVO) throws Exception;

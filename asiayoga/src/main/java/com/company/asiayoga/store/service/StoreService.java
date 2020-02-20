@@ -7,7 +7,10 @@ import com.company.asiayoga.store.domain.StoreVO;
 public interface StoreService {
 
 	// 매장 목록
-	List<StoreVO> storeList() throws Exception;
+	List<StoreVO> storeList(StoreVO storeVO) throws Exception;
+	
+	// 매장 목록 갯수
+	int storeTotalCount(StoreVO storeVO) throws Exception;
 	
 	// 매장 상세
 	StoreVO storeDetail(StoreVO storeVO) throws Exception;

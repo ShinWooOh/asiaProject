@@ -12,10 +12,13 @@
 
     <title>회원 상세 정보</title>
 
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="/resources/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/resources/dist/css/adminlte.min.css">
+    
+    <link rel="stylesheet" href="/resources/common/css/common.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
@@ -129,11 +132,6 @@
                             </tr>
                             </tbody>
                         </table>
-                        
-                      <!--   <table class="table2 table-bordered">
-                            <tbody>
-                            </tbody>
-                        </table> -->
                     </div>
                     <div style="margin-top: 10px;">
                 		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goMemberList();" style="float: left; width:80px;">

@@ -5,6 +5,10 @@
   
   <mapper namespace="com.company.asiayoga.mapper.memberMapper">
   
+  	<sql id="commomPaging">
+  		LIMIT #{totalRow} OFFSET #{paramPage};
+  	</sql>
+  
 	<!-- 회원 목록  -->
 	<select id="memberList" parameterType="memberVO" resultType="memberVO">
   		/* memberMapper.memberList */
@@ -17,11 +21,38 @@
 	            birth,
 	            memo,
 	            store_seq,
-	            register_date
+	            register_date,
+	            adjournment_state
 		FROM MEMBERINFO , (SELECT @ROWNUM :=0) AS R
 		WHERE store_seq = #{storeSeq}
 		AND del_yn = 'N'
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	birth LIKE CONCAT('%',#{searchWord},'%')
+				OR 	phone LIKE CONCAT('%',#{searchWord},'%')
+				OR 	email LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
 	    ORDER BY register_date DESC, row_num DESC
+	    <include refid="commomPaging"/>
+	</select>
+	
+	<!-- 회원 목록 갯수  -->
+	<select id="memberTotalCount" parameterType="memberVO" resultType="int">
+  		/* memberMapper.memberTotalCount */
+		SELECT count(*)
+		FROM MEMBERINFO 
+		WHERE store_seq = #{storeSeq}
+		AND del_yn = 'N'
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	birth LIKE CONCAT('%',#{searchWord},'%')
+				OR 	phone LIKE CONCAT('%',#{searchWord},'%')
+				OR 	email LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
 	</select>
 	
 	<!-- 회원 정보 상세  -->

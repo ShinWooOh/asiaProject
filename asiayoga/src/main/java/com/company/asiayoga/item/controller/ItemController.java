@@ -1,5 +1,6 @@
 package com.company.asiayoga.item.controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -18,6 +19,7 @@ import com.company.asiayoga.attendance.domain.AttendanceVO;
 import com.company.asiayoga.item.domain.ItemVO;
 import com.company.asiayoga.item.service.ItemService;
 import com.company.asiayoga.manage.domain.ManageVO;
+import com.company.asiayoga.member.domain.MemberVO;
 
 @Controller
 @RequestMapping("item")
@@ -41,8 +43,15 @@ public class ItemController {
 		 itemVO.setStoreSeq(manageVO.getStoreSeq()); 								// 현재는 임시적으로 부여
 		 
 		 List<ItemVO> list = itemService.itemList(itemVO);
-		 
 		 model.addAttribute("itemList", list);
+		 
+		 int paramTotalCount = 0;
+		paramTotalCount = itemService.itemTotalCount(itemVO);
+		itemVO.setTotalCount(paramTotalCount);
+		itemVO.setTotalPage(this.totalPage(paramTotalCount, itemVO));
+		itemVO.setEndPage(this.endPage(itemVO));
+		
+		model.addAttribute("itemVO", itemVO);
 		 
 		// 경로 체크
 		String currentPath = (String)request.getSession().getAttribute("nowPath");
@@ -53,6 +62,62 @@ public class ItemController {
 		 
 		 return "/item/itemList";
 	 }
+	 
+	// 품목 관리 화면에서의 검색
+	@RequestMapping(value = "searchItemList")
+	@ResponseBody
+	public HashMap<String, Object> searchItemList(HttpServletRequest request,Model model,ItemVO itemVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+
+		itemVO.setParamPage((itemVO.getTotalRow()*itemVO.getPageNum())-itemVO.getTotalRow());
+		itemVO.setStoreSeq(manageVO.getStoreSeq());
+		List<ItemVO> list = itemService.itemList(itemVO);
+
+		int paramTotalCount = 0;
+		paramTotalCount = itemService.itemTotalCount(itemVO);
+		
+		if(list.size() == 0) {
+			itemVO.setParamPage(0);
+			itemVO.setPageNum(1);
+			itemVO.setPageRow(0);
+
+			if(paramTotalCount != 0) {
+				itemVO.setStartPage(1);
+				itemVO.setTotalPage(this.totalPage(paramTotalCount, itemVO));
+				itemVO.setEndPage(this.endPage(itemVO));
+				list = itemService.itemList(itemVO);
+				hashMap.put("result", "success");
+				hashMap.put("itemList", list);
+			}else {
+				hashMap.put("result", "noCount");
+			}
+			
+		} else if(list.size() > 0) {
+			int paramStartPage = 0;
+			int paramEndPage = 0;
+			paramStartPage = (itemVO.getPageRow()*5)+1;
+			
+			itemVO.setTotalCount(paramTotalCount);
+			itemVO.setTotalPage(this.totalPage(paramTotalCount, itemVO));
+			paramEndPage = this.endPage(itemVO);
+			itemVO.setStartPage(paramStartPage);
+			itemVO.setEndPage(paramEndPage);
+			hashMap.put("result", "success");
+			hashMap.put("itemList", list);
+		} else {
+			itemVO.setParamPage(0);
+			itemVO.setPageNum(1);
+			itemVO.setPageRow(0);
+			hashMap.put("result", "fail");
+		}
+		hashMap.put("itemVO", itemVO);
+		
+		return hashMap;
+	}
 	 
 	 // 품목 등록 화면으로 이동
 	 @RequestMapping(value = "itemRegister")
@@ -142,5 +207,35 @@ public class ItemController {
 		 }
 		 return result;
 	 }
+	 
+	// 마지막 페이지 점검 
+	public int endPage(ItemVO itemVO) {
+		
+		int paramEndPage = 0;
+		int paramTotalPage = 0;
+		
+		paramEndPage = itemVO.getPageRow()*5+5;
+		paramTotalPage = itemVO.getTotalPage();
+		
+		if(paramEndPage >= paramTotalPage) {
+			paramEndPage = paramTotalPage;
+		}
+		
+		return paramEndPage;
+	}
+	
+	// 전체 페이지 설정
+	public int totalPage(int totalCount,ItemVO itemVO) {
+		
+		int paramTotalPage = 0;
+		
+		if(totalCount%itemVO.getTotalRow() == 0) {
+			paramTotalPage = totalCount/itemVO.getTotalRow();
+		} else {
+			paramTotalPage = (totalCount/itemVO.getTotalRow())+1;
+		}
+		
+		return paramTotalPage;
+	}
 
 }

@@ -59,9 +59,15 @@ public class AdjournmentController {
     	
     	List<AdjournmentVO> list = new ArrayList<AdjournmentVO>();
     	list = adjournmentService.adjournmentList(adjournmentVO);
-    	
     	model.addAttribute("adjournmentList", list);
     	
+    	int paramTotalCount = 0;
+    	paramTotalCount = adjournmentService.adjournmentTotalCount(adjournmentVO);
+    	adjournmentVO.setTotalCount(paramTotalCount);
+    	adjournmentVO.setTotalPage(this.totalPage(paramTotalCount, adjournmentVO));
+    	adjournmentVO.setEndPage(this.endPage(adjournmentVO));
+    	
+    	model.addAttribute("adjournmentVO", adjournmentVO);
     	
         // 경로 체크
         String currentPath = (String)request.getSession().getAttribute("nowPath");
@@ -72,6 +78,62 @@ public class AdjournmentController {
     	
     	return "/adjournment/adjournmentList";
 	}
+    
+    // 회원 목록 화면에서의 검색
+ 	@RequestMapping(value = "searchAdjournmentList")
+ 	@ResponseBody
+ 	public HashMap<String, Object> searchAdjournmentList(HttpServletRequest request,Model model,AdjournmentVO adjournmentVO) throws Exception{
+ 		
+ 		ManageVO manageVO = new ManageVO();
+ 		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+ 		
+ 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+
+ 		adjournmentVO.setParamPage((adjournmentVO.getTotalRow()*adjournmentVO.getPageNum())-adjournmentVO.getTotalRow());
+ 		adjournmentVO.setStoreSeq(manageVO.getStoreSeq());
+ 		List<AdjournmentVO> list = adjournmentService.adjournmentList(adjournmentVO);
+
+ 		int paramTotalCount = 0;
+ 		paramTotalCount = adjournmentService.adjournmentTotalCount(adjournmentVO);
+ 		
+ 		if(list.size() == 0) {
+ 			adjournmentVO.setParamPage(0);
+ 			adjournmentVO.setPageNum(1);
+ 			adjournmentVO.setPageRow(0);
+
+ 			if(paramTotalCount != 0) {
+ 				adjournmentVO.setStartPage(1);
+ 				adjournmentVO.setTotalPage(this.totalPage(paramTotalCount, adjournmentVO));
+ 				adjournmentVO.setEndPage(this.endPage(adjournmentVO));
+ 				list = adjournmentService.adjournmentList(adjournmentVO);
+ 				hashMap.put("result", "success");
+ 				hashMap.put("adjournmentList", list);
+ 			}else {
+ 				hashMap.put("result", "noCount");
+ 			}
+ 			
+ 		} else if(list.size() > 0) {
+ 			int paramStartPage = 0;
+ 			int paramEndPage = 0;
+ 			paramStartPage = (adjournmentVO.getPageRow()*5)+1;
+ 			
+ 			adjournmentVO.setTotalCount(paramTotalCount);
+ 			adjournmentVO.setTotalPage(this.totalPage(paramTotalCount, adjournmentVO));
+ 			paramEndPage = this.endPage(adjournmentVO);
+ 			adjournmentVO.setStartPage(paramStartPage);
+ 			adjournmentVO.setEndPage(paramEndPage);
+ 			hashMap.put("result", "success");
+ 			hashMap.put("adjournmentList", list);
+ 		} else {
+ 			adjournmentVO.setParamPage(0);
+ 			adjournmentVO.setPageNum(1);
+ 			adjournmentVO.setPageRow(0);
+ 			hashMap.put("result", "fail");
+ 		}
+ 		hashMap.put("adjournmentVO", adjournmentVO);
+ 		
+ 		return hashMap;
+ 	}
     
     // 휴회 등록 화면으로 이동
  	@RequestMapping(value = "adjournmentRegister", method = {RequestMethod.POST,RequestMethod.GET})
@@ -194,5 +256,35 @@ public class AdjournmentController {
  			
  		}
  		return hashMap;
+ 	}
+ 	
+ 	// 마지막 페이지 점검 
+ 	public int endPage(AdjournmentVO adjournmentVO) {
+ 		
+ 		int paramEndPage = 0;
+ 		int paramTotalPage = 0;
+ 		
+ 		paramEndPage = adjournmentVO.getPageRow()*5+5;
+ 		paramTotalPage = adjournmentVO.getTotalPage();
+ 		
+ 		if(paramEndPage >= paramTotalPage) {
+ 			paramEndPage = paramTotalPage;
+ 		}
+ 		
+ 		return paramEndPage;
+ 	}
+ 	
+ 	// 전체 페이지 설정
+ 	public int totalPage(int totalCount,AdjournmentVO adjournmentVO) {
+ 		
+ 		int paramTotalPage = 0;
+ 		
+ 		if(totalCount%adjournmentVO.getTotalRow() == 0) {
+ 			paramTotalPage = totalCount/adjournmentVO.getTotalRow();
+ 		} else {
+ 			paramTotalPage = (totalCount/adjournmentVO.getTotalRow())+1;
+ 		}
+ 		
+ 		return paramTotalPage;
  	}
 }

@@ -2,7 +2,9 @@ package com.company.asiayoga.store.domain;
 
 import java.util.Date;
 
-public class StoreVO {
+import com.company.asiayoga.common.domain.PagingVO;
+
+public class StoreVO extends PagingVO {
 
 	private int rowNum;
 	private int storeSeq;							// 매장 번호

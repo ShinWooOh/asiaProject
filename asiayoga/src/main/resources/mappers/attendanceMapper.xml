@@ -5,6 +5,10 @@
 
 <mapper namespace="com.company.asiayoga.mapper.attendanceMapper">
 	
+	<sql id="commomPaging">
+		LIMIT #{totalRow} OFFSET #{paramPage};
+  	</sql>
+	
 	<!-- 출석 목록  -->
 	<select id="attendanceList" parameterType="attendanceVO" resultType="attendanceVO">
 		/* attendanceMapper.attendanceList */
@@ -39,10 +43,54 @@
 						atdinfo.store_seq 
 				FROM ATTENDANCEINFO atdinfo
 				WHERE atdinfo.store_seq = #{storeSeq} 
-				AND atdinfo.del_yn = 'N' 
+				AND atdinfo.del_yn = 'N'
                 ORDER BY atdinfo.attendance_date ASC 
              	) AS temp , (SELECT @ROWNUM :=0) AS R 
-        ORDER BY row_num DESC; 
+		<if test="searchWord != null and searchWord != ''">
+		WHERE 1=1
+		AND 
+				(		temp.name LIKE CONCAT('%',#{searchWord},'%')
+					OR 	temp.phone LIKE CONCAT('%',#{searchWord},'%')
+					OR 	temp.product_name LIKE CONCAT('%',#{searchWord},'%')
+					OR 	DATE_FORMAT(temp.attendance_date, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+				)
+		</if>
+        ORDER BY row_num DESC
+        <include refid="commomPaging"/>
+	</select>
+	
+	<!-- 출석 목록  갯수-->
+	<select id="attendanceTotalCount" parameterType="memberVO" resultType="int">
+		/* attendanceMapper.attendanceTotalCount */
+		SELECT 	COUNT(*)
+     	FROM  ( SELECT 	atdinfo.attendance_seq, 
+						atdinfo.member_seq,
+						atdinfo.product_seq,
+						( SELECT product_name FROM PRODUCTINFO WHERE product_seq = atdinfo.product_seq ) AS product_name,
+						( SELECT name FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS name,
+						( SELECT phone FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS phone,
+						( SELECT sex FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS sex,
+						atdinfo.attendance_date,
+						atdinfo.register_date,
+						atdinfo.register_id,
+						atdinfo.modify_date, 
+						atdinfo.modify_id,
+						atdinfo.del_yn,
+						atdinfo.store_seq 
+				FROM ATTENDANCEINFO atdinfo
+				WHERE atdinfo.store_seq = #{storeSeq} 
+				AND atdinfo.del_yn = 'N'
+                ORDER BY atdinfo.attendance_date ASC 
+             	) AS temp , (SELECT @ROWNUM :=0) AS R 
+		<if test="searchWord != null and searchWord != ''">
+		WHERE 1=1
+		AND 
+				(		temp.name LIKE CONCAT('%',#{searchWord},'%')
+					OR 	temp.phone LIKE CONCAT('%',#{searchWord},'%')
+					OR 	temp.product_name LIKE CONCAT('%',#{searchWord},'%')
+					OR 	DATE_FORMAT(temp.attendance_date, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+				)
+		</if>
 	</select>
 
   	<!-- 회원 출석 상세 정보  -->

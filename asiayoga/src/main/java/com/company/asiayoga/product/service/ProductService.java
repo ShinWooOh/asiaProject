@@ -9,6 +9,9 @@ public interface ProductService {
 	// 상품 목록
 	List<ProductVO> productList(ProductVO productVO)throws Exception;
 	
+	// 상품 목록 갯수
+	int productTotalCount(ProductVO productVO) throws Exception;
+	
 	// 상품 등록
 	int insertProduct(ProductVO productVO) throws Exception;
 	
