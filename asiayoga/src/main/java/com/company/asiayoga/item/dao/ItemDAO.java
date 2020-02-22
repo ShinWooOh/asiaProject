@@ -47,4 +47,9 @@ public class ItemDAO {
 	public int updateItem(ItemVO itemVO) {
 		return sqlSession.update(ITEM_NAMESPACE+".updateItem",itemVO);
 	}
+	
+	// 품목 리스트 엑셀 다운로드
+	public List<ItemVO> itemExcelDownload(ItemVO itemVO){
+		return sqlSession.selectList(ITEM_NAMESPACE+".itemExcelDownload", itemVO);
+	}
 }

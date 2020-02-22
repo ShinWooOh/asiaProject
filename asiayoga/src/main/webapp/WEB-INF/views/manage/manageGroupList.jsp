@@ -90,6 +90,12 @@
 								<input type="search" id="searchWord" name="searchWord" class="form-control input-sm"  oninput="goChangeManageGroupList();">
 							</label>
 						</div>
+						<div class="dataTables_filter" id="excelBox">
+							<label>
+								<a class="far fa-file-excel fa-2x" style="cursor: pointer; margin-right: -20px;"></a>
+								<input type="button" class="excelBtn" id="excelDown" name="excelDown" onclick="manageGroupExcelDown(${manageGroupVO.storeSeq});" value="엑셀 다운로드" >
+							</label>
+						</div> 
 					</div>
 				</div>
 				<div class="row" style="width: 100%; padding: 5px;">
@@ -222,7 +228,10 @@
 	<input type="hidden" id="manageGroupSeq" name="manageGroupSeq">
 </form:form>
 
-
+<form:form action="/manage/manageGroupExcelDownload" id="manageGroupExcelDownload" name="manageGroupExcelDownload" modelAttribute="manageGroupVO" method="get" enctype="multipart/form-data">
+	<input type="hidden" id="searchWord" name="searchWord">
+	<input type="hidden" id="storeSeq" name="storeSeq">
+</form:form>
 <!-- REQUIRED SCRIPTS -->
 
 <!-- jQuery -->
@@ -234,7 +243,27 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
-
+	
+	$("#excelBox").css({
+		"float"							: "right",
+		"margin-top"					: "5px",
+		"margin-right"					: "10px",
+		"background-color"				: "#d2d6de",
+		"border-top-left-radius"		: "4px",
+		"border-bottom-left-radius"		: "4px",
+		"border-top-right-radius"		: "4px",
+		"border-bottom-right-radius"	: "4px"
+	});
+	
+	$(".excelBtn").css({
+		"width"				: "120px",
+		"text-align"		: "right",
+		"font-weight"		: "bold",
+		"cursor"			: "pointer",
+		"border"			: "none",
+		"background"		: "transparent"
+	});
+	
 	defaultCss();
 });
 
@@ -287,6 +316,7 @@ function goUseYnStateChange(manageGroupSeq,useYnState){
 	    });
 }
 
+/* 검색 조건 ,페이징  */
 /* 검색 조건에 의한 목록  */
 function goChangeManageGroupList() {
 	
@@ -444,6 +474,23 @@ function goClickPage(pageNum) {
 	$("#pageNum").val(pageNum);
 	goChangeManageGroupList();
 }
+
+
+/* 검색 조건 ,페이징  */
+
+
+/* 엑셀 다운로드 기능  */
+function manageGroupExcelDown(storeSeq) {
+	
+ 	var paramSearchWord = $("#searchWord").val();
+ 	
+ 	$("#manageGroupExcelDownload #searchWord").val(paramSearchWord);
+ 	$("#manageGroupExcelDownload #storeSeq").val(storeSeq);
+ 	
+ 	$("#manageGroupExcelDownload").submit();
+	
+}
+
 
 function defaultCss() {
 	$(".table > tbody > tr > th").css({

@@ -47,4 +47,8 @@ public class ProductDAO {
 		return sqlSession.update(PRODUCT_NAMESPACE+".updateProduct", productVO);
 	}
 
+	// »óÇ° ¸ñ·Ï ¿¢¼¿ ´Ù¿î·Îµå
+	public List<ProductVO> productExcelDown(ProductVO productVO) throws Exception{
+		return sqlSession.selectList(PRODUCT_NAMESPACE+".productExcelDown", productVO);
+	}
 }

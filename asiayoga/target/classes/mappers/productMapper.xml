@@ -153,5 +153,36 @@
 		AND store_seq = #{storeSeq}
 		AND del_yn ='N'
 	</update>
+	
+	<!-- 상품 목록 엑셀 다운로드  -->
+	<select id="productExcelDown" parameterType="productVO" resultType="productVO">
+		/* productMapper.productExcelDown */
+		SELECT
+			@ROWNUM:=@ROWNUM+1 AS row_num,
+			prdinfo.product_seq,
+			prdinfo.store_seq,
+			prdinfo.product_name,
+			prdinfo.product_price,
+            stinfo.store_name,
+            prdinfo.item_seq,
+            prditem.item_name
+		FROM PRODUCTINFO prdinfo
+        INNER JOIN (SELECT @ROWNUM :=0) AS R
+        INNER JOIN STOREINFO stinfo
+        ON prdinfo.store_seq = stinfo.store_seq
+        INNER JOIN PRODUCTITEM prditem
+        ON prdinfo.item_seq = prditem.item_seq
+		WHERE prdinfo.store_seq = #{storeSeq}
+		AND	prdinfo.del_yn = 'N'
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		store_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	item_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	product_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	product_price LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
+		ORDER BY row_num DESC
+	</select>
 
 </mapper>

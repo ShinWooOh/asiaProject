@@ -59,6 +59,16 @@ public class ManageDAO {
 		return sqlSession.update(MANAGE_NAMESPACE+".updateManage", manageVO);
 	}
 	
+	//직원 리스트 엑셀 다운로드
+	public List<ManageVO> manageExcelDownload(ManageVO manageVO) throws Exception{
+		return sqlSession.selectList(MANAGE_NAMESPACE+".manageExcelDownload", manageVO);
+	}
+	
+	
+	
+	/*직원 그룹 관련*/
+
+	
 	// 직원 그룹 목록
 	public List<ManageGroupVO> manageGroupList(ManageGroupVO manageGroupVO) throws Exception {
 		return sqlSession.selectList(MANAGE_GROUP_NAMESPACE+".manageGroupList", manageGroupVO);
@@ -92,5 +102,10 @@ public class ManageDAO {
 	// 직원 그룹 업데이트
 	public int updateManageGroup(ManageGroupVO manageGroupVO) throws Exception{
 		return sqlSession.update(MANAGE_GROUP_NAMESPACE+".updateManageGroup",manageGroupVO);
+	}
+	
+	//직원 그룹 리스트 엑셀 다운로드
+	public List<ManageGroupVO> manageGroupExcelDownload(ManageGroupVO manageGroupVO) throws Exception{
+		return sqlSession.selectList(MANAGE_GROUP_NAMESPACE+".manageGroupExcelDownload", manageGroupVO);
 	}
 }

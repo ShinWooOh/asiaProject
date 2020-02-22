@@ -261,5 +261,59 @@
  		</set>
  		WHERE order_seq = #{orderSeq}
 	</update>
+	
+ 	<!-- 주문 목록 엑셀 다운로드  -->
+ 	<select id="orderExcelDown" parameterType="orderVO" resultType="orderVO">
+ 		/* orderMapper.orderExcelDown */
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+			 	tempA.order_seq,
+			 	tempA.store_seq,
+				tempA.product_seq,
+				tempA.member_seq,
+				tempA.start_day,
+				tempA.expiration_day,
+                tempA.expiration_yn,
+                tempA.store_name,
+                tempA.product_name,
+                tempA.item_name,
+                tempA.name,
+                tempA.phone
+		FROM (	
+				SELECT	ordinfo.order_seq,
+						ordinfo.store_seq,
+						ordinfo.product_seq,
+						ordinfo.member_seq,
+						ordinfo.start_day,
+						ordinfo.expiration_day,
+		                ordinfo.expiration_yn,
+						ordinfo.del_yn,
+		                ( SELECT store_name FROM STOREINFO WHERE store_Seq = #{storeSeq}) AS store_name,
+                		prdinfo.product_name,
+                		( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq) As item_name,
+		                mbrinfo.name,
+		                mbrinfo.phone
+				FROM ORDERINFO ordinfo
+		        INNER JOIN MEMBERINFO mbrinfo
+		        ON ordinfo.member_seq = mbrinfo.member_seq
+		        INNER JOIN PRODUCTINFO prdinfo
+		        ON ordinfo.product_seq = prdinfo.product_Seq
+				WHERE ordinfo.store_seq = #{storeSeq}
+				AND ordinfo.del_yn = 'N'
+		        ORDER By ordinfo.order_seq DESC) AS tempA
+        , (SELECT @ROWNUM :=0) AS R 
+        WHERE 1=1
+        <if test="searchWord != null and searchWord != ''">
+			AND 
+			(		tempA.store_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.item_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.product_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.phone LIKE CONCAT('%',#{searchWord},'%')
+				OR 	DATE_FORMAT(tempA.start_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+				OR 	DATE_FORMAT(tempA.expiration_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
+        ORDER BY row_num DESC
+	</select>
     
 </mapper>

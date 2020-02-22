@@ -146,4 +146,39 @@
 			modify_id = #{modifyId}
 		WHERE manage_group_seq = #{manageGroupSeq}
 	</update>
+	
+	<!-- 직원 그룹 리스트 엑셀 다운로드  -->
+ 	<select id="manageGroupExcelDownload" parameterType="manageGroupVO" resultType="manageGroupVO">
+ 		/* manageGroupMapper.manageGroupExcelDownload */
+		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
+				mnggrp.manage_group_seq,
+				mnggrp.authority,
+				CASE WHEN mnggrp.authority = 'ROLE_ADMIN' THEN '관리자'
+					 WHEN mnggrp.authority = 'ROLE_MANAGER' THEN '매장관리자'
+                     WHEN mnggrp.authority = 'ROLE_STAFF' THEN '직원'
+                     ELSE '기타'
+				END AS authority_name,
+				mnggrp.group_name,
+				mnggrp.store_seq,
+				stinfo.store_name
+		FROM MANAGEGROUP mnggrp	
+		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		INNER JOIN STOREINFO stinfo
+		ON mnggrp.store_seq = stinfo.store_seq
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND mnggrp.store_seq = #{storeSeq}
+				AND mnggrp.authority NOT IN ('ROLE_ADMIN')
+			</when>
+			<otherwise></otherwise>
+		</choose>
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		mnggrp.group_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	stinfo.store_name LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
+		ORDER BY mnggrp.modify_date DESC
+	</select>
 </mapper>

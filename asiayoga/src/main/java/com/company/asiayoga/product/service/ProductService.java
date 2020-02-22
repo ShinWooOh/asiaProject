@@ -2,6 +2,8 @@ package com.company.asiayoga.product.service;
 
 import java.util.List;
 
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+
 import com.company.asiayoga.product.domain.ProductVO;
 
 public interface ProductService {
@@ -23,4 +25,7 @@ public interface ProductService {
 	
 	// 상품 업데이트
 	int updateProduct(ProductVO productVO) throws Exception;
+	
+	// 상품 목록 엑셀 다운로드
+	SXSSFWorkbook productExcelDownload(ProductVO productVO) throws Exception;
 }

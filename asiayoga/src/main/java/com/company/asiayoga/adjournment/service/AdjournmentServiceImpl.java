@@ -1,10 +1,18 @@
 package com.company.asiayoga.adjournment.service;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.apache.ibatis.executor.ReuseExecutor;
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -94,6 +102,73 @@ public class AdjournmentServiceImpl implements AdjournmentService{
 	@Override
 	public List<MemberVO> memberSearch(MemberVO memberVO) throws Exception {
 		return adjournmentDAO.memberSearch(memberVO);
+	}
+
+	@SuppressWarnings("unlikely-arg-type")
+	@Override
+	public SXSSFWorkbook adjournmentExcelDownload(AdjournmentVO adjournmentVO) throws Exception {
+		SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
+		
+		SXSSFSheet sheet = sxssfWorkbook.createSheet("휴회 회원 목록");
+		
+		SXSSFRow row = null;
+		SXSSFCell cell = null;
+		
+		List<AdjournmentVO> list = new  ArrayList<AdjournmentVO>();
+		list = adjournmentDAO.adjournmentExcelDownload(adjournmentVO);
+		
+		row = sheet.createRow(0);
+		String[] headerKey = {"No","매장명","회원명","연락처","상품명","휴회시작일","휴회종료일","상태"};
+
+		
+		for(int i = 0; i < headerKey.length; i++) {
+			cell = row.createCell(i);
+			cell.setCellValue(headerKey[i]);
+		}
+		
+		for(int j= 0 ; j < list.size() ; j++) {
+			
+			row = sheet.createRow(j+1);
+			AdjournmentVO vo = list.get(j);
+			
+			cell = row.createCell(0);
+			cell.setCellValue(vo.getRowNum());
+			
+			cell = row.createCell(1);
+			cell.setCellValue(vo.getStoreName());
+			
+			cell = row.createCell(2);
+			cell.setCellValue(vo.getName());
+			
+			cell = row.createCell(3);
+			cell.setCellValue(vo.getPhone());
+			
+			cell = row.createCell(4);
+			cell.setCellValue(vo.getProductName());
+			
+			cell = row.createCell(5);
+			Date startDate = vo.getAdjournmentStart();
+			Timestamp startTs = new Timestamp(startDate.getTime());
+			SimpleDateFormat startFormatter = new SimpleDateFormat("yyyy-MM-dd");
+			cell.setCellValue(startFormatter.format(startTs));
+			
+			cell = row.createCell(6);
+			Date endDate = vo.getAdjournmentEnd();
+			Timestamp endTs = new Timestamp(endDate.getTime());
+			SimpleDateFormat endFormatter = new SimpleDateFormat("yyyy-MM-dd");
+			cell.setCellValue(endFormatter.format(endTs));
+			
+			cell = row.createCell(7);
+			if(vo.getAdjournmentState().equals("Y")) {
+				cell.setCellValue("휴회");
+			} else if(vo.getAdjournmentState().equals("N")) {
+				cell.setCellValue("미휴회");
+			} else {
+				cell.setCellValue("");
+			}
+		}
+		
+		return sxssfWorkbook;
 	}
 
 

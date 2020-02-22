@@ -1,14 +1,23 @@
 package com.company.asiayoga.manage.service;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import com.company.asiayoga.manage.dao.ManageDAO;
 import com.company.asiayoga.manage.domain.ManageGroupVO;
 import com.company.asiayoga.manage.domain.ManageVO;
+import com.company.asiayoga.member.domain.MemberVO;
 
 @Service
 public class ManageServiceImpl implements ManageService {
@@ -72,6 +81,63 @@ public class ManageServiceImpl implements ManageService {
 		
 		return resultParam;
 	}
+	
+	@Override
+	public SXSSFWorkbook manageExcelDownload(ManageVO manageVO) throws Exception {
+		
+		SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
+		
+		SXSSFSheet sheet = sxssfWorkbook.createSheet("직원 목록");
+		
+		SXSSFRow row = null;
+		SXSSFCell cell = null;
+		
+		List<ManageVO> list = new  ArrayList<ManageVO>();
+		list = manageDAO.manageExcelDownload(manageVO);
+		
+		row = sheet.createRow(0);
+		String[] headerKey = {"No","관리자명","권한","직급","최종접속일자","매장명"};
+		
+		
+		for(int i = 0; i < headerKey.length; i++) {
+			cell = row.createCell(i);
+			cell.setCellValue(headerKey[i]);
+		}
+		
+		for(int j= 0 ; j < list.size() ; j++) {
+			
+			row = sheet.createRow(j+1);
+			ManageVO vo = list.get(j);
+			
+			cell = row.createCell(0);
+			cell.setCellValue(vo.getRowNum());
+			
+			cell = row.createCell(1);
+			cell.setCellValue(vo.getName());
+			
+			cell = row.createCell(2);
+			cell.setCellValue(vo.getAuthorityName());
+			
+			cell = row.createCell(3);
+			cell.setCellValue(vo.getGroupName());
+			
+			cell = row.createCell(4);
+			Date date = vo.getAccessDate();
+			if(date == null ) {
+				cell.setCellValue("");
+			} else {
+				Timestamp ts = new Timestamp(date.getTime());
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				cell.setCellValue(formatter.format(ts));
+			}
+			
+			cell = row.createCell(5);
+			cell.setCellValue(vo.getStoreName());
+			
+		}
+		
+		return sxssfWorkbook;
+	}
 
 	@Override
 	public int updateManage(ManageVO manageVO) throws Exception {
@@ -121,6 +187,50 @@ public class ManageServiceImpl implements ManageService {
 	public int updateManageGroup(ManageGroupVO manageGroupVO) throws Exception {
 		return manageDAO.updateManageGroup(manageGroupVO);
 	}
+
+	@Override
+	public SXSSFWorkbook manageGroupExcelDownload(ManageGroupVO manageGroupVO) throws Exception {
+		SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
+		
+		SXSSFSheet sheet = sxssfWorkbook.createSheet("직원 직급 목록");
+		
+		SXSSFRow row = null;
+		SXSSFCell cell = null;
+		
+		List<ManageGroupVO> list = new  ArrayList<ManageGroupVO>();
+		list = manageDAO.manageGroupExcelDownload(manageGroupVO);
+		
+		row = sheet.createRow(0);
+		String[] headerKey = {"No","직급명","권한","매장"};
+		
+		
+		for(int i = 0; i < headerKey.length; i++) {
+			cell = row.createCell(i);
+			cell.setCellValue(headerKey[i]);
+		}
+		
+		for(int j= 0 ; j < list.size() ; j++) {
+			
+			row = sheet.createRow(j+1);
+			ManageVO vo = list.get(j);
+			
+			cell = row.createCell(0);
+			cell.setCellValue(vo.getRowNum());
+			
+			cell = row.createCell(1);
+			cell.setCellValue(vo.getGroupName());
+			
+			cell = row.createCell(2);
+			cell.setCellValue(vo.getAuthorityName());
+			
+			cell = row.createCell(3);
+			cell.setCellValue(vo.getStoreName());
+			
+		}
+		
+		return sxssfWorkbook;
+	}
+
 
 
 

@@ -2,6 +2,8 @@ package com.company.asiayoga.manage.service;
 
 import java.util.List;
 
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+
 import com.company.asiayoga.manage.domain.ManageGroupVO;
 import com.company.asiayoga.manage.domain.ManageVO;
 
@@ -31,6 +33,11 @@ public interface ManageService {
 	// 계정 중복 여부 확인
 	public int manageDupIdCheck(ManageVO manageVO) throws Exception;
 	
+	//직원 리스트 엑셀 다운로드
+	SXSSFWorkbook manageExcelDownload(ManageVO manageVO) throws Exception;
+	
+	/*직원 그룹 관련*/
+	
 	// 직급 목록
 	public List<ManageGroupVO> manageGroupList(ManageGroupVO manageGroupVO) throws Exception;
 	
@@ -51,4 +58,7 @@ public interface ManageService {
 	
 	// 직급 정보 업데이트
 	public int updateManageGroup(ManageGroupVO manageGroupVO) throws Exception;
+	
+	//직원 그룹 리스트 엑셀 다운로드
+	SXSSFWorkbook manageGroupExcelDownload(ManageGroupVO manageGroupVO) throws Exception;
 }

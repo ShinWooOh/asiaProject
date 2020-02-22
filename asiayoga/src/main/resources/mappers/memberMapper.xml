@@ -191,4 +191,32 @@
 		AND del_yn = 'N'
 	    ORDER BY register_date DESC, row_num DESC
 	</select>
+	
+	<!-- 회원 목록 , 엑셀 다운로드 시 쓰인다.  -->
+	<select id="memberExcelDown" parameterType="memberVO" resultType="memberVO">
+  		/* memberMapper.memberExcelDown */
+		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
+				member_seq,
+				name,
+	            sex,
+	            phone,
+	            email,
+	            birth,
+	            memo,
+	            store_seq,
+	            register_date,
+	            adjournment_state
+		FROM MEMBERINFO , (SELECT @ROWNUM :=0) AS R
+		WHERE store_seq = #{storeSeq}
+		AND del_yn = 'N'
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	birth LIKE CONCAT('%',#{searchWord},'%')
+				OR 	phone LIKE CONCAT('%',#{searchWord},'%')
+				OR 	email LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
+	    ORDER BY register_date DESC, row_num DESC
+	</select>
   </mapper>

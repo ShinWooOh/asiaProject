@@ -1,11 +1,16 @@
 package com.company.asiayoga.member.controller;
 
+import java.io.BufferedOutputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -259,6 +264,29 @@ public class MemberController {
 		}
 		
 		return result;
+	}
+	
+	// 회원 리스트 엑셀 다운로드
+	@RequestMapping(value = "memberExcelDownload")
+	public void memberExcelDownload(HttpServletRequest request, HttpServletResponse reponse, MemberVO memberVO) throws Exception{
+		
+		OutputStream out = null;
+		try {
+			SXSSFWorkbook sxssfWorkbook = memberService.memberExcelDownload(memberVO);
+			
+			reponse.reset();
+			reponse.setHeader("Content-Disposition", "attachment;filename=memberList.xlsx");
+			reponse.setContentType("application/vnd.ms-excel");
+			out = new BufferedOutputStream(reponse.getOutputStream());
+			
+			sxssfWorkbook.write(out);
+			out.flush();
+			
+		} catch (Exception e) {
+			logger.error("exception during downloading excel file : {}", e);
+		} finally {
+			if(out != null) { out.close(); }
+		}
 	}
 
 	// 마지막 페이지 점검 

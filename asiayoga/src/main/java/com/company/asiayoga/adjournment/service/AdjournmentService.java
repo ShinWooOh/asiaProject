@@ -2,6 +2,7 @@ package com.company.asiayoga.adjournment.service;
 
 import java.util.List;
 
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.company.asiayoga.adjournment.domain.AdjournmentVO;
@@ -30,5 +31,8 @@ public interface AdjournmentService {
 	
 	// 회원 정보 검색(List 로 리턴)
 	List<MemberVO> memberSearch(MemberVO memberVO)throws Exception;
+	
+	// 휴회 리스트 엑셀 다운로드
+	SXSSFWorkbook adjournmentExcelDownload(AdjournmentVO adjournmentVO) throws Exception;
 	
 }

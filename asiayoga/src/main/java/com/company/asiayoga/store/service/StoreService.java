@@ -2,6 +2,8 @@ package com.company.asiayoga.store.service;
 
 import java.util.List;
 
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+
 import com.company.asiayoga.store.domain.StoreVO;
 
 public interface StoreService {
@@ -23,4 +25,7 @@ public interface StoreService {
 	
 	// 매장 업데이트
 	int updateStore(StoreVO storeVO) throws Exception;
+	
+	// 매장 리스트 엑셀 다운로드
+	SXSSFWorkbook storeExcelDownload(StoreVO storeVO) throws Exception;
 }

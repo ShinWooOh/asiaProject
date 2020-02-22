@@ -1,11 +1,15 @@
 package com.company.asiayoga.store.controller;
 
+import java.io.BufferedOutputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -190,6 +194,29 @@ public class StoreController {
 		}
 		
 		return result;
+	}
+	
+	// 매장 리스트 엑셀 다운로드
+	@RequestMapping(value = "storeExcelDownload")
+	public void storeExcelDownload(HttpServletRequest request, HttpServletResponse reponse, StoreVO storeVO) throws Exception{
+		
+		OutputStream out = null;
+		try {
+			SXSSFWorkbook sxssfWorkbook = storeService.storeExcelDownload(storeVO);
+			
+			reponse.reset();
+			reponse.setHeader("Content-Disposition", "attachment;filename=storeList.xlsx");
+			reponse.setContentType("application/vnd.ms-excel");
+			out = new BufferedOutputStream(reponse.getOutputStream());
+			
+			sxssfWorkbook.write(out);
+			out.flush();
+			
+		} catch (Exception e) {
+			logger.error("exception during downloading excel file : {}", e);
+		} finally {
+			if(out != null) { out.close(); }
+		}
 	}
 	
 	// 마지막 페이지 점검 

@@ -158,4 +158,41 @@
  		WHERE adjournment_seq = #{adjournmentSeq}
     </update>
     
+	<!-- 휴회 리스트 엑셀 다운로드  -->
+ 	<select id="adjournmentExcelDownload" parameterType="adjournmentVO" resultType="adjournmentVO">
+ 		/* adjournmentMapper."adjournmentExcelDownload" */
+		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
+				adjinfo.adjournment_seq,
+				adjinfo.member_seq,
+				adjinfo.store_seq,
+				adjinfo.order_seq,
+				adjinfo.adjournment_start,
+				adjinfo.adjournment_end,
+				adjinfo.adjournment_state,
+				mbinfo.name,
+				mbinfo.phone,
+				stinfo.store_name,
+				prdinfo.product_name
+		FROM ADJOURNMENTINFO adjinfo
+		INNER JOIN ORDERINFO ordinfo
+		ON adjinfo.order_seq = ordinfo.order_seq
+		INNER JOIN MEMBERINFO mbinfo
+		ON adjinfo.member_seq = mbinfo.member_seq
+		INNER JOIN STOREINFO stinfo
+		ON adjinfo.store_seq = stinfo.store_seq
+		INNER JOIN PRODUCTINFO prdinfo
+		ON ordinfo.product_seq = prdinfo.product_seq
+		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		WHERE adjinfo.store_seq =#{storeSeq}
+		AND adjinfo.del_yn = 'N'
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	phone LIKE CONCAT('%',#{searchWord},'%')
+				OR 	product_name LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
+		ORDER BY adjinfo.modify_date DESC
+	</select>
+	
 </mapper>

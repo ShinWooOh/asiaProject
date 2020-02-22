@@ -46,4 +46,9 @@ public class StoreDAO {
 	public int updateStore(StoreVO storeVO) throws Exception{
 		return sqlSession.update(STORE_NAMESPACE+".updateStore", storeVO);
 	}
+	
+	// 매장 리스트 엑셀 다운로드
+	public List<StoreVO> storeExcelDownload(StoreVO storeVO) throws Exception{
+		return sqlSession.selectList(STORE_NAMESPACE+".storeExcelDownload",storeVO);
+	}
 }

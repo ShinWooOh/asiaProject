@@ -2,6 +2,8 @@ package com.company.asiayoga.order.service;
 
 import java.util.List;
 
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+
 import com.company.asiayoga.order.domain.OrderVO;
 
 public interface OrderService {
@@ -27,4 +29,6 @@ public interface OrderService {
 	// 구매 내역 업데이트
 	int updateOrder(OrderVO orderVO) throws Exception;
 
+	// 주문 목록 엑셀 다운로드
+	SXSSFWorkbook orderExcelDown(OrderVO orderVO) throws Exception;
 }

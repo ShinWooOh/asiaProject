@@ -1,11 +1,20 @@
 package com.company.asiayoga.store.service;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Service;
 
+import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.store.dao.StoreDAO;
 import com.company.asiayoga.store.domain.StoreVO;
 
@@ -65,6 +74,55 @@ public class StoreServiceImpl implements StoreService{
 	@Override
 	public int updateStore(StoreVO storeVO) throws Exception {
 		return storeDAO.updateStore(storeVO);
+	}
+
+	@Override
+	public SXSSFWorkbook storeExcelDownload(StoreVO storeVO) throws Exception {
+		
+		SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
+		
+		SXSSFSheet sheet = sxssfWorkbook.createSheet("매장 목록");
+		
+		SXSSFRow row = null;
+		SXSSFCell cell = null;
+		
+		List<StoreVO> list = new  ArrayList<StoreVO>();
+		list = storeDAO.storeExcelDownload(storeVO);
+		
+		row = sheet.createRow(0);
+		String[] headerKey = {"No","매장번호","매장명","매장 전화번호","매장 전화번호(휴대폰)","매장주소"};
+
+		
+		for(int i = 0; i < headerKey.length; i++) {
+			cell = row.createCell(i);
+			cell.setCellValue(headerKey[i]);
+		}
+		
+		for(int j= 0 ; j < list.size() ; j++) {
+			
+			row = sheet.createRow(j+1);
+			StoreVO vo = list.get(j);
+			
+			cell = row.createCell(0);
+			cell.setCellValue(vo.getRowNum());
+			
+			cell = row.createCell(1);
+			cell.setCellValue(vo.getStoreSeq());
+			
+			cell = row.createCell(2);
+			cell.setCellValue(vo.getStoreName());
+			
+			cell = row.createCell(3);
+			cell.setCellValue(vo.getStoreTel());
+			
+			cell = row.createCell(4);
+			cell.setCellValue(vo.getStorePhone());
+			
+			cell = row.createCell(5);
+			cell.setCellValue(vo.getStoreAddress());
+		}
+		
+		return sxssfWorkbook;
 	}
 
 

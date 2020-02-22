@@ -53,4 +53,9 @@ public class AdjournmentDAO {
 	public List<MemberVO> memberSearch(MemberVO memberVO) {
 		return sqlSession.selectList(MEMBER_NAMESPACE+".memberSearchList", memberVO);
 	}
+	
+ 	// ÈÞÈ¸ ¸®½ºÆ® ¿¢¼¿ ´Ù¿î·Îµå
+	public List<AdjournmentVO> adjournmentExcelDownload(AdjournmentVO adjournmentVO) {
+		return sqlSession.selectList(ADJOURNMENT_NAMESPACE+".adjournmentExcelDownload", adjournmentVO);
+	}
 }

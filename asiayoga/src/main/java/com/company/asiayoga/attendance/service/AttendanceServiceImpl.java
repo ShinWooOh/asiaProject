@@ -1,9 +1,17 @@
 package com.company.asiayoga.attendance.service;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import com.company.asiayoga.attendance.dao.AttendanceDAO;
@@ -69,6 +77,64 @@ public class AttendanceServiceImpl implements AttendanceService {
 		return attendanceDAO.attendanceDelete(attendanceVO);
 	}
 
+	@Override
+	public SXSSFWorkbook attendanceExcelDownload(AttendanceVO attendanceVO) throws Exception {
+SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
+		
+		SXSSFSheet sheet = sxssfWorkbook.createSheet("출석 정보");
+		
+		SXSSFRow row = null;
+		SXSSFCell cell = null;
+		
+		List<AttendanceVO> list = new  ArrayList<AttendanceVO>();
+		list = attendanceDAO.attendanceExcelDownload(attendanceVO);
+		
+		row = sheet.createRow(0);
+		String[] headerKey = {"No","회원명","상품명","출석일","연락처","성별"};
+
+		
+		for(int i = 0; i < headerKey.length; i++) {
+			cell = row.createCell(i);
+			cell.setCellValue(headerKey[i]);
+		}
+		
+		for(int j= 0 ; j < list.size() ; j++) {
+			
+			row = sheet.createRow(j+1);
+			AttendanceVO vo = list.get(j);
+			
+			cell = row.createCell(0);
+			cell.setCellValue(vo.getRowNum());
+			
+			cell = row.createCell(1);
+			cell.setCellValue(vo.getName());
+			
+			cell = row.createCell(2);
+			cell.setCellValue(vo.getProductName());
+			
+			cell = row.createCell(3);
+			Date date = vo.getAttendanceDate();
+			Timestamp ts = new Timestamp(date.getTime());
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			cell.setCellValue(formatter.format(ts));
+			
+			cell = row.createCell(4);
+			cell.setCellValue(vo.getPhone());
+			
+			cell = row.createCell(5);
+			if(vo.getSex().equals("M")) {
+				cell.setCellValue("남");
+			} else if(vo.getSex().equals("W")) {
+				cell.setCellValue("여");
+			} else {
+				cell.setCellValue("");
+			}
+		}
+		
+		return sxssfWorkbook;
+	}
+
+	
 	
 	
 }

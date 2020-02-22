@@ -233,4 +233,47 @@
 			modify_id = #{modifyId}
 		WHERE	manage_seq = #{manageSeq} 
 	</update>
+	
+	<!-- 매장 직원 목록  -->
+ 	<select id="manageExcelDownload" resultType="manageVO">
+ 		/* manageMapper.manageExcelDownload */
+		SELECT 	@ROWNUM:=@ROWNUM+1 as row_num,
+				mginfo.manage_seq,
+				mginfo.id,
+				mginfo.passwd,
+				mginfo.name,
+				mginfo.authority,
+                CASE WHEN mginfo.authority = 'ROLE_ADMIN' THEN '관리자'
+					 WHEN mginfo.authority = 'ROLE_MANAGER' THEN '매장관리자'
+                     WHEN mginfo.authority = 'ROLE_STAFF' THEN '직원'
+                     ELSE '기타'
+				END AS authority_name,
+                CASE WHEN mginfo.authority = 'ROLE_ADMIN' THEN '관리자'
+                     ELSE mnggrp.group_name
+				END AS group_name,
+				mginfo.access_date,
+				mginfo.enabled,
+				mginfo.store_seq,
+				( SELECT store_name FROM STOREINFO WHERE store_seq = mginfo.store_seq ) AS store_name,
+				mginfo.use_yn
+		FROM MANAGEINFO mginfo
+		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		INNER JOIN MANAGEGROUP mnggrp
+		ON mginfo.manage_group_seq = mnggrp.manage_group_seq
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND mginfo.store_seq = #{storeSeq}
+				AND mginfo.authority NOT IN ('ROLE_ADMIN')
+			</when>
+			<otherwise></otherwise>
+		</choose>
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		mginfo.name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mnggrp.group_name LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
+		ORDER BY mginfo.store_seq DESC
+	</select>
 </mapper>

@@ -121,5 +121,28 @@
 		AND del_yn = 'N'
 	</update>
 
+	<!-- 매장 리스트 엑셀 다운로드  -->
+	<select id="storeExcelDownload" parameterType="storeVO" resultType="storeVO">
+		/* storeMapper.storeExcelDownload */
+		SELECT
+			@ROWNUM:=@ROWNUM+1 AS row_num, 
+			store_seq,
+			store_name,
+			store_tel,
+			store_phone,
+			store_address,
+			store_memo
+		FROM STOREINFO, (SELECT @ROWNUM :=0) AS R
+		WHERE del_yn = 'N'
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		store_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	store_tel LIKE CONCAT('%',#{searchWord},'%')
+				OR 	store_phone LIKE CONCAT('%',#{searchWord},'%')
+				OR 	store_address LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
+		ORDER BY store_seq DESC
+	</select>
 
 </mapper>

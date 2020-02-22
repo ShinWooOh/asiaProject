@@ -84,6 +84,12 @@
 								<input type="search" id="searchWord" name="searchWord" class="form-control input-sm"  oninput="goChangeProductList();">
 							</label>
 						</div>
+						<div class="dataTables_filter" id="excelBox">
+							<label>
+								<a class="far fa-file-excel fa-2x" style="cursor: pointer; margin-right: -20px;"></a>
+								<input type="button" class="excelBtn" id="excelDown" name="excelDown" onclick="productExcelDown(${productVO.storeSeq});" value="엑셀 다운로드" >
+							</label>
+						</div> 
 					</div>
 				</div>
 				<div class="row" style="width: 100%; padding: 5px;">
@@ -202,7 +208,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    <%@ include file="/WEB-INF/views/include/main_footer.jsp" %>
+   <%--  <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
 
@@ -211,6 +217,10 @@
 	<input type="hidden" id="storeSeq" name="storeSeq">
 </form:form>
 
+<form:form action="/product/productExcelDownload" id="productExcelDownload" name="productExcelDownload" modelAttribute="productVO" method="get" enctype="multipart/form-data">
+	<input type="hidden" id="searchWord" name="searchWord">
+	<input type="hidden" id="storeSeq" name="storeSeq">
+</form:form>
 
 <!-- REQUIRED SCRIPTS -->
 
@@ -224,6 +234,26 @@
 
 $(document).ready(function() {
 
+	$("#excelBox").css({
+		"float"							: "right",
+		"margin-top"					: "5px",
+		"margin-right"					: "10px",
+		"background-color"				: "#d2d6de",
+		"border-top-left-radius"		: "4px",
+		"border-bottom-left-radius"		: "4px",
+		"border-top-right-radius"		: "4px",
+		"border-bottom-right-radius"	: "4px"
+	});
+	
+	$(".excelBtn").css({
+		"width"				: "120px",
+		"text-align"		: "right",
+		"font-weight"		: "bold",
+		"cursor"			: "pointer",
+		"border"			: "none",
+		"background"		: "transparent"
+	});
+	
 	defaultCss();
 	
 });
@@ -268,6 +298,7 @@ function goProductDetail(productSeq,storeSeq){
 	$("#productDetail").submit();
 }
 
+/* 검색 조건 ,페이징  */
 /* 검색 조건에 의한 목록  */
 function goChangeProductList() {
 	
@@ -428,6 +459,21 @@ function goClickPage(pageNum) {
 	
 	$("#pageNum").val(pageNum);
 	goChangeProductList();
+}
+
+/* 검색 조건 ,페이징  */
+
+
+/* 엑셀 다운로드 기능  */
+function productExcelDown(storeSeq) {
+	
+ 	var paramSearchWord = $("#searchWord").val();
+ 	
+ 	$("#productExcelDownload #searchWord").val(paramSearchWord);
+ 	$("#productExcelDownload #storeSeq").val(storeSeq);
+ 	
+ 	$("#productExcelDownload").submit();
+	
 }
 
 function defaultCss() {

@@ -48,4 +48,9 @@ public class AttendanceDAO {
 	public List<MemberVO> memberSearch(MemberVO memberVO) {
 		return sqlSession.selectList(MEMBER_NAMESPACE+".memberSearchList", memberVO);
 	}
+	
+	// 출석 정보 리스트 엑셀 다운로드
+	public List<AttendanceVO> attendanceExcelDownload(AttendanceVO attendanceVO){
+		return sqlSession.selectList(ATTENDANCE_NAMESPACE+".attendanceExcelDownload", attendanceVO);
+	}
 }

@@ -153,4 +153,34 @@
 		WHERE item_seq = #{itemSeq}
 		AND del_yn ='N'
 	</update>
+	
+	<!-- 품목 리스트 엑셀 다운로드 -->
+	<select id="itemExcelDownload" parameterType="itemVO" resultType="itemVO">
+		/* itemMapper.itemExcelDownload */
+		SELECT 
+			@ROWNUM:=@ROWNUM+1 as row_num,
+			tempA.store_seq,
+			tempA.store_name,
+			tempA.large_category,
+			tempA.item_seq,
+			tempA.item_name
+		FROM (	SELECT	item_seq,
+						store_seq,
+						( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} AND del_yn ='N') AS store_name,
+						large_category,
+						item_name
+				FROM PRODUCTITEM 
+				WHERE store_seq= #{storeSeq}
+				AND del_yn ='N'
+				ORDER BY modify_date ASC
+			 ) AS tempA , (SELECT @ROWNUM :=0) AS R
+		WHERE 1=1
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		tempA.store_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.item_name LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
+		ORDER BY row_num DESC
+	</select>
 </mapper>

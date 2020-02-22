@@ -51,4 +51,9 @@ public class MemberDAO {
 	public List<MemberVO> searchMemberList(MemberVO memberVO){
 		return sqlSession.selectList(MEMBER_NAMESPACE+".searchMemberList", memberVO);
 	}
+	
+	// È¸¿ø ¸ñ·Ï ¿¢¼¿ ´Ù¿î·Îµå
+	public List<MemberVO> memberExcelDown(MemberVO memberVO){
+		return sqlSession.selectList(MEMBER_NAMESPACE+".memberExcelDown", memberVO);
+	}
 }

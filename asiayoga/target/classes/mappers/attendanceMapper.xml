@@ -165,4 +165,42 @@
 		WHERE attendance_seq = #{attendanceSeq}
 		AND del_yn ='N'
 	</update>
+	
+	<!-- 출석 정보 리스트 엑셀 다운로드  -->
+	<select id="attendanceExcelDownload" parameterType="attendanceVO" resultType="attendanceVO">
+		/* attendanceMapper.attendanceExcelDownload */
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+				temp.attendance_seq,
+	            temp.member_seq,
+				temp.product_name,
+				temp.name,
+	            temp.phone,
+	            temp.sex,
+	            temp.attendance_date,
+	            temp.store_seq
+     	FROM  ( SELECT 	atdinfo.attendance_seq, 
+						atdinfo.member_seq,
+						atdinfo.product_seq,
+						( SELECT product_name FROM PRODUCTINFO WHERE product_seq = atdinfo.product_seq ) AS product_name,
+						( SELECT name FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS name,
+						( SELECT phone FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS phone,
+						( SELECT sex FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS sex,
+						atdinfo.attendance_date,
+						atdinfo.store_seq 
+				FROM ATTENDANCEINFO atdinfo
+				WHERE atdinfo.store_seq = #{storeSeq} 
+				AND atdinfo.del_yn = 'N'
+                ORDER BY atdinfo.attendance_date ASC 
+             	) AS temp , (SELECT @ROWNUM :=0) AS R 
+		<if test="searchWord != null and searchWord != ''">
+		WHERE 1=1
+		AND 
+				(		temp.name LIKE CONCAT('%',#{searchWord},'%')
+					OR 	temp.phone LIKE CONCAT('%',#{searchWord},'%')
+					OR 	temp.product_name LIKE CONCAT('%',#{searchWord},'%')
+					OR 	DATE_FORMAT(temp.attendance_date, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+				)
+		</if>
+        ORDER BY row_num DESC
+	</select>
 </mapper>

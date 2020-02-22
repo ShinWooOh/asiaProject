@@ -89,6 +89,12 @@
 								<input type="search" id="searchWord" name="searchWord" class="form-control input-sm"  oninput="goChangeAdjournmentList();">
 							</label>
 						</div>
+						<div class="dataTables_filter" id="excelBox">
+							<label>
+								<a class="far fa-file-excel fa-2x" style="cursor: pointer; margin-right: -20px;"></a>
+								<input type="button" class="excelBtn" id="excelDown" name="excelDown" onclick="adjournmentExcelDown(${adjournmentVO.storeSeq});" value="엑셀 다운로드" >
+							</label>
+						</div> 
 					</div>
 				</div>
 				<div class="row" style="width: 100%; padding: 5px;">
@@ -225,6 +231,10 @@
 	<input type="hidden" id="adjournmentSeq" name="adjournmentSeq">
 </form:form>
 
+<form:form action="/adjournment/adjournmentExcelDownload" id="adjournmentExcelDownload" name="adjournmentExcelDownload" modelAttribute="adjournmentVO" method="get" enctype="multipart/form-data">
+	<input type="hidden" id="searchWord" name="searchWord">
+	<input type="hidden" id="storeSeq" name="storeSeq">
+</form:form>
 
 <!-- REQUIRED SCRIPTS -->
 
@@ -238,6 +248,27 @@
 
 $(document).ready(function() {
 
+	$("#excelBox").css({
+		"float"							: "right",
+		"margin-top"					: "5px",
+		"margin-right"					: "10px",
+		"background-color"				: "#d2d6de",
+		"border-top-left-radius"		: "4px",
+		"border-bottom-left-radius"		: "4px",
+		"border-top-right-radius"		: "4px",
+		"border-bottom-right-radius"	: "4px"
+	});
+	
+	$(".excelBtn").css({
+		"width"				: "120px",
+		"text-align"		: "right",
+		"font-weight"		: "bold",
+		"cursor"			: "pointer",
+		"border"			: "none",
+		"background"		: "transparent"
+	});
+	
+	
 	defaultCss();
 });
 
@@ -277,7 +308,7 @@ function goAdjournmentStateChange(adjournmentSeq,adjournmentState,orderSeq){
 	    });
 }
 
-
+/* 검색 조건 ,페이징  */
 /* 검색 조건에 의한 목록  */
 function goChangeAdjournmentList() {
 	
@@ -481,6 +512,21 @@ function goClickPage(pageNum) {
 	
 	$("#pageNum").val(pageNum);
 	goChangeAdjournmentList();
+}
+
+/* 검색 조건 ,페이징  */
+
+
+/* 엑셀 다운로드 기능  */
+function adjournmentExcelDown(storeSeq) {
+	
+ 	var paramSearchWord = $("#searchWord").val();
+ 	
+ 	$("#adjournmentExcelDownload #searchWord").val(paramSearchWord);
+ 	$("#adjournmentExcelDownload #storeSeq").val(storeSeq);
+ 	
+ 	$("#adjournmentExcelDownload").submit();
+	
 }
 
 function defaultCss() {

@@ -63,5 +63,9 @@ public class OrderDAO {
 		return sqlSession.update(ORDER_NAMESPACE+".updateAdjournmentState",orderVO);
 	}
 	
+	// ÁÖ¹® ¸ñ·Ï ¿¢¼¿ ´Ù¿î·Îµå
+	public List<OrderVO> orderExcelDown(OrderVO orderVO){
+		return sqlSession.selectList(ORDER_NAMESPACE+".orderExcelDown", orderVO);
+	}
 	
 }
