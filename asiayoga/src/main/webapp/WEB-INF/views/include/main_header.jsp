@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <ul class="navbar-nav ml-auto">
 	<li class="nav-item">
-		<a class="btn btn-block btn-secondary" id="btnLogOut" onclick="goLogOut();"><font style="color: white;">로그아웃</font></a>
+		<a class="btn btn-block btn-secondary" id="btnLogOut" onclick="goLogOut();" style="cursor: pointer;"><font style="color: white;">로그아웃</font></a>
 		<form id="logout-form" action='<c:url value='/logout'/>' method="POST">
    			<input name="${_csrf.parameterName}" type="hidden" value="${_csrf.token}"/>
 		</form>
