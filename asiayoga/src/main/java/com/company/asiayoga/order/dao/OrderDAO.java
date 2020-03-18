@@ -8,6 +8,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.company.asiayoga.order.domain.OrderVO;
+import com.company.asiayoga.product.domain.ProductVO;
+import com.company.asiayoga.store.domain.StoreVO;
 
 @Repository
 public class OrderDAO {
@@ -16,6 +18,8 @@ public class OrderDAO {
 	private SqlSession sqlSession;
 	
 	private static final String ORDER_NAMESPACE = "com.company.asiayoga.mapper.orderMapper";
+	private static final String STORE_NAMESPACE = "com.company.asiayoga.mapper.storeMapper";
+	private static final String PRODUCT_NAMESPACE = "com.company.asiayoga.mapper.productMapper";
 	
 	
 	// 구매 목록
@@ -66,6 +70,16 @@ public class OrderDAO {
 	// 주문 목록 엑셀 다운로드
 	public List<OrderVO> orderExcelDown(OrderVO orderVO){
 		return sqlSession.selectList(ORDER_NAMESPACE+".orderExcelDown", orderVO);
+	}
+	
+	// 구매 등록 화면 > 매장 검색 팝업에서 검색(관리자 전용)
+	public List<StoreVO> storeSearchList(StoreVO storeVO) {
+		return sqlSession.selectList(STORE_NAMESPACE+".storeSearchList", storeVO);
+	}
+	
+	// 매장 검색 팝업에서 선택 후 상품 목록(관리자 전용)
+	public List<ProductVO> searchProductList(ProductVO productVO) {
+		return sqlSession.selectList(PRODUCT_NAMESPACE+".searchProductList", productVO);
 	}
 	
 }

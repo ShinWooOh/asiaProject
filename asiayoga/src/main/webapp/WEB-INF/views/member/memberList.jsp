@@ -104,10 +104,11 @@
 		                            <tbody id="memberHeader" style="vertical-align: middle;">
 			                            <tr>
 			                                <th style="width: 10%;">No</th>
-			                                <th style="width: 15%;">회원명</th>
+			                                <th style="width: 10%;">매장명</th>
+			                                <th style="width: 13%;">회원명</th>
 			                                <th style="width: 10%;">생년월일</th>
-			                                <th style="width: 16%;">연락처</th>
-			                                <th style="width: 20%;">이메일</th>
+			                                <th style="width: 13%;">연락처</th>
+			                                <th style="width: 15%;">이메일</th>
 			                                <th style="width: 5%;">성별</th>
 			                                <th style="width: 7%;">휴회여부</th>
 			                                <th style="width: 10%;">가입일</th>
@@ -118,6 +119,7 @@
 					                            <c:forEach var="memberList" items="${memberList}">
 					                            	<tr>
 														<td><c:out value="${memberList.rowNum}"/></td>                            		
+														<td><c:out value="${memberList.storeName}"/></td>                            		
 														<td><a href="javascript:void(0);" onclick="goMemberDetail(${memberList.memberSeq},${memberList.storeSeq});">${memberList.name}</a></td>                            		
 														<td><c:out value="${memberList.birth}"/></td>                            		
 														<td><c:out value="${memberList.phone}"/></td>                            		
@@ -141,7 +143,7 @@
 					                            </c:forEach>
 		                            		</c:when>
 		                            		<c:otherwise>
-	                            				<tr><th colspan="9" style="text-align: center;">결과가 없습니다.</th></tr>
+	                            				<tr><th colspan="10" style="text-align: center;">결과가 없습니다.</th></tr>
 		                            		</c:otherwise>
 			                            </c:choose>
 		                            </tbody>
@@ -357,10 +359,11 @@ function goRefreshMemberList(memberList) {
 	var paramMemberList = '';
 	paramMemberList += '<tr>';
 	paramMemberList += '<th style="width: 10%;">No</th>';
-	paramMemberList += '<th style="width: 15%;">회원명</th>';
+	paramMemberList += '<th style="width: 10%;">매장명</th>';
+	paramMemberList += '<th style="width: 13%;">회원명</th>';
 	paramMemberList += '<th style="width: 10%;">생년월일</th>';
-	paramMemberList += '<th style="width: 16%;">연락처</th>';
-	paramMemberList += '<th style="width: 20%;">이메일</th>';
+	paramMemberList += '<th style="width: 13%;">연락처</th>';
+	paramMemberList += '<th style="width: 15%;">이메일</th>';
 	paramMemberList += '<th style="width: 5%;">성별</th>';
 	paramMemberList += '<th style="width: 7%;">휴회여부</th>';
 	paramMemberList += '<th style="width: 10%;">가입일</th>';
@@ -371,6 +374,7 @@ function goRefreshMemberList(memberList) {
 		var paramRowNum = 0;
 		var paramMemberSeq = 0;
 		var paramStoreSeq = 0;
+		var paramStoreName = '';
 		var paramName ='';
 		var paramBirth = '';
 		var paramPhone = '';
@@ -382,6 +386,7 @@ function goRefreshMemberList(memberList) {
 		paramRowNum = memberList[i].rowNum;
 		paramMemberSeq = memberList[i].memberSeq;
 		paramStoreSeq = memberList[i].storeSeq;
+		paramStoreName = memberList[i].storeName;
 		paramName = memberList[i].name;
 		paramBirth = memberList[i].birth;
 		paramPhone = memberList[i].phone;
@@ -392,6 +397,7 @@ function goRefreshMemberList(memberList) {
 		
 		paramMemberList += '<tr>';
 		paramMemberList += '<td>'+paramRowNum+'</td>';
+		paramMemberList += '<td>'+paramStoreName+'</td>';
 		paramMemberList += '<td><a href="javascript:void(0);" onclick="goMemberDetail('+paramMemberSeq+','+paramStoreSeq+')">'+paramName+'</a></td>';
 		paramMemberList += '<td>'+paramBirth+'</td>';
 		paramMemberList += '<td>'+paramPhone+'</td>';
@@ -482,16 +488,17 @@ function goRefreshMemberNoCount() {
 	var paramMemberList = '';
 	paramMemberList += '<tr>';
 	paramMemberList += '<th style="width: 10%;">No</th>';
-	paramMemberList += '<th style="width: 15%;">회원명</th>';
+	paramMemberList += '<th style="width: 10%;">매장명</th>';
+	paramMemberList += '<th style="width: 13%;">회원명</th>';
 	paramMemberList += '<th style="width: 10%;">생년월일</th>';
-	paramMemberList += '<th style="width: 16%;">연락처</th>';
-	paramMemberList += '<th style="width: 20%;">이메일</th>';
+	paramMemberList += '<th style="width: 13%;">연락처</th>';
+	paramMemberList += '<th style="width: 15%;">이메일</th>';
 	paramMemberList += '<th style="width: 5%;">성별</th>';
 	paramMemberList += '<th style="width: 7%;">휴회여부</th>';
 	paramMemberList += '<th style="width: 10%;">가입일</th>';
 	paramMemberList += '<th style="width: 7%;"></th>';
 	paramMemberList += '</tr>';
-	paramMemberList += '<tr><th colspan="9" style="text-align: center;">결과가 없습니다.</th></tr>';
+	paramMemberList += '<tr><th colspan="10" style="text-align: center;">결과가 없습니다.</th></tr>';
 	
 	$("#memberHeader").text("");
 	$("#memberHeader").append(paramMemberList);

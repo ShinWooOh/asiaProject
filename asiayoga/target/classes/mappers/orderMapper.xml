@@ -37,7 +37,7 @@
 		                ordinfo.expiration_yn,
 						ordinfo.locker_seq,
 						ordinfo.del_yn,
-		                ( SELECT store_name FROM STOREINFO WHERE store_Seq = #{storeSeq}) AS store_name,
+		                ( SELECT store_name FROM STOREINFO WHERE store_seq = stinfo.store_seq) AS store_name,
                 		prdinfo.product_name,
                 		( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq) As item_name,
 		                mbrinfo.name,
@@ -47,7 +47,15 @@
 		        ON ordinfo.member_seq = mbrinfo.member_seq
 		        INNER JOIN PRODUCTINFO prdinfo
 		        ON ordinfo.product_seq = prdinfo.product_Seq
-				WHERE ordinfo.store_seq = #{storeSeq}
+		        INNER JOIN STOREINFO stinfo
+		        ON ordinfo.store_seq = stinfo.store_seq
+				WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND ordinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
 				AND ordinfo.del_yn = 'N'
 		        ORDER By ordinfo.order_seq DESC) AS tempA
         , (SELECT @ROWNUM :=0) AS R 
@@ -81,7 +89,7 @@
 		                ordinfo.expiration_yn,
 						ordinfo.locker_seq,
 						ordinfo.del_yn,
-		                ( SELECT store_name FROM STOREINFO WHERE store_Seq = #{storeSeq}) AS store_name,
+		                ( SELECT store_name FROM STOREINFO WHERE store_Seq = stinfo.store_seq) AS store_name,
                 		prdinfo.product_name,
                 		( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq) As item_name,
 		                mbrinfo.name,
@@ -91,21 +99,35 @@
 		        ON ordinfo.member_seq = mbrinfo.member_seq
 		        INNER JOIN PRODUCTINFO prdinfo
 		        ON ordinfo.product_seq = prdinfo.product_Seq
-				WHERE ordinfo.store_seq = #{storeSeq}
+		        INNER JOIN STOREINFO stinfo
+		        ON ordinfo.store_seq = stinfo.store_seq
+				WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND ordinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
 				AND ordinfo.del_yn = 'N'
 		        ORDER By ordinfo.order_seq DESC) AS tempA
-       WHERE 1=1
-       		<if test="searchWord != null and searchWord != ''">
-				AND 
-				(		tempA.store_name LIKE CONCAT('%',#{searchWord},'%')
-					OR 	tempA.item_name LIKE CONCAT('%',#{searchWord},'%')
-					OR 	tempA.product_name LIKE CONCAT('%',#{searchWord},'%')
-					OR 	tempA.name LIKE CONCAT('%',#{searchWord},'%')
-					OR 	tempA.phone LIKE CONCAT('%',#{searchWord},'%')
-					OR 	DATE_FORMAT(tempA.start_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
-					OR 	DATE_FORMAT(tempA.expiration_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
-				)
-			</if>
+       	WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND tempA.store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose>
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		tempA.store_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.item_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.product_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.phone LIKE CONCAT('%',#{searchWord},'%')
+				OR 	DATE_FORMAT(tempA.start_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+				OR 	DATE_FORMAT(tempA.expiration_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
 	</select>
 	
 	<!-- 고객 1명의 구매 목록  -->
@@ -123,7 +145,6 @@
 				ordinfo.del_yn,
 				ordinfo.modify_date,
 				prdinfo.product_name,
-				prdinfo.product_code,
 				( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} ) AS store_name,
 				( SELECT item_seq FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_seq,
 				( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_name
@@ -153,7 +174,6 @@
 				ordinfo.order_memo,
 				ordinfo.del_yn,
 				prdinfo.product_name,
-				prdinfo.product_code,
                 prdinfo.item_seq,
                 ( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_name,
                 ( SELECT store_name FROM STOREINFO WHERE store_seq = prdinfo.store_seq ) AS store_name,
@@ -287,7 +307,7 @@
 						ordinfo.expiration_day,
 		                ordinfo.expiration_yn,
 						ordinfo.del_yn,
-		                ( SELECT store_name FROM STOREINFO WHERE store_Seq = #{storeSeq}) AS store_name,
+		                ( SELECT store_name FROM STOREINFO WHERE store_Seq = ordinfo.store_seq) AS store_name,
                 		prdinfo.product_name,
                 		( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq) As item_name,
 		                mbrinfo.name,
@@ -297,7 +317,13 @@
 		        ON ordinfo.member_seq = mbrinfo.member_seq
 		        INNER JOIN PRODUCTINFO prdinfo
 		        ON ordinfo.product_seq = prdinfo.product_Seq
-				WHERE ordinfo.store_seq = #{storeSeq}
+		        WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND ordinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
 				AND ordinfo.del_yn = 'N'
 		        ORDER By ordinfo.order_seq DESC) AS tempA
         , (SELECT @ROWNUM :=0) AS R 

@@ -6,6 +6,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import com.company.asiayoga.manage.domain.ManageGroupVO;
 import com.company.asiayoga.manage.domain.ManageVO;
+import com.company.asiayoga.store.domain.StoreVO;
 
 public interface ManageService {
 	
@@ -36,6 +37,9 @@ public interface ManageService {
 	//직원 리스트 엑셀 다운로드
 	SXSSFWorkbook manageExcelDownload(ManageVO manageVO) throws Exception;
 	
+	// 직원 등록 화면에서 매장 선택에 따른 직급 리스트(관리자 전용)
+	public List<ManageGroupVO> searchGroupList(ManageGroupVO manageGroupVO) throws Exception;
+	
 	/*직원 그룹 관련*/
 	
 	// 직급 목록
@@ -61,4 +65,10 @@ public interface ManageService {
 	
 	//직원 그룹 리스트 엑셀 다운로드
 	SXSSFWorkbook manageGroupExcelDownload(ManageGroupVO manageGroupVO) throws Exception;
+	
+	// 팝업 창에서의 매장 검색
+	public List<StoreVO> storeSearchList(StoreVO storeVO) throws Exception;
+	
+	// 검색 조건 없는 직급 목록
+	public List<ManageGroupVO> manageGroupListAll(ManageGroupVO manageGroupVO) throws Exception;
 }

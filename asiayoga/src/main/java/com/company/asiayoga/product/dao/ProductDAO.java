@@ -7,7 +7,9 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.company.asiayoga.item.domain.ItemVO;
 import com.company.asiayoga.product.domain.ProductVO;
+import com.company.asiayoga.store.domain.StoreVO;
 
 @Repository
 public class ProductDAO {
@@ -16,6 +18,8 @@ public class ProductDAO {
 	private SqlSession sqlSession;
 	
 	private static final String PRODUCT_NAMESPACE = "com.company.asiayoga.mapper.productMapper";
+	private static final String STORE_NAMESPACE = "com.company.asiayoga.mapper.storeMapper";
+	private static final String ITEM_NAMESPACE = "com.company.asiayoga.mapper.itemMapper";
 	
 	// 상품 목록
 	public List<ProductVO> productList(ProductVO productVO) throws Exception{
@@ -50,5 +54,15 @@ public class ProductDAO {
 	// 상품 목록 엑셀 다운로드
 	public List<ProductVO> productExcelDown(ProductVO productVO) throws Exception{
 		return sqlSession.selectList(PRODUCT_NAMESPACE+".productExcelDown", productVO);
+	}
+	
+	// 매장 찾기(관리자 전용)
+	public List<StoreVO> storeSearchList(StoreVO storeVO) throws Exception{
+		return sqlSession.selectList(STORE_NAMESPACE+".storeSearchList", storeVO);
+	}
+	
+	// 품목 찾기(관리자 전용, 매장 선택 후 로직)
+	public List<ItemVO> searchItemList(ItemVO itemVO) throws Exception{
+		return sqlSession.selectList(ITEM_NAMESPACE+".searchItemList", itemVO);
 	}
 }

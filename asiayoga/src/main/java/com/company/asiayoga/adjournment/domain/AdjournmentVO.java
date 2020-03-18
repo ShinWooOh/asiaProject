@@ -31,6 +31,7 @@ public class AdjournmentVO extends PagingVO {
     private String itemName;								// 품목명
     private int remainingCount;								// 상품 남은 횟수
     private int productCount;								// 상품 횟수
+    private String authority;								// 권한
 	
     public int getAdjournmentSeq() {
 		return adjournmentSeq;
@@ -176,6 +177,11 @@ public class AdjournmentVO extends PagingVO {
 	public void setProductCount(int productCount) {
 		this.productCount = productCount;
 	}
-	
+	public String getAuthority() {
+		return authority;
+	}
+	public void setAuthority(String authority) {
+		this.authority = authority;
+	}
 	
 }

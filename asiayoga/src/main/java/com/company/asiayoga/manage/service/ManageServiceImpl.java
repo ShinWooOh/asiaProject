@@ -18,6 +18,7 @@ import com.company.asiayoga.manage.dao.ManageDAO;
 import com.company.asiayoga.manage.domain.ManageGroupVO;
 import com.company.asiayoga.manage.domain.ManageVO;
 import com.company.asiayoga.member.domain.MemberVO;
+import com.company.asiayoga.store.domain.StoreVO;
 
 @Service
 public class ManageServiceImpl implements ManageService {
@@ -145,6 +146,14 @@ public class ManageServiceImpl implements ManageService {
 	}
 	
 	@Override
+	public List<ManageGroupVO> searchGroupList(ManageGroupVO manageGroupVO) throws Exception {
+		return manageDAO.searchGroupList(manageGroupVO);
+	}
+	
+	
+	// 직원 그룹
+	
+	@Override
 	public List<ManageGroupVO> manageGroupList(ManageGroupVO manageGroupVO) throws Exception {
 		return manageDAO.manageGroupList(manageGroupVO);
 	}
@@ -231,6 +240,16 @@ public class ManageServiceImpl implements ManageService {
 		return sxssfWorkbook;
 	}
 
+	@Override
+	public List<StoreVO> storeSearchList(StoreVO storeVO) throws Exception {
+		return manageDAO.storeSearchList(storeVO);
+	}
+
+
+	@Override
+	public List<ManageGroupVO> manageGroupListAll(ManageGroupVO manageGroupVO) throws Exception {
+		return manageDAO.manageGroupListAll(manageGroupVO);
+	}
 
 
 

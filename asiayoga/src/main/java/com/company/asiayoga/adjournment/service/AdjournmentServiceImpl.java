@@ -19,6 +19,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.company.asiayoga.adjournment.dao.AdjournmentDAO;
 import com.company.asiayoga.adjournment.domain.AdjournmentVO;
+import com.company.asiayoga.member.dao.MemberDAO;
 import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.order.dao.OrderDAO;
 import com.company.asiayoga.order.domain.OrderVO;
@@ -32,6 +33,9 @@ public class AdjournmentServiceImpl implements AdjournmentService{
 	@Inject
 	private OrderDAO orderDAO;
 	
+	@Inject
+	private MemberDAO memberDAO;
+	
 	@Override
 	public List<AdjournmentVO> adjournmentList(AdjournmentVO adjournmentVO) throws Exception {
 		return adjournmentDAO.adjournmentList(adjournmentVO);
@@ -44,7 +48,34 @@ public class AdjournmentServiceImpl implements AdjournmentService{
 	
 	@Override
 	public int insertAdjournment(AdjournmentVO adjournmentVO) throws Exception {
-		return adjournmentDAO.insertAdjournment(adjournmentVO);
+		
+		// 상태 저장
+		int paramResult = 0;
+		paramResult = adjournmentDAO.insertAdjournment(adjournmentVO);
+		
+		// 상태 저장 후 구매 내역에서도 휴회 상태 update
+		if(paramResult > 0){
+			OrderVO orderVO = new OrderVO();
+			orderVO.setOrderSeq(adjournmentVO.getOrderSeq());
+			orderVO.setModifyId(adjournmentVO.getModifyId());
+			orderVO.setAdjournmentState("Y");
+			paramResult = orderDAO.updateAdjournmentState(orderVO);
+
+			// 구매내역에서 휴회 상태 변경 성공인 경우 , 회원정보란에도 휴회 상태로 변경
+			if(paramResult > 0) {
+				MemberVO memberVO = new MemberVO();
+				memberVO.setOrderSeq(adjournmentVO.getOrderSeq());
+				memberVO.setAdjournmentState(orderVO.getAdjournmentState());
+				memberVO.setModifyId(adjournmentVO.getModifyId());
+				paramResult = memberDAO.updateAdjournmentState(memberVO);
+			} else {
+				paramResult = 0;
+			}
+		} else {
+			paramResult = 0;
+		}
+		
+		return paramResult;
 	}
 	
 	@Transactional(rollbackFor =Exception.class)
@@ -60,13 +91,23 @@ public class AdjournmentServiceImpl implements AdjournmentService{
 		// 상태 업데이트
 		int paramResult = 0;
 		paramResult = adjournmentDAO.updateAdjournmentState(adjournmentVO);
-		
 		if(paramResult > 0){
 			OrderVO orderVO = new OrderVO();
 			orderVO.setOrderSeq(adjournmentVO.getOrderSeq());
 			orderVO.setAdjournmentState(adjournmentVO.getAdjournmentState());
 			orderVO.setModifyId(adjournmentVO.getModifyId());
 			paramResult = orderDAO.updateAdjournmentState(orderVO);
+
+			// 구매내역에서 휴회 상태 변경 성공인 경우 , 회원정보란에도 휴회 상태로 변경
+			if(paramResult > 0) {
+				MemberVO memberVO = new MemberVO();
+				memberVO.setOrderSeq(adjournmentVO.getOrderSeq());
+				memberVO.setAdjournmentState(adjournmentVO.getAdjournmentState());
+				memberVO.setModifyId(adjournmentVO.getModifyId());
+				paramResult = memberDAO.updateAdjournmentState(memberVO);
+			} else {
+				paramResult = 0;
+			}
 		} else {
 			paramResult = 0;
 		}
@@ -104,7 +145,6 @@ public class AdjournmentServiceImpl implements AdjournmentService{
 		return adjournmentDAO.memberSearch(memberVO);
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public SXSSFWorkbook adjournmentExcelDownload(AdjournmentVO adjournmentVO) throws Exception {
 		SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();

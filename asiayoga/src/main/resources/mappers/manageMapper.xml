@@ -76,6 +76,9 @@
 				mginfo.enabled,
 				mginfo.store_seq,
 				( SELECT store_name FROM STOREINFO WHERE store_seq = mginfo.store_seq ) AS store_name,
+				CASE WHEN mginfo.authority = 'ROLE_ADMIN' then '1'
+					 ELSE '9'
+				END AS check_authority,  
 				use_yn
 		FROM MANAGEINFO mginfo
 		WHERE id = #{id}
@@ -125,6 +128,7 @@
 		<include refid="commomPaging"/>
 	</select>
 	
+	<!-- 매장 직원 목록 갯수 -->
  	<select id="manageTotalCount"  parameterType="manageVO" resultType="int">
  		/* manageMapper.manageTotalCount */
 		SELECT 	COUNT(*)
@@ -180,6 +184,7 @@
  					manage_group_seq,
  					memo,
  					store_seq,
+ 					failure_count,
  					authority,
  					register_id,
  					modify_id
@@ -192,6 +197,7 @@
  					#{manageGroupSeq},
  					#{memo},
  					#{storeSeq},
+ 					0,
  					( SELECT authority FROM MANAGEGROUP WHERE manage_group_seq = #{manageGroupSeq}),
  					#{registerId},
  					#{modifyId}
@@ -202,23 +208,24 @@
 	<!-- 직원 정보   -->
  	<select id="manageInfo" resultType="manageVO">
  		/* manageMapper.manageInfo */
-		SELECT	manage_seq,
-				id,
-				passwd,
-				name,
-				phone,
-				authority,
+		SELECT	mginfo.manage_seq,
+				mginfo.id,
+				mginfo.passwd,
+				mginfo.name,
+				mginfo.phone,
+				mginfo.authority,
                 CASE WHEN authority = 'ROLE_ADMIN' THEN '관리자'
 					 WHEN authority = 'ROLE_MANAGER' THEN '매장관리자'
                      WHEN authority = 'ROLE_STAFF' THEN '직원'
                      ELSE '기타'
 				END AS authority_name,
-				manage_group_seq,
-				access_date,
-				memo,
-				use_yn
-		FROM	MANAGEINFO
-		WHERE	manage_seq = #{manageSeq} 
+				mginfo.manage_group_seq,
+				( SELECT store_name FROM STOREINFO WHERE store_seq = mginfo.store_seq ) AS store_name,
+				mginfo.access_date,
+				mginfo.memo,
+				mginfo.use_yn
+		FROM	MANAGEINFO mginfo
+		WHERE	mginfo.manage_seq = #{manageSeq} 
 	</select>
 	
 	<!-- 직원 정보 업데이트   -->
@@ -234,7 +241,7 @@
 		WHERE	manage_seq = #{manageSeq} 
 	</update>
 	
-	<!-- 매장 직원 목록  -->
+	<!-- 매장 직원 목록 엑셀 다운로드  -->
  	<select id="manageExcelDownload" resultType="manageVO">
  		/* manageMapper.manageExcelDownload */
 		SELECT 	@ROWNUM:=@ROWNUM+1 as row_num,

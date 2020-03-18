@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.company.asiayoga.manage.domain.ManageVO;
 import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.member.service.MemberService;
+import com.company.asiayoga.store.domain.StoreVO;
+import com.company.asiayoga.store.service.StoreService;
 
 @Controller
 @RequestMapping("member")
@@ -32,7 +34,10 @@ public class MemberController {
 	private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
 	
 	@Inject
-	MemberService memberService;
+	private MemberService memberService;
+	
+	@Inject
+	private StoreService storeService;
 	
 	private String menuFirstRoot = "member";
 	
@@ -44,6 +49,7 @@ public class MemberController {
 		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		memberVO.setStoreSeq(manageVO.getStoreSeq());
+		memberVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
 		List<MemberVO> list = memberService.memberList(memberVO);
 		model.addAttribute("memberList", list);
 		
@@ -77,6 +83,7 @@ public class MemberController {
 
 		memberVO.setParamPage((memberVO.getTotalRow()*memberVO.getPageNum())-memberVO.getTotalRow());
 		memberVO.setStoreSeq(manageVO.getStoreSeq());
+		memberVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
 		List<MemberVO> list = memberService.memberList(memberVO);
 
 		int paramTotalCount = 0;
@@ -167,9 +174,13 @@ public class MemberController {
 	// 회원 정보 저장
 	@RequestMapping(value = "memberInsert", method = RequestMethod.POST)
 	@ResponseBody
-	public String memberInsert(Model model,@ModelAttribute("memberVO") MemberVO memberVO) throws Exception{
+	public String memberInsert(HttpServletRequest request,Model model,@ModelAttribute("memberVO") MemberVO memberVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		int resultParam = 0;
+		memberVO.setRegisterId(manageVO.getId());
 		resultParam = memberService.memberInsert(memberVO);
 		
 		String result = "fail";
@@ -184,7 +195,11 @@ public class MemberController {
 	// 회원 정보 삭제
 	@RequestMapping(value = "memberDel", method = RequestMethod.POST)
 	@ResponseBody
-	public String memberDel(Model model,@ModelAttribute("memberVO") MemberVO memberVO) throws Exception{
+	public String memberDel(HttpServletRequest request,Model model,@ModelAttribute("memberVO") MemberVO memberVO) throws Exception{
+
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		memberVO.setModifyId(manageVO.getId());
 		
 		int resultParam = 0;
 		resultParam = memberService.memberDel(memberVO);
@@ -236,7 +251,11 @@ public class MemberController {
 	// 회원 정보 수정 
 	@RequestMapping(value = "memberEdit")
 	@ResponseBody
-	public String memberEdit(Model model,@ModelAttribute("memberVO") MemberVO memberVO) throws Exception{
+	public String memberEdit(HttpServletRequest request,Model model,@ModelAttribute("memberVO") MemberVO memberVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		memberVO.setModifyId(manageVO.getId());
 		
 		int resultParam = 0;
 		resultParam = memberService.memberEdit(memberVO);
@@ -270,6 +289,11 @@ public class MemberController {
 	@RequestMapping(value = "memberExcelDownload")
 	public void memberExcelDownload(HttpServletRequest request, HttpServletResponse reponse, MemberVO memberVO) throws Exception{
 		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
+		memberVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
+		
 		OutputStream out = null;
 		try {
 			SXSSFWorkbook sxssfWorkbook = memberService.memberExcelDownload(memberVO);
@@ -287,6 +311,28 @@ public class MemberController {
 		} finally {
 			if(out != null) { out.close(); }
 		}
+	}
+	
+	// 팝업에서 매장 목록(HashMap 구조)
+	@RequestMapping(value = "searchStore", method = RequestMethod.GET)
+	@ResponseBody
+	public  HashMap<String, Object> searchStore(Model model,StoreVO storeVO) throws Exception{
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		
+		storeVO.setSearchWord(storeVO.getStoreName());
+		List<StoreVO> storeList = memberService.storeSearchList(storeVO);
+		
+		if(storeList.size() >= 1){
+			hashMap.put("result", "success");
+			hashMap.put("popStoreList", storeList);
+		} else if(storeList.size() == 0) {
+			hashMap.put("result", "noCount");
+			hashMap.put("popStoreList", "");
+		} else {
+			
+		}
+		
+		return hashMap;
 	}
 
 	// 마지막 페이지 점검 
@@ -318,5 +364,16 @@ public class MemberController {
 		
 		return paramTotalPage;
 	}
+	
+	// 권한 체크
+	public String checkAuthority(String myAuthority) {
+		String resultParam = "";
+	
+		if(myAuthority.equals("ROLE_ADMIN")) {
+			resultParam = myAuthority;
+		}
 		
+		return resultParam;
+	}
+
 }

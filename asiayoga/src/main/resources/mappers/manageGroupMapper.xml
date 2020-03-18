@@ -50,6 +50,33 @@
 		<include refid="commomPaging"/>
 	</select>
 	
+	<!-- 직원 그룹 목록  -->
+ 	<select id="manageGroupListAll" parameterType="manageGroupVO" resultType="manageGroupVO">
+ 		/* manageGroupMapper.manageGroupListAll */
+		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
+				mnggrp.manage_group_seq,
+				mnggrp.authority,
+				CASE WHEN mnggrp.authority = 'ROLE_ADMIN' THEN '관리자'
+					 WHEN mnggrp.authority = 'ROLE_MANAGER' THEN '매장관리자'
+                     WHEN mnggrp.authority = 'ROLE_STAFF' THEN '직원'
+                     ELSE '기타'
+				END AS authority_name,
+				mnggrp.group_name,
+				mnggrp.store_seq,
+				stinfo.store_name,
+				mnggrp.register_date,
+				mnggrp.register_id,
+				mnggrp.modify_date, 
+				mnggrp.modify_id,
+				mnggrp.use_yn
+		FROM MANAGEGROUP mnggrp	
+		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		INNER JOIN STOREINFO stinfo
+		ON mnggrp.store_seq = stinfo.store_seq
+		WHERE mnggrp.store_seq = #{storeSeq}
+		ORDER BY mnggrp.modify_date DESC
+	</select>
+	
 	<!-- 직원 그룹 목록 갯수 -->
  	<select id="manageGroupTotalCount" parameterType="manageGroupVO" resultType="int">
  		/* manageGroupMapper.manageGroupTotalCount */
@@ -132,8 +159,7 @@
 				mnggrp.modify_id,
 				mnggrp.use_yn
 		FROM MANAGEGROUP mnggrp
-		WHERE mnggrp.store_seq = #{storeSeq}
-		AND mnggrp.manage_group_seq =#{manageGroupSeq}
+		WHERE mnggrp.manage_group_seq =#{manageGroupSeq}
 	</select>
 
 	<!-- 직원 그룹 수정   -->
@@ -179,6 +205,30 @@
 				OR 	stinfo.store_name LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
+		ORDER BY mnggrp.modify_date DESC
+	</select>
+	
+	<!-- 매장명 검색 후 직원 그룹 목록 리스트  -->
+ 	<select id="searchGroupList" parameterType="manageGroupVO" resultType="manageGroupVO">
+ 		/* manageGroupMapper.searchGroupList */
+		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
+				mnggrp.manage_group_seq,
+				mnggrp.authority,
+				CASE WHEN mnggrp.authority = 'ROLE_ADMIN' THEN '관리자'
+					 WHEN mnggrp.authority = 'ROLE_MANAGER' THEN '매장관리자'
+                     WHEN mnggrp.authority = 'ROLE_STAFF' THEN '직원'
+                     ELSE '기타'
+				END AS authority_name,
+				mnggrp.group_name,
+				mnggrp.store_seq,
+				stinfo.store_name,
+				mnggrp.use_yn
+		FROM MANAGEGROUP mnggrp	
+		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		INNER JOIN STOREINFO stinfo
+		ON mnggrp.store_seq = stinfo.store_seq
+		WHERE mnggrp.store_seq = #{storeSeq}
+		AND mnggrp.use_yn = 'Y'
 		ORDER BY mnggrp.modify_date DESC
 	</select>
 </mapper>

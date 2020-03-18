@@ -31,6 +31,7 @@ public class ManageVO extends PagingVO {
     private String phone2;							// 휴대폰 번호 2
     private String phone3;							// 휴대폰 번호 3
     private String groupName;						// 직급명
+    private String checkAuthority = "9" ;			// 관리자 구분 확인 (1 : 관리자 , 9 : 그외)
     
 	public int getManageSeq() {
 		return manageSeq;
@@ -175,6 +176,12 @@ public class ManageVO extends PagingVO {
 	}
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
+	}
+	public String getCheckAuthority() {
+		return checkAuthority;
+	}
+	public void setCheckAuthority(String checkAuthority) {
+		this.checkAuthority = checkAuthority;
 	}
 	
 }

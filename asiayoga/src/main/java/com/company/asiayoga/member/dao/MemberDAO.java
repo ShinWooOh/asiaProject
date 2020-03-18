@@ -7,7 +7,9 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.company.asiayoga.adjournment.domain.AdjournmentVO;
 import com.company.asiayoga.member.domain.MemberVO;
+import com.company.asiayoga.store.domain.StoreVO;
 
 @Repository
 public class MemberDAO {
@@ -16,6 +18,7 @@ public class MemberDAO {
 	private SqlSession sqlSession;
 	
 	private static final String MEMBER_NAMESPACE = "com.company.asiayoga.mapper.memberMapper";
+	private static final String STORE_NAMESPACE = "com.company.asiayoga.mapper.storeMapper";
 	
 	// 회원 정보 목록
 	public List<MemberVO> memberList(MemberVO memberVO){
@@ -55,5 +58,15 @@ public class MemberDAO {
 	// 회원 목록 엑셀 다운로드
 	public List<MemberVO> memberExcelDown(MemberVO memberVO){
 		return sqlSession.selectList(MEMBER_NAMESPACE+".memberExcelDown", memberVO);
+	}
+	
+	// 팝업에서의 매장 목록
+	public List<StoreVO> storeSearchList(StoreVO storeVO){
+		return sqlSession.selectList(STORE_NAMESPACE+".storeSearchList", storeVO);
+	}
+	
+	// 회원 휴회 상태 변경
+	public int updateAdjournmentState(MemberVO memberVO) {
+		return sqlSession.update(MEMBER_NAMESPACE+".updateAdjournmentState", memberVO);
 	}
 }

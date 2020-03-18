@@ -14,9 +14,11 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Service;
 
+import com.company.asiayoga.item.domain.ItemVO;
 import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.product.dao.ProductDAO;
 import com.company.asiayoga.product.domain.ProductVO;
+import com.company.asiayoga.store.domain.StoreVO;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -99,5 +101,17 @@ public class ProductServiceImpl implements ProductService {
 		
 		return sxssfWorkbook;
 	}
+
+	@Override
+	public List<StoreVO> storeSearchList(StoreVO storeVO) throws Exception {
+		return productDAO.storeSearchList(storeVO);
+	}
+
+	@Override
+	public List<ItemVO> searchItemList(ItemVO itemVO) throws Exception {
+		return productDAO.searchItemList(itemVO);
+	}
+	
+	
 
 }

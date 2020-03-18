@@ -72,12 +72,21 @@
 								<tbody>
 		                            <tr>
 		                                <th style="width: 100px">등록매장</th>
-		                                <td><c:out value="${productVO.storeName}"/>
+		                            	<td>
+		                            	    <c:choose>
+		                                		<c:when test="${manageInfo.getAuthority() eq 'ROLE_ADMIN'}">
+		                                			<input type="text" id="paramStoreName" name="paramStoreName" readonly="readonly">
+		                            				<input type="button" id="findStoreName" name="findStoreName" value="매장 찾기" data-toggle="modal" data-target="#findStore">
+		                                		</c:when>
+		                                		<c:otherwise>
+					                                <c:out value="${productVO.storeName}"/>
+		                                		</c:otherwise>
+		                                	</c:choose>
 		                                	<input type="hidden" id="storeName" name="storeName" value="${productVO.storeName}">
 		                                	<input type="hidden" id="storeSeq" name="storeSeq" value="${productVO.storeSeq}">
-		                                </td>
+		                            	</td>
 		                            </tr>
-		                            <tr>
+		                            <tr id="itemInfo">
 		                                <th style="width: 150px">품목구분<font style=" color: red;">&nbsp;*</font></th>
 		                                <td>
 		                                	<c:choose>
@@ -168,6 +177,14 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	
+	defaultCss();
+	
+	/* 매장검색 팝업창에서 입력 후 엔터 눌렀를 때 기능  */
+	$("#popStoreName").keydown(function(key){
+		if(key.keyCode == 13){
+			searchStore();
+		}
+	});
 
 });
 
@@ -223,14 +240,14 @@ function productRegister(){
     });
 }
 
-/* 품목 체크 */
+/* 품목 체크 , 락커인 경우 해당 정보에 대한 컬럼 open*/
 function goCheckItem(){
 	
 	var paramItemSeq = $("#itemSeq option:selected").val();
 	var storeSeq = $("#storeSeq").val();
 	
 	$.ajax({
-		type: 'POST',
+		type: 'get',
         url : "/product/checkItem",
         data: 	{	itemSeq : paramItemSeq,
         			storeSeq : storeSeq
@@ -280,9 +297,202 @@ function removeChar(event) {
         event.target.value = event.target.value.replace(/[^0-9]/g, "");
 }
 /* 숫자만 입력 가능하게 하는 로직 */
+ 
+ 
+/* 팝업파트 */
+function searchStore(){
+		
+	if($("#popStoreName").val() ==''){
+		alert("매장명을 입력해 주세요");
+		$("#popStoreName").focus();
+		return false;
+	}
+	
+	var paramStoreName = $("#popStoreName").val();
+	
+	$.ajax({
+		type: 'get',
+       	url : "/product/searchStore",
+       	data: {		storeName : paramStoreName
+       			},
+       	success : function(data){
+            if(data.result == 'success'){
+            		popStoreList(data.popStoreList);
+            }else if(data.result == 'noCount'){
+            		alert("검색 결과가 존재하지 않습니다.");
+            		return false;
+            }
+       	},
+       	error:function(request,status,error){
+			alert("저장에 실패하였습니다. 관리자에게 문의하세요");
+       	}
+   	});
+}
+ 	
+ function popStoreList(popStoreList){
+ 	var paramList = '';
+ 	
+ 	for(var i = 0 ; i < popStoreList.length; i++ ){
+ 		var paramStoreSeq = 0;
+ 		var paramStoreName = '';
+ 		var paramStoreTel = '';
+ 		var paramStoreAddress = '';
+ 		
+ 		paramStoreSeq = popStoreList[i].storeSeq;
+ 		paramStoreName = popStoreList[i].storeName;
+ 		paramStoreTel = popStoreList[i].storeTel;
+ 		paramStoreAddress = popStoreList[i].storeAddress;
+ 		
+ 		paramList = '<td>'+popStoreList[i].rowNum+'</td>';
+ 		paramList += '<td>';
+ 		paramList += '<a href="#" onclick="popStoreSelect('+paramStoreSeq+', \''+paramStoreName+'\');">'; 
+ 		paramList +=  paramStoreName+'</a>';
+ 		paramList += '</td>';
+ 		paramList += '<td>'+paramStoreTel+'</td>';
+ 		paramList += '<td>'+paramStoreAddress+'</td>';
+ 	}
+ 	
+ 	$("#storeList").text("");
+ 	$("#storeList").append(paramList);
+ 	
+ }
+
+ function popStoreSelect(storeSeq,storeName) {
+ 	
+ 	$("#paramStoreName").val(storeName);
+ 	$("#productInfo #storeSeq").val(storeSeq);
+ 	$("#productInfo #storeName").val(storeName);
+ 	
+ 	
+ 	popStoreSelectAfter(storeSeq);
+ }
+
+ 
+/* 팝업에서 매장 선택 후 품목이 있는 경우 selectBox로 기능 구현 */
+function popStoreSelectAfter(storeSeq) {
+
+	$.ajax({
+		type: 'get',
+       	url : "/product/searchItemList",
+       	data: {		storeSeq : storeSeq
+       			},
+       	success : function(data){
+           if(data.result == 'success'){
+           		itemList(data.itemList);
+           }else if(data.result == 'noCount'){
+           		alert("등록되어 있는 품목이 없습니다.\n 상품품목 > 품목등록에서 등록 절차를 거친 다음 판매 상품 등록을 이용하실 수 있습니다.");
+           		return false;
+           }
+       	},
+       	error:function(request,status,error){
+			alert("저장에 실패하였습니다. 관리자에게 문의하세요");
+       	}
+   	});
+	
+}
+
+function itemList(itemList) {
+	
+	var paramItemList ='';
+	
+	var paramGroupSeq =  0;
+	var paramGroupName = '';
+	paramItemList+= '<th style="width: 150px">품목구분<font style=" color: red;">&nbsp;*</font></th>';
+	
+	paramItemList+= '<td>';
+	paramItemList+= '<select id="itemSeq" name="itemSeq" onchange="goCheckItem();">';
+	paramItemList+= '<option value="0">선택하세요</option>';
+	
+	for(var i = 0 ; i < itemList.length;i++){
+		paramItemList+= '<option value="'+itemList[i].itemSeq+'">'+itemList[i].itemName+'</option>';
+	}
+	
+	paramItemList+= '</select>';
+	paramItemList+= '</td>';
+	
+	$("#itemInfo").text("");
+	$("#itemInfo").append(paramItemList);
+	
+	/* 하단 등록 버튼 영역  */
+	var productFooter = '';
+	productFooter += '<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goProductList();" style="float: left; width:80px;">';
+	productFooter += '<input type="button" class="btn btn-block btn-success" value="등록" onclick="goProductRegister();" style="float: right; width:80px;">';
+	$("#productFooter").text("");
+	$("#productFooter").append(productFooter);
+
+ 	defaultCss();
+ 	popClose();
+ 	
+ 	$("#findStore").modal('toggle');
+
+}
+
+function popClose(){
+	$("#popStoreName").val("");
+	
+	var paramDefaultList = '<th colspan="4" style="text-align: center;">결과가 없습니다.</th>';
+	
+	$("#storeList").text("");
+	$("#storeList").append(paramDefaultList);
+}
+ 
+ function defaultCss() {
+		
+		$("#findStoreName").css({
+			"margin-left"		: "5px",
+			"background-color"	: "#00c0ef",
+			"border-color"		: "#00c0ef",
+			"border-radius"		: "3px",
+			"color"				: "white",
+			"border"			: "1px solid",
+			"width"				: "80px",
+			"fontSize"			: "15px"
+		});
+		
+		$("#popFindStore").css({
+			"margin-left"		: "5px",
+			"background-color"	: "#00c0ef",
+			"border-color"		: "#00c0ef",
+			"border-radius"		: "3px",
+			"color"				: "white",
+			"border"			: "1px solid",
+			"width"				: "80px",
+			"fontSize"			: "15px"
+		});
+}
 </script>
-
-
-
+<!--popUp Modal -->
+<div class="modal fade" id="findStore" role="dialog" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+			  <h4 class="modal-title">매장 찾기</h4>
+			  <button type="button" class="close" data-dismiss="modal" onclick="popClose();">&times;</button>
+			</div>
+			<div class="modal-body">
+				<div style="margin: 10px;">
+					<input type="text" id="popStoreName" name="popStoreName"  placeholder="매장">
+					<input type="button" id="popFindStore" name="popFindStore" value="찾기" onclick="searchStore();" style="margin-bottom: 10px;">
+				</div>
+				<div style="margin: 10px; border-top-style: solid;">
+					<table class="table table-bordered" style="margin-top: 20px;">
+						<tbody>
+							<tr>
+								<th>No</th>
+								<th>매장</th>
+								<th>연락처</th>
+								<th>주소</th>
+							</tr>
+							<tr id="storeList"><th colspan="4" style="text-align: center;">결과가 없습니다.</th></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-default" data-dismiss="modal" onclick="popClose();">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
 </body>
 </html>

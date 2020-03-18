@@ -53,6 +53,7 @@ public class AttendanceController {
     	
         AttendanceVO attendanceVO = new AttendanceVO();
         attendanceVO.setStoreSeq(manageVO.getStoreSeq());
+        attendanceVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
         
         List<AttendanceVO> list = attendanceService.attendanceList(attendanceVO);
         model.addAttribute("attendanceList",list);
@@ -83,6 +84,8 @@ public class AttendanceController {
  		
  		ManageVO manageVO = new ManageVO();
  		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+ 		
+ 		attendanceVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
  		
  		HashMap<String, Object> hashMap = new HashMap<String, Object>();
 
@@ -201,7 +204,7 @@ public class AttendanceController {
 	}
 	
 	// 출석 등록
-	@RequestMapping(value = "insertAttendance", method = RequestMethod.POST)
+	@RequestMapping(value = "insertAttendance")
 	@ResponseBody
 	public String insertAttendance(Model model,@ModelAttribute("attendanceVO") AttendanceVO attendanceVO) throws Exception{
 		
@@ -210,7 +213,7 @@ public class AttendanceController {
 		
 		resultParam = attendanceService.insertAttendance(attendanceVO);
 		
-		if(resultParam >= 1) {
+		if(resultParam > 0) {
 			result = "success"; 
 		}
 		
@@ -218,16 +221,22 @@ public class AttendanceController {
 	}
 	
 	// 출석 삭제
-	@RequestMapping(value = "attendanceDelete", method = RequestMethod.POST)
+	@RequestMapping(value = "attendanceDelete")
 	@ResponseBody
-	public String attendanceDelete(Model model,@ModelAttribute("attendanceVO") AttendanceVO attendanceVO) throws Exception{
+	public String attendanceDelete(HttpServletRequest request,Model model,AttendanceVO attendanceVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		int resultParam = 0;
 		String result = "fail";
 		
+		attendanceVO.setModifyId(manageVO.getId());
+		
+		
 		resultParam = attendanceService.attendanceDelete(attendanceVO);
 		
-		if(resultParam >= 1) {
+		if(resultParam > 0) {
 			result = "success"; 
 		}
 		
@@ -237,15 +246,19 @@ public class AttendanceController {
 	// 팝업에서의 회원 찾기(List 리턴 , 상품정보 포함)
 	@RequestMapping(value = "searchMember", method = RequestMethod.GET)
 	@ResponseBody
-	public HashMap<String, Object> searchMember(Model model,AttendanceVO attendanceVO) throws Exception{
+	public HashMap<String, Object> searchMember(HttpServletRequest request,Model model,AttendanceVO attendanceVO) throws Exception{
 		
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
 		
-		MemberVO memberVO = new MemberVO();
-		memberVO.setStoreSeq(attendanceVO.getStoreSeq());
-		memberVO.setName(attendanceVO.getName());
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
-		List<MemberVO> memberList = attendanceService.memberSearch(memberVO);
+		MemberVO vo = new MemberVO();
+		vo.setAuthority(this.checkAuthority(manageVO.getAuthority()));
+		vo.setStoreSeq(attendanceVO.getStoreSeq());
+		vo.setSearchWord(attendanceVO.getName());
+		
+		List<MemberVO> memberList = attendanceService.memberSearch(vo);
 		
 		if(memberList.size() >= 1) {
 			hashMap.put("result", "success");
@@ -262,6 +275,10 @@ public class AttendanceController {
 	// 출석 정보 리스트 엑셀 다운로드
 	@RequestMapping(value = "attendanceExcelDownload")
 	public void attendanceExcelDownload(HttpServletRequest request, HttpServletResponse reponse,AttendanceVO attendanceVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		attendanceVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
 		
 		OutputStream out = null;
 		try {
@@ -310,6 +327,17 @@ public class AttendanceController {
 		}
 		
 		return paramTotalPage;
+	}
+	
+ 	// 권한 체크
+ 	public String checkAuthority(String myAuthority) {
+		String resultParam = "";
+ 		
+ 		if(myAuthority.equals("ROLE_ADMIN")) {
+ 			resultParam = myAuthority;
+ 		}
+ 		
+ 		return resultParam;
 	}
 
 }

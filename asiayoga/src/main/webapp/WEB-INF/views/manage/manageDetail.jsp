@@ -111,7 +111,7 @@
 	                            </tr>
 	                            <tr>
 	                                <th style="width: 10%">매장명</th>
-	                                <td><%= manageInfo.getStoreName() %></td>
+	                                <td><c:out value="${manageInfo.storeName}"/></td>
 	                            </tr>
                            		<tr>
                 					<th style="width: 10%">메모</th>

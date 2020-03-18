@@ -16,6 +16,7 @@ public class ItemVO extends StoreVO {
     private String registerId;                      // 등록자 아이디
     private Date modifyDate;                        // 수정 일자
     private String modifyId;                        // 수정자 아이디
+    private String authority;						// 권한
 	
     public int getItemSeq() {
 		return itemSeq;
@@ -77,18 +78,10 @@ public class ItemVO extends StoreVO {
 	public void setModifyId(String modifyId) {
 		this.modifyId = modifyId;
 	}
-	@Override
-	public String toString() {
-		return "ItemVO [itemSeq=" + itemSeq + ", storeSeq=" + storeSeq + ", productCode=" + productCode
-				+ ", largeCategory=" + largeCategory + ", itemName=" + itemName + ", delYn=" + delYn + ", registerDate="
-				+ registerDate + ", registerId=" + registerId + ", modifyDate=" + modifyDate + ", modifyId=" + modifyId
-				+ ", getItemSeq()=" + getItemSeq() + ", getStoreSeq()=" + getStoreSeq() + ", getProductCode()="
-				+ getProductCode() + ", getLargeCategory()=" + getLargeCategory() + ", getItemName()=" + getItemName()
-				+ ", getDelYn()=" + getDelYn() + ", getRegisterDate()=" + getRegisterDate() + ", getRegisterId()="
-				+ getRegisterId() + ", getModifyDate()=" + getModifyDate() + ", getModifyId()=" + getModifyId()
-				+ ", getRowNum()=" + getRowNum() + ", getStoreName()=" + getStoreName() + ", getStoreTel()="
-				+ getStoreTel() + ", getStorePhone()=" + getStorePhone() + ", getStoreAddress()=" + getStoreAddress()
-				+ ", getStoreMemo()=" + getStoreMemo() + ", toString()=" + super.toString() + ", getClass()="
-				+ getClass() + ", hashCode()=" + hashCode() + "]";
+	public String getAuthority() {
+		return authority;
+	}
+	public void setAuthority(String authority) {
+		this.authority = authority;
 	}
 }

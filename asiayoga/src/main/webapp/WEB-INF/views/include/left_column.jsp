@@ -16,6 +16,7 @@
     
     ManageVO manageInfo = (ManageVO)session.getAttribute("manageInfo");
     String nowPath = (String)session.getAttribute("nowPath");
+    String authority = manageInfo.getAuthority();
 %>
 
 <!-- Main Sidebar Container -->
@@ -36,8 +37,15 @@
             <div class="info">
             	<sec:authorize access="isAuthenticated()">
                 	<a class="d-block">
-                		<%= manageInfo.getStoreName() %><br>
-                		<%= manageInfo.getName() %>님
+                		<c:choose>
+                			<c:when test="${manageInfo.getAuthority() eq 'ROLE_ADMIN'}">
+		                		<%= manageInfo.getName() %>님
+                			</c:when>
+                			<c:otherwise>
+		                		<%= manageInfo.getStoreName() %><br>
+		                		<%= manageInfo.getName() %>님
+                			</c:otherwise>
+                		</c:choose>
                 	</a>
                 </sec:authorize>
             </div>

@@ -143,13 +143,7 @@
                             </tr>
                             <tr id="adjournmentStoreSeq">
                                 <th>매장명</th>
-                            	<td>
-                            		<c:choose>
-                            			<c:when test="${orderDetail.storeSeq eq 10}">레이디요가 의정부점</c:when>
-                            			<c:when test="${orderDetail.storeSeq eq null}"></c:when>
-                            			<c:when test="${orderDetail.storeSeq eq 0}"></c:when>
-                            			<c:otherwise>준비중입니다.</c:otherwise>
-                            		</c:choose>
+                            	<td>${orderDetail.storeName}                      		
                             	</td>
                                 <th></th>
                             	<td></td>
@@ -301,7 +295,7 @@ function goAdjournmentRegister(memberSeq,storeSeq,orderSeq){
 		alert("휴회 종료일을 선택해주세요.");
 		return false;
 	}
-	var insertConfirm = confirm("출석 등록 하시겠습니까?");
+	var insertConfirm = confirm("휴회 등록 하시겠습니까?");
 	if(insertConfirm){
 		adjournmentRegister(memberSeq,storeSeq,orderSeq);
 	}
@@ -378,6 +372,13 @@ function searchName(){
 /* 팝업파트 */
 function popMemberList(popMemberList){
 	var paramList = '';
+	paramList += '<tr>';
+	paramList += '<th>No</th>';
+	paramList += '<th>이름</th>';
+	paramList += '<th>연락처</th>';
+	paramList += '<th>성별</th>';
+	paramList += '<th>등록상품</th>';
+	paramList += '</tr>';
 	
 	for(var i = 0 ; i < popMemberList.length; i++ ){
 		var paramMemberSeq = 0;
@@ -411,6 +412,7 @@ function popMemberList(popMemberList){
 		paramProductCount = popMemberList[i].productCount;
 		paramRemainingCount = popMemberList[i].remainingCount;
 		
+		paramList += '<tr>';
 		paramList += '<td>'+popMemberList[i].rowNum+'</td>';
 		paramList += '<td>';
  		paramList += '<a href="#" onclick="popMemberSelect('+paramMemberSeq+', \''+paramName+'\' , \''+paramPhone+'\' , \''+paramEmail+'\' , \''+paramBirth+'\' , \''+paramSex+'\' , '+paramProductSeq+' , \''+paramProductName+'\' , '+paramStoreSeq+' , \''+paramStoreName+'\' , '+paramOrderSeq+' , \''+paramItemName+'\' , '+paramProductCount+' , '+paramRemainingCount+');">'; 
@@ -419,6 +421,7 @@ function popMemberList(popMemberList){
 		paramList += '<td>'+popMemberList[i].phone+'</td>';
 		paramList += '<td>'+popMemberList[i].sex+'</td>';
 		paramList += '<td>'+popMemberList[i].productName+'</td>';
+		paramList += '</tr>';
 	}
 	
 	$("#memberList").text("");
@@ -505,7 +508,17 @@ function popMemberSelect(memberSeq,name,phone,email,birth,sex,productSeq,product
 function popClose(){
 	$("#popName").val("");
 	
-	var paramDefaultList = '<th colspan="5" style="text-align: center;">결과가 없습니다.</th>';
+	var paramDefaultList = '';
+	paramDefaultList += '<tr>';
+	paramDefaultList += '<th>No</th>';
+	paramDefaultList += '<th>이름</th>';
+	paramDefaultList += '<th>연락처</th>';
+	paramDefaultList += '<th>성별</th>';
+	paramDefaultList += '<th>등록상품</th>';
+	paramDefaultList += '</tr>';
+	paramDefaultList += '<tr>';
+	paramDefaultList = '<th colspan="5" style="text-align: center;">결과가 없습니다.</th>';
+	paramDefaultList += '</tr>';
 	
 	$("#memberList").text("");
 	$("#memberList").append(paramDefaultList);
@@ -542,7 +555,7 @@ function getFormatDate(date){
 				</div>
 				<div style="margin: 10px; border-top-style: solid;">
 					<table class="table table-bordered" style="margin-top: 20px;">
-						<tbody>
+						<tbody id="memberList">
 							<tr>
 								<th>No</th>
 								<th>이름</th>
@@ -550,7 +563,7 @@ function getFormatDate(date){
 								<th>성별</th>
 								<th>등록상품</th>
 							</tr>
-							<tr id="memberList"><th colspan="5" style="text-align: center;">결과가 없습니다.</th></tr>
+							<tr><th colspan="5" style="text-align: center;">결과가 없습니다.</th></tr>
 						</tbody>
 					</table>
 				</div>

@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.company.asiayoga.item.domain.ItemVO;
+import com.company.asiayoga.store.domain.StoreVO;
 
 @Repository
 public class ItemDAO {
@@ -16,6 +17,7 @@ public class ItemDAO {
 	private SqlSession sqlSession;
 	
 	private static final String ITEM_NAMESPACE = "com.company.asiayoga.mapper.itemMapper";
+	private static final String STORE_NAMESPACE = "com.company.asiayoga.mapper.storeMapper";
 	
 	
 	// 품목 목록
@@ -51,5 +53,10 @@ public class ItemDAO {
 	// 품목 리스트 엑셀 다운로드
 	public List<ItemVO> itemExcelDownload(ItemVO itemVO){
 		return sqlSession.selectList(ITEM_NAMESPACE+".itemExcelDownload", itemVO);
+	}
+	
+	// 팝업에서의 매장 목록
+	public List<StoreVO> storeSearchList(StoreVO storeVO){
+		return sqlSession.selectList(STORE_NAMESPACE+".storeSearchList", storeVO);
 	}
 }

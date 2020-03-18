@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import com.company.asiayoga.member.domain.MemberVO;
+import com.company.asiayoga.store.domain.StoreVO;
 
 public interface MemberService {
 	
@@ -31,5 +32,11 @@ public interface MemberService {
 	
 	// 회원 목록 엑셀 다운로드
 	SXSSFWorkbook memberExcelDownload(MemberVO memberVO) throws Exception;
+	
+	// 팝업에서의 매장 목록
+	public List<StoreVO> storeSearchList(StoreVO storeVO) throws Exception;
+	
+	// 회원 휴회 상태 변경
+	public int updateAdjournmentState(MemberVO memberVO) throws Exception;
 
 }

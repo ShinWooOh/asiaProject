@@ -102,7 +102,7 @@
 									    -<input type="number" id="phone3" name="phone3" style="width: 70px; margin-left: 5px;">
 	                                </td>
 	                            </tr>
-	                            <tr>
+	                            <tr id="manageGroupInfo">
 	                                <th style="width: 10%">직급</th>
 	                                <td>
 	                                	<select id="manageGroupSeq" name="manageGroupSeq" style="width: 250px;">
@@ -113,9 +113,19 @@
 	                                	</select>
 	                                </td>
 	                            </tr>
-	                            <tr>
+	                            <tr id="storeInfo">
 	                                <th style="width: 10%">매장명</th>
-	                                <td><%= manageInfo.getStoreName() %></td>
+	                                <td>
+	                                	<c:choose>
+	                                		<c:when test="${manageInfo.getAuthority() eq 'ROLE_ADMIN'}">
+	                                			<input type="text" id="paramStoreName" name="paramStoreName" readonly="readonly">
+	                            				<input type="button" id="findStoreName" name="findStoreName" value="매장 찾기" data-toggle="modal" data-target="#findStore">
+	                                		</c:when>
+	                                		<c:otherwise>
+			                                	<%= manageInfo.getStoreName() %>
+	                                		</c:otherwise>
+	                                	</c:choose>
+	                                </td>
 	                            </tr>
                            		<tr>
                 					<th style="width: 10%">메모</th>
@@ -157,6 +167,10 @@
 	<input type="hidden" id="phone" name="phone">
 	<input type="hidden" id="manageGroupSeq" name="manageGroupSeq">
 	<input type="hidden" id=memo name="memo">
+	<input type="hidden" id="checkAuthority" name="checkAuthority" value="${manageInfo.getCheckAuthority()}">
+	<c:if test="${manageInfo.getCheckAuthority() eq '1'}">
+		<input type="hidden" id="storeSeq" name="storeSeq">
+	</c:if>
 	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </form:form>
 <!-- REQUIRED SCRIPTS -->
@@ -171,17 +185,14 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	
-	$("#dupCheck").css({
-		"margin-left"		: "5px",
-		"background-color"	: "#00c0ef",
-		"border-color"		: "#00c0ef",
-		"border-radius"		: "3px",
-		"color"				: "white",
-		"border"			: "1px solid",
-		"width"				: "80px",
-		"fontSize"			: "15px"
-	});
+	defaultCss();
 	
+	/* 매장검색 팝업창에서 입력 후 엔터 눌렀를 때 기능  */
+	$("#popStoreName").keydown(function(key){
+		if(key.keyCode == 13){
+			searchStore();
+		}
+	});
 	
 });
 
@@ -234,7 +245,7 @@ function manageRegister(){
 	$("#manageInfo #passwd").val($("#passwd").val());
 	$("#manageInfo #name").val($("#name").val());
 	
-	var manageGroupSeq = $("#manageGroupSeq").val();
+	var manageGroupSeq = $("#manageGroupSeq option:selected").val();
 	$("#manageInfo #manageGroupSeq").val(manageGroupSeq);
 	$("#manageInfo #memo").val($("#memo").val());
 	
@@ -297,6 +308,131 @@ function goDupCheck() {
 	
 }
 
+
+/* 팝업파트 */
+function searchStore(){
+		
+	if($("#popStoreName").val() ==''){
+		alert("매장명을 입력해 주세요");
+		$("#popStoreName").focus();
+		return false;
+	}
+	
+	var paramStoreName = $("#popStoreName").val();
+	
+	$.ajax({
+		type: 'get',
+       	url : "/manage/searchStore",
+       	data: {		storeName : paramStoreName
+       			},
+       	success : function(data){
+           if(data.result == 'success'){
+           		popStoreList(data.popStoreList);
+           }else if(data.result == 'noCount'){
+           		alert("검색 결과가 존재하지 않습니다.");
+           		return false;
+           }
+       	},
+       	error:function(request,status,error){
+			alert("저장에 실패하였습니다. 관리자에게 문의하세요");
+       	}
+   	});
+}
+	
+function popStoreList(popStoreList){
+	var paramList = '';
+	
+	for(var i = 0 ; i < popStoreList.length; i++ ){
+		var paramStoreSeq = 0;
+		var paramStoreName = '';
+		var paramStoreTel = '';
+		var paramStoreAddress = '';
+		
+		paramStoreSeq = popStoreList[i].storeSeq;
+		paramStoreName = popStoreList[i].storeName;
+		paramStoreTel = popStoreList[i].storeTel;
+		paramStoreAddress = popStoreList[i].storeAddress;
+		
+		paramList = '<td>'+popStoreList[i].rowNum+'</td>';
+		paramList += '<td>';
+		paramList += '<a href="#" onclick="popStoreSelect('+paramStoreSeq+', \''+paramStoreName+'\');">'; 
+		paramList +=  paramStoreName+'</a>';
+		paramList += '</td>';
+		paramList += '<td>'+paramStoreTel+'</td>';
+		paramList += '<td>'+paramStoreAddress+'</td>';
+	}
+	
+	$("#storeList").text("");
+	$("#storeList").append(paramList);
+}
+
+function popStoreSelect(storeSeq,storeName) {
+	
+	$("#paramStoreName").val(storeName);
+	$("#manageInfo #storeSeq").val(storeSeq);
+	
+	/* 매장 정보 세팅 후 선택된 매장에 대하여 설정*/
+	storeSelectAtferGroupList(storeSeq);
+}
+
+function storeSelectAtferGroupList(storeSeq) {
+	
+	$.ajax({
+		type: 'get',
+       	url : "/manage/searchGroupList",
+       	data: {		storeSeq : storeSeq
+       			},
+       	success : function(data){
+           if(data.result == 'success'){
+           		groupList(data.manageGroupList);
+           }else if(data.result == 'noCount'){
+           		alert("직급을 등록 한 후 직원을 등록해 주시 바랍니다.");
+           		return false;
+           }
+       	},
+       	error:function(request,status,error){
+			alert("저장에 실패하였습니다. 관리자에게 문의하세요");
+       	}
+   	});
+}
+
+function groupList(manageGroupList) {
+	var paramGroupList ='';
+	
+	var paramGroupSeq =  0;
+	var paramGroupName = '';
+    
+	paramGroupList+= '<th style="width: 10%">직급</th>';
+	paramGroupList+= '<td>';
+	paramGroupList+= '<select id="manageGroupSeq" name="manageGroupSeq" style="width: 250px;">';
+	paramGroupList+= '<option value="000">직급을 선택하세요</option>';
+	
+	for(var i = 0 ; i < manageGroupList.length;i++){
+		paramGroupList+= '<option value="'+manageGroupList[i].manageGroupSeq+'">'+manageGroupList[i].groupName+'</option>';
+	}
+	
+	paramGroupList+= '</select>';
+	paramGroupList+= '</td>';
+	
+	$("#manageGroupInfo").text("");
+	$("#manageGroupInfo").append(paramGroupList);
+	
+	defaultCss();
+	popClose();
+	
+	$("#findStore").modal('toggle');
+}
+
+function popClose(){
+	$("#popStoreName").val("");
+	
+	var paramDefaultList = '<th colspan="4" style="text-align: center;">결과가 없습니다.</th>';
+	
+	$("#storeList").text("");
+	$("#storeList").append(paramDefaultList);
+}
+
+
 function getFormatDate(date){
     var year = date.getFullYear();              //yyyy
     var month = (1 + date.getMonth());          //M
@@ -309,6 +445,76 @@ function getFormatDate(date){
     minutes = minutes >= 10 ? minutes : '0' + minutes;       //day 두자리로 저장
     return  year + '-' + month + '-' + day + " "+ hour+":"+minutes;
 }
+
+
+function defaultCss() {
+	
+	$("#dupCheck").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+	
+	$("#findStoreName").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+	
+	$("#popFindStore").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+}
 </script>
+<!--popUp Modal -->
+<div class="modal fade" id="findStore" role="dialog" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+			  <h4 class="modal-title">매장 찾기</h4>
+			  <button type="button" class="close" data-dismiss="modal" onclick="popClose();">&times;</button>
+			</div>
+			<div class="modal-body">
+				<div style="margin: 10px;">
+					<input type="text" id="popStoreName" name="popStoreName"  placeholder="매장">
+					<input type="button" id="popFindStore" name="popFindStore" value="찾기" onclick="searchStore();" style="margin-bottom: 10px;">
+				</div>
+				<div style="margin: 10px; border-top-style: solid;">
+					<table class="table table-bordered" style="margin-top: 20px;">
+						<tbody>
+							<tr>
+								<th>No</th>
+								<th>매장</th>
+								<th>연락처</th>
+								<th>주소</th>
+							</tr>
+							<tr id="storeList"><th colspan="4" style="text-align: center;">결과가 없습니다.</th></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-default" data-dismiss="modal" onclick="popClose();">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
 </body>
 </html>

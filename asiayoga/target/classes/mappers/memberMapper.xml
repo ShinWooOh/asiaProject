@@ -13,28 +13,35 @@
 	<select id="memberList" parameterType="memberVO" resultType="memberVO">
   		/* memberMapper.memberList */
 		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
-				member_seq,
-				name,
-	            sex,
-	            phone,
-	            email,
-	            birth,
-	            memo,
-	            store_seq,
-	            register_date,
-	            adjournment_state
-		FROM MEMBERINFO , (SELECT @ROWNUM :=0) AS R
-		WHERE store_seq = #{storeSeq}
-		AND del_yn = 'N'
+				mbinfo.member_seq,
+				mbinfo.name,
+	            mbinfo.sex,
+	            mbinfo.phone,
+	            mbinfo.email,
+	            mbinfo.birth,
+	            mbinfo.memo,
+	            mbinfo.store_seq,
+	            ( SELECT store_name FROM STOREINFO WHERE store_seq = mbinfo.store_seq) AS store_name,
+	            mbinfo.register_date,
+	            mbinfo.adjournment_state
+		FROM MEMBERINFO mbinfo , (SELECT @ROWNUM :=0) AS R
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND mbinfo.store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose>
+		AND mbinfo.del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
 			AND 
-			(		name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	birth LIKE CONCAT('%',#{searchWord},'%')
-				OR 	phone LIKE CONCAT('%',#{searchWord},'%')
-				OR 	email LIKE CONCAT('%',#{searchWord},'%')
+			(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.birth LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.email LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
-	    ORDER BY register_date DESC, row_num DESC
+	    ORDER BY mbinfo.register_date DESC, row_num DESC
 	    <include refid="commomPaging"/>
 	</select>
 	
@@ -42,15 +49,21 @@
 	<select id="memberTotalCount" parameterType="memberVO" resultType="int">
   		/* memberMapper.memberTotalCount */
 		SELECT count(*)
-		FROM MEMBERINFO 
-		WHERE store_seq = #{storeSeq}
-		AND del_yn = 'N'
+		FROM MEMBERINFO mbinfo
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND mbinfo.store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose>
+		AND mbinfo.del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
 			AND 
-			(		name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	birth LIKE CONCAT('%',#{searchWord},'%')
-				OR 	phone LIKE CONCAT('%',#{searchWord},'%')
-				OR 	email LIKE CONCAT('%',#{searchWord},'%')
+			(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.birth LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.email LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
 	</select>
@@ -100,10 +113,8 @@
 					#{email},
 					#{memo},
 					#{storeSeq},
-					now(),
-					'admin',
-					now(),
-					'admin',
+					#{registerId},
+					#{registerId}
 					'N'
 				)
 	</insert>
@@ -112,7 +123,9 @@
 	<update id="memberDel" parameterType="memberVO">
   		/* memberMapper.memberDel */
   		UPDATE MEMBERINFO 
-  		SET del_yn = 'Y'
+  		SET del_yn = 'Y',
+  			modify_date = now(),
+  			modify_id = #{modifyId}
   		WHERE member_seq = #{memberSeq}
   		AND store_seq = #{storeSeq} 
 	</update>
@@ -130,7 +143,7 @@
   			<if test="email != null and email != ''">email = #{email},</if>
   			<if test="memo != null and memo != ''">memo = #{memo},</if>
   			modify_date= now(),
-  			modify_id = 'admin'
+  			modify_id = #{modifyId}
   		</set> 
   		WHERE member_seq = #{memberSeq}
   		AND store_seq = #{storeSeq}
@@ -150,7 +163,7 @@
 	            mbinfo.birth,
 	            mbinfo.memo,
 	            mbinfo.store_seq,
-	            ( SELECT store_name FROM STOREINFO WHERE store_seq=#{storeSeq} ) AS store_name,
+	            ( SELECT store_name FROM STOREINFO WHERE store_seq= mbinfo.store_seq ) AS store_name,
 	            mbinfo.register_date,
 	            ordinfo.order_seq,
             	ordinfo.product_count,
@@ -164,8 +177,20 @@
         INNER JOIN PRODUCTINFO prdinfo
     	ON ordinfo.product_seq = prdinfo.product_seq
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
-		WHERE mbinfo.store_seq = #{storeSeq}
-		AND mbinfo.name = #{name}
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND mbinfo.store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose>
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.email LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
 		AND mbinfo.del_yn = 'N'
         AND ordinfo.expiration_yn = 'N'
         AND ordinfo.del_yn = 'N'
@@ -187,28 +212,6 @@
 	            register_date
 		FROM MEMBERINFO , (SELECT @ROWNUM :=0) AS R
 		WHERE store_seq = #{storeSeq}
-		AND name = #{name}
-		AND del_yn = 'N'
-	    ORDER BY register_date DESC, row_num DESC
-	</select>
-	
-	<!-- 회원 목록 , 엑셀 다운로드 시 쓰인다.  -->
-	<select id="memberExcelDown" parameterType="memberVO" resultType="memberVO">
-  		/* memberMapper.memberExcelDown */
-		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
-				member_seq,
-				name,
-	            sex,
-	            phone,
-	            email,
-	            birth,
-	            memo,
-	            store_seq,
-	            register_date,
-	            adjournment_state
-		FROM MEMBERINFO , (SELECT @ROWNUM :=0) AS R
-		WHERE store_seq = #{storeSeq}
-		AND del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
 			AND 
 			(		name LIKE CONCAT('%',#{searchWord},'%')
@@ -217,6 +220,53 @@
 				OR 	email LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
+		AND del_yn = 'N'
 	    ORDER BY register_date DESC, row_num DESC
 	</select>
+	
+	<!-- 회원 목록 , 엑셀 다운로드 시 쓰인다.  -->
+	<select id="memberExcelDown" parameterType="memberVO" resultType="memberVO">
+  		/* memberMapper.memberExcelDown */
+		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
+				mbinfo.member_seq,
+				mbinfo.name,
+	            mbinfo.sex,
+	            mbinfo.phone,
+	            mbinfo.email,
+	            mbinfo.birth,
+	            mbinfo.memo,
+	            mbinfo.store_seq,
+	            mbinfo.register_date,
+	            mbinfo.adjournment_state
+		FROM MEMBERINFO mbinfo, (SELECT @ROWNUM :=0) AS R
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND mbinfo.store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose>
+		AND mbinfo.del_yn = 'N'
+		<if test="searchWord != null and searchWord != ''">
+			AND 
+			(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.birth LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.email LIKE CONCAT('%',#{searchWord},'%')
+			)
+		</if>
+	    ORDER BY mbinfo.register_date DESC, row_num DESC
+	</select>
+	
+	<!-- 회원 휴회 상태 변경  -->
+	<update id="updateAdjournmentState" parameterType="memberVO">
+  		/* memberMapper.updateAdjournmentState */
+  		UPDATE MEMBERINFO 
+  		SET adjournment_state = #{adjournmentState},
+  			modify_date = now(),
+  			modify_id = #{modifyId}
+  		WHERE member_seq = (SELECT member_seq FROM ORDERINFO WHERE order_seq =#{orderSeq} AND del_yn = 'N' LIMIT 1)
+  		AND store_seq = (SELECT store_seq FROM ORDERINFO WHERE order_seq =#{orderSeq} AND del_yn = 'N' LIMIT 1) 
+	</update>
+	
   </mapper>

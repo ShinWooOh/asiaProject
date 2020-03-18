@@ -117,9 +117,9 @@
 					                            <c:forEach var="manageList" items="${manageList}">
 					                            	<tr>
 					                            		<td align="center"><c:out value="${manageList.rowNum}"/></td>
-					                            		<td><a href="#" onclick="goManageInfo(${manageList.manageSeq});"><c:out value="${manageList.name}"/></a></td>
-					                            		<td><a href="#" onclick="goManageInfo(${manageList.manageSeq});"><c:out value="${manageList.authorityName}"/></a></td>
-					                            		<td><a href="#" onclick="goManageInfo(${manageList.manageSeq});"><c:out value="${manageList.groupName}"/></a></td>
+					                            		<td><a href="#" onclick="goManageInfo(${manageList.manageSeq},${manageList.storeSeq});"><c:out value="${manageList.name}"/></a></td>
+					                            		<td><a href="#" onclick="goManageInfo(${manageList.manageSeq},${manageList.storeSeq});"><c:out value="${manageList.authorityName}"/></a></td>
+					                            		<td><a href="#" onclick="goManageInfo(${manageList.manageSeq},${manageList.storeSeq});"><c:out value="${manageList.groupName}"/></a></td>
 					                            		<td><fmt:formatDate value="${manageList.accessDate}" pattern="yyyy-MM-dd HH:mm"/></td>
 					                            		<td><c:out value="${manageList.storeName}"/></td>
 					                            		<td>
@@ -229,6 +229,7 @@
 <!-- ./wrapper -->
 <form:form action="/manage/manageInfo" id="manageInfo" name="manageInfo" modelAttribute="manageVO" method="post">
 	<input type="hidden" id="manageSeq" name="manageSeq">
+	<input type="hidden" id="storeSeq" name="storeSeq">
 </form:form>
 
 <form:form action="/manage/manageExcelDownload" id="manageExcelDownload" name="manageExcelDownload" modelAttribute="manageVO" method="get" enctype="multipart/form-data">
@@ -271,8 +272,9 @@ $(document).ready(function() {
 	defaultCss();
 });
 
-function goManageInfo(manageSeq){
+function goManageInfo(manageSeq,storeSeq){
 	$("#manageInfo #manageSeq").val(manageSeq);
+	$("#manageInfo #storeSeq").val(storeSeq);
 	$("#manageInfo").submit();
 	
 }

@@ -26,6 +26,7 @@ import com.company.asiayoga.order.domain.OrderVO;
 import com.company.asiayoga.order.service.OrderService;
 import com.company.asiayoga.product.domain.ProductVO;
 import com.company.asiayoga.product.service.ProductService;
+import com.company.asiayoga.store.domain.StoreVO;
 
 @Controller
 @RequestMapping("order")
@@ -55,6 +56,7 @@ public class OrderController {
 		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		OrderVO orderVO = new OrderVO();
+		orderVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
 		orderVO.setStoreSeq(manageVO.getStoreSeq());
 		
 		List<OrderVO> list = orderService.orderList(orderVO);
@@ -85,6 +87,7 @@ public class OrderController {
 		
 		ManageVO manageVO = new ManageVO();
 		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		orderVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
 		
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
 	
@@ -204,14 +207,11 @@ public class OrderController {
 	// 구매 등록 화면에서 상품 선택에 따른 품목 정보
 	@RequestMapping(value = "searchProduct")
 	@ResponseBody
-	public HashMap<String, Object> searchProduct(Model model,@ModelAttribute("orderVO") OrderVO orderVO) throws Exception{
+	public HashMap<String, Object> searchProduct(Model model,ProductVO productVO) throws Exception{
 		
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
 		String result = "fail";
 		
-		ProductVO productVO = new ProductVO();
-		productVO.setProductSeq(orderVO.getProductSeq());
-		productVO.setStoreSeq(orderVO.getStoreSeq());
 		productVO = productService.productDetail(productVO);
 		
 		if(productVO != null) {
@@ -226,17 +226,11 @@ public class OrderController {
 	// 구매 관리에서 회원 검색
 	@RequestMapping(value = "searchMember")
 	@ResponseBody
-	public HashMap<String, Object> searchMember(HttpServletRequest request,Model model,OrderVO orderVO) throws Exception{
+	public HashMap<String, Object> searchMember(HttpServletRequest request,Model model,MemberVO memberVO) throws Exception{
 		
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
 		
-		ManageVO manageVO = new ManageVO();
-		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
-		
-		MemberVO memberVO = new MemberVO();
-		memberVO.setStoreSeq(manageVO.getStoreSeq());
-		memberVO.setName(orderVO.getName());
-		
+		memberVO.setSearchWord(memberVO.getName());
 		List<MemberVO> memberList = memberService.searchMemberList(memberVO);
 		
 		if(memberList.size() >= 1) {
@@ -247,6 +241,50 @@ public class OrderController {
 			hashMap.put("popMemberList", "");
 		} else {
 			hashMap.put("result", "fail");
+		}
+		
+		return hashMap;
+	}
+	
+	// 구매 관리에서 매장 검색
+	@RequestMapping(value = "searchStore")
+	@ResponseBody
+	public HashMap<String, Object> searchStore(HttpServletRequest request,Model model,StoreVO storeVO) throws Exception{
+		
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		
+		storeVO.setSearchWord(storeVO.getStoreName());
+		List<StoreVO> storeList = orderService.storeSearchList(storeVO);
+		
+		if(storeList.size() >= 1){
+			hashMap.put("result", "success");
+			hashMap.put("popStoreList", storeList);
+		} else if(storeList.size() == 0) {
+			hashMap.put("result", "noCount");
+			hashMap.put("popStoreList", "");
+		} else {
+			
+		}
+		
+		return hashMap;
+	}
+	
+	// 구매 관리에서 회원 검색
+	@RequestMapping(value = "searchProductList")
+	@ResponseBody
+	public HashMap<String, Object> searchProductList(HttpServletRequest request,Model model,ProductVO productVO) throws Exception{
+		
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		
+		List<ProductVO> productList = orderService.searchProductList(productVO);
+		
+		if(productList.size() >= 1){
+			hashMap.put("result", "success");
+			hashMap.put("productList", productList);
+		} else if(productList.size() == 0) {
+			hashMap.put("result", "noCount");
+		} else {
+			
 		}
 		
 		return hashMap;
@@ -289,6 +327,11 @@ public class OrderController {
 	// 주문 목록 엑셀 다운로드
 	@RequestMapping(value = "orderExcelDownload")
 	public void orderExcelDownload(HttpServletRequest request, HttpServletResponse reponse, OrderVO orderVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
+		orderVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
 		
 		OutputStream out = null;
 		try {
@@ -337,6 +380,17 @@ public class OrderController {
 		}
 		
 		return paramTotalPage;
+	}
+	
+	// 권한 체크
+	public String checkAuthority(String myAuthority) {
+		String resultParam = "";
+	
+		if(myAuthority.equals("ROLE_ADMIN")) {
+			resultParam = myAuthority;
+		}
+		
+		return resultParam;
 	}
 
 }

@@ -28,4 +28,5 @@ public interface StoreService {
 	
 	// 매장 리스트 엑셀 다운로드
 	SXSSFWorkbook storeExcelDownload(StoreVO storeVO) throws Exception;
+	
 }

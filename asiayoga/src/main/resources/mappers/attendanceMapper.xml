@@ -42,7 +42,13 @@
 						atdinfo.del_yn,
 						atdinfo.store_seq 
 				FROM ATTENDANCEINFO atdinfo
-				WHERE atdinfo.store_seq = #{storeSeq} 
+				WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND atdinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
 				AND atdinfo.del_yn = 'N'
                 ORDER BY atdinfo.attendance_date ASC 
              	) AS temp , (SELECT @ROWNUM :=0) AS R 
@@ -78,7 +84,13 @@
 						atdinfo.del_yn,
 						atdinfo.store_seq 
 				FROM ATTENDANCEINFO atdinfo
-				WHERE atdinfo.store_seq = #{storeSeq} 
+				WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND atdinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
 				AND atdinfo.del_yn = 'N'
                 ORDER BY atdinfo.attendance_date ASC 
              	) AS temp , (SELECT @ROWNUM :=0) AS R 
@@ -105,6 +117,7 @@
 				temp.email,
 				temp.memo,
 				temp.store_seq,
+				temp.store_name,
 				temp.attendance_seq,
 				temp.attendance_date
 		FROM (
@@ -116,6 +129,7 @@
 						mbinfo.email,
 						mbinfo.memo,
 						mbinfo.store_seq,
+						( SELECT store_name FROM STOREINFO WHERE store_seq = mbinfo.store_seq) AS store_name,
 						atdinfo.attendance_seq,
 						atdinfo.attendance_date
 				FROM MEMBERINFO mbinfo
@@ -161,7 +175,9 @@
 	<update id="attendanceDelete" parameterType="attendanceVO">
 		/* attendanceMapper.attendanceDelete */
 		UPDATE ATTENDANCEINFO
-		SET del_yn = 'Y'
+		SET del_yn = 'Y' , 
+			modify_date = now(),
+			modify_id= #{modifyId}
 		WHERE attendance_seq = #{attendanceSeq}
 		AND del_yn ='N'
 	</update>
@@ -188,7 +204,13 @@
 						atdinfo.attendance_date,
 						atdinfo.store_seq 
 				FROM ATTENDANCEINFO atdinfo
-				WHERE atdinfo.store_seq = #{storeSeq} 
+				WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND atdinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
 				AND atdinfo.del_yn = 'N'
                 ORDER BY atdinfo.attendance_date ASC 
              	) AS temp , (SELECT @ROWNUM :=0) AS R 

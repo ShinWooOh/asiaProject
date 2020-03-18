@@ -24,20 +24,26 @@
 			tempA.register_id,
 			tempA.modify_date,
 			tempA.modify_id
-		FROM (	SELECT	item_seq,
-						store_seq,
-						( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} AND del_yn ='N') AS store_name,
-						large_category,
-						item_name,
-						del_yn,
-						register_date, 
-						register_id,
-						modify_date,
-						modify_id
-				FROM PRODUCTITEM 
-				WHERE store_seq= #{storeSeq}
-				AND del_yn ='N'
-				ORDER BY modify_date ASC
+		FROM (	SELECT	prditem.item_seq,
+						prditem.store_seq,
+						( SELECT store_name FROM STOREINFO WHERE store_seq = prditem.store_seq AND del_yn ='N') AS store_name,
+						prditem.large_category,
+						prditem.item_name,
+						prditem.del_yn,
+						prditem.register_date, 
+						prditem.register_id,
+						prditem.modify_date,
+						prditem.modify_id
+				FROM PRODUCTITEM prditem
+				WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND prditem.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
+				AND prditem.del_yn ='N'
+				ORDER BY prditem.modify_date ASC
 			 ) AS tempA , (SELECT @ROWNUM :=0) AS R
 		WHERE 1=1
 		<if test="searchWord != null and searchWord != ''">
@@ -54,20 +60,25 @@
 	<select id="itemTotalCount" parameterType="itemVO" resultType="int">
 		/* itemMapper.itemTotalCount */
 		SELECT COUNT(*)
-		FROM (	SELECT	item_seq,
-						store_seq,
-						( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} AND del_yn ='N') AS store_name,
-						large_category,
-						item_name,
-						del_yn,
-						register_date, 
-						register_id,
-						modify_date,
-						modify_id
-				FROM PRODUCTITEM 
-				WHERE store_seq= #{storeSeq}
-				AND del_yn ='N'
-				ORDER BY modify_date ASC
+		FROM (	SELECT	prditem.item_seq,
+						prditem.store_seq,
+						( SELECT store_name FROM STOREINFO WHERE store_seq = prditem.store_seq AND del_yn ='N') AS store_name,
+						prditem.large_category,
+						prditem.item_name,
+						prditem.del_yn,
+						prditem.register_date, 
+						prditem.register_id,
+						prditem.modify_date,
+						prditem.modify_id
+				FROM PRODUCTITEM prditem
+				WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND prditem.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
+				AND prditem.del_yn ='N'
 			 ) AS tempA , (SELECT @ROWNUM :=0) AS R
 		WHERE 1=1
 		<if test="searchWord != null and searchWord != ''">
@@ -164,15 +175,21 @@
 			tempA.large_category,
 			tempA.item_seq,
 			tempA.item_name
-		FROM (	SELECT	item_seq,
-						store_seq,
-						( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} AND del_yn ='N') AS store_name,
-						large_category,
-						item_name
-				FROM PRODUCTITEM 
-				WHERE store_seq= #{storeSeq}
-				AND del_yn ='N'
-				ORDER BY modify_date ASC
+		FROM (	SELECT	prditem.item_seq,
+						prditem.store_seq,
+						( SELECT store_name FROM STOREINFO WHERE store_seq = prditem.store_seq AND del_yn ='N') AS store_name,
+						prditem.large_category,
+						prditem.item_name
+				FROM PRODUCTITEM prditem 
+				WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND prditem.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
+				AND prditem.del_yn ='N'
+				ORDER BY prditem.modify_date ASC
 			 ) AS tempA , (SELECT @ROWNUM :=0) AS R
 		WHERE 1=1
 		<if test="searchWord != null and searchWord != ''">
@@ -182,5 +199,20 @@
 			)
 		</if>
 		ORDER BY row_num DESC
+	</select>
+	
+	<!-- 품목 찾기(관리자 전용, 매장 선택 후 로직) -->
+	<select id="searchItemList" parameterType="itemVO" resultType="itemVO">
+		/* itemMapper.searchItemList */
+		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
+				item_seq,
+				( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} AND del_yn ='N') AS store_name,
+				large_category,
+				item_name,
+				del_yn
+		FROM PRODUCTITEM, (SELECT @ROWNUM :=0) AS R
+		WHERE store_seq = #{storeSeq}
+		AND del_yn ='N'
+		ORDER BY modify_date ASC
 	</select>
 </mapper>

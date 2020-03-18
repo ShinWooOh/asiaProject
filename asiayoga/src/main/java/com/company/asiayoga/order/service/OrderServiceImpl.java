@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.order.dao.OrderDAO;
 import com.company.asiayoga.order.domain.OrderVO;
+import com.company.asiayoga.product.domain.ProductVO;
+import com.company.asiayoga.store.domain.StoreVO;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -75,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Override
 	public SXSSFWorkbook orderExcelDown(OrderVO orderVO) throws Exception {
-SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
+		SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
 		
 		SXSSFSheet sheet = sxssfWorkbook.createSheet("구매 내역");
 		
@@ -135,6 +137,16 @@ SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
 		}
 		
 		return sxssfWorkbook;
+	}
+
+	@Override
+	public List<StoreVO> storeSearchList(StoreVO storeVO) throws Exception {
+		return orderDAO.storeSearchList(storeVO);
+	}
+
+	@Override
+	public List<ProductVO> searchProductList(ProductVO productVO) throws Exception {
+		return orderDAO.searchProductList(productVO);
 	}
 
 	

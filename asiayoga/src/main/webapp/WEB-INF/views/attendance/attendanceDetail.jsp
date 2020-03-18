@@ -131,12 +131,7 @@
 	                            <tr>
 	                            	<td><c:out value="${attendanceDetailList.rowNum}"/></td>
 	                            	<td><fmt:formatDate value="${attendanceDetailList.attendanceDate}" pattern="yyyy-MM-dd HH:mm"/></td>
-	                            	<td>
-	                            		<c:choose>
-	                            			<c:when test="${attendanceDetailList.storeSeq eq '10'}">레이디요가 의정부점</c:when>
-	                            			<c:otherwise>준비중입니다.</c:otherwise>
-	                            		</c:choose>
-	                            	</td>
+	                            	<td><c:out value="${attendanceDetailList.storeName}"/></td>
 	                            </tr>
                             </c:forEach>
                             

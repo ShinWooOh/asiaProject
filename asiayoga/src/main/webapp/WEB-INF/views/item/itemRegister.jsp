@@ -69,37 +69,48 @@
                     <div>
                     	<c:set var="itemVO" value="${itemVO}" />
                     	<form:form action="/item/itemInsert" id="itemInfo" name="itemInfo" modelAttribute="itemVO" method="post">
+                    	    <input type="hidden" id="checkAuthority" name="checkAuthority" value="${manageInfo.getCheckAuthority()}">
+							<c:if test="${manageInfo.getCheckAuthority() eq '1'}">
+								<input type="hidden" id="storeSeq" name="storeSeq">
+							</c:if>
 	                        <table class="table table-bordered">
 	                            <tbody>
-	                            <tr>
-	                                <th style="width: 100px">등록매장</th>
-	                                <td><c:out value="${itemVO.storeName}"/>
-	                                	<input type="hidden" id="storeName" name="storeName" value="${itemVO.storeName}" readonly="readonly">
-	                                	<input type="hidden" id="storeSeq" name="storeSeq" value="${itemVO.storeSeq}">
-	                                </td>
-	                            </tr>
-	                            <tr>
-	                                <th style="width: 150px">품목구분<font style=" color: red;">&nbsp;*</font></th>
-	                                <td>
-	                                	<select id="largeCategory" name="largeCategory" style="width: 15%;">
-	                                		<option value="000">선택하세요</option>
-	                                		<option value="001">일반상품</option>
-	                                		<option value="002">락커</option>
-	                                		<option value="003">운동복</option>
-	                                	</select>
-	                                </td>
-	                            </tr>
-	                            <tr>
-	                                <th style="width: 150px">
-	                                	품목명<font style=" color: red;">&nbsp;*</font>
-	                                </th>
-	                                <td><input type="text" id="itemName" name="itemName" value="" style="width: 20%;"></td>
-	                            </tr>
-	                            <tr>
-	                            	<th colspan="2">
-	                            		<font style=" color: red;">-&nbsp;품목 등록 시 상품 등록 에서  쓰이게 됩니다.<br>-&nbsp;* 표시 된 항목은 필수 입력입니다.</font> 
-	                            	</th>
-	                            </tr>
+	                				<tr id="storeInfo">
+	                					<th>등록매장</th>
+		                                <td>
+		                                	<c:choose>
+		                                		<c:when test="${manageInfo.getAuthority() eq 'ROLE_ADMIN'}">
+		                                			<input type="text" id="paramStoreName" name="paramStoreName" readonly="readonly">
+		                            				<input type="button" id="findStoreName" name="findStoreName" value="매장 찾기" data-toggle="modal" data-target="#findStore">
+		                                		</c:when>
+		                                		<c:otherwise>
+				                                	<%= manageInfo.getStoreName() %>
+		                                		</c:otherwise>
+		                                	</c:choose>
+		                                </td>
+	                				</tr>
+		                            <tr>
+		                                <th style="width: 150px">품목구분<font style=" color: red;">&nbsp;*</font></th>
+		                                <td>
+		                                	<select id="largeCategory" name="largeCategory" style="width: 15%;">
+		                                		<option value="000">선택하세요</option>
+		                                		<option value="001">일반상품</option>
+		                                		<option value="002">락커</option>
+		                                		<option value="003">운동복</option>
+		                                	</select>
+		                                </td>
+		                            </tr>
+		                            <tr>
+		                                <th style="width: 150px">
+		                                	품목명<font style=" color: red;">&nbsp;*</font>
+		                                </th>
+		                                <td><input type="text" id="itemName" name="itemName" value="" style="width: 20%;"></td>
+		                            </tr>
+		                            <tr>
+		                            	<th colspan="2">
+		                            		<font style=" color: red;">-&nbsp;품목 등록 시 상품 등록 에서  쓰이게 됩니다.<br>-&nbsp;* 표시 된 항목은 필수 입력입니다.</font> 
+		                            	</th>
+		                            </tr>
 	                            </tbody>
 	                        </table>
                         </form:form>
@@ -143,7 +154,15 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	
-
+	defaultCss();
+	
+	/* 회원검색 팝업창에서 입력 후 엔터 눌렀를 때 기능  */
+	$("#popStoreName").keydown(function(key){
+		if(key.keyCode == 13){
+			searchStore();
+		}
+	});
+	
 });
 
 function goItemList(){
@@ -189,9 +208,140 @@ function itemRegister(){
     });
 }
 
+/* 팝업파트 */
+function searchStore(){
+		
+	if($("#popStoreName").val() ==''){
+		alert("매장명을 입력해 주세요");
+		$("#popStoreName").focus();
+		return false;
+	}
+	
+	var paramStoreName = $("#popStoreName").val();
+	
+	$.ajax({
+		type: 'get',
+       	url : "/item/searchStore",
+       	data: {		storeName : paramStoreName
+       			},
+       	success : function(data){
+           if(data.result == 'success'){
+           		popStoreList(data.popStoreList);
+           }else if(data.result == 'noCount'){
+           		alert("검색 결과가 존재하지 않습니다.");
+           		return false;
+           }
+       	},
+       	error:function(request,status,error){
+			alert("저장에 실패하였습니다. 관리자에게 문의하세요");
+       	}
+   	});
+}
+	
+function popStoreList(popStoreList){
+	var paramList = '';
+	
+	for(var i = 0 ; i < popStoreList.length; i++ ){
+		var paramStoreSeq = 0;
+		var paramStoreName = '';
+		var paramStoreTel = '';
+		var paramStoreAddress = '';
+		
+		paramStoreSeq = popStoreList[i].storeSeq;
+		paramStoreName = popStoreList[i].storeName;
+		paramStoreTel = popStoreList[i].storeTel;
+		paramStoreAddress = popStoreList[i].storeAddress;
+		
+		paramList = '<td>'+popStoreList[i].rowNum+'</td>';
+		paramList += '<td>';
+		paramList += '<a href="#" onclick="popStoreSelect('+paramStoreSeq+', \''+paramStoreName+'\');">'; 
+		paramList +=  paramStoreName+'</a>';
+		paramList += '</td>';
+		paramList += '<td>'+paramStoreTel+'</td>';
+		paramList += '<td>'+paramStoreAddress+'</td>';
+	}
+	
+	$("#storeList").text("");
+	$("#storeList").append(paramList);
+}
+
+function popStoreSelect(storeSeq,storeName) {
+	
+	$("#paramStoreName").val(storeName);
+	$("#itemInfo #storeSeq").val(storeSeq);
+	
+	defaultCss();
+	popClose();
+	
+	$("#findStore").modal('toggle');
+}
+
+function popClose(){
+	$("#popStoreName").val("");
+	
+	var paramDefaultList = '<th colspan="4" style="text-align: center;">결과가 없습니다.</th>';
+	
+	$("#storeList").text("");
+	$("#storeList").append(paramDefaultList);
+}
+
+function defaultCss() {
+	
+	$("#findStoreName").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+	
+	$("#popFindStore").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+}
 </script>
-
-
-
+<!--popUp Modal -->
+<div class="modal fade" id="findStore" role="dialog" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+			  <h4 class="modal-title">매장 찾기</h4>
+			  <button type="button" class="close" data-dismiss="modal" onclick="popClose();">&times;</button>
+			</div>
+			<div class="modal-body">
+				<div style="margin: 10px;">
+					<input type="text" id="popStoreName" name="popStoreName"  placeholder="매장">
+					<input type="button" id="popFindStore" name="popFindStore" value="찾기" onclick="searchStore();" style="margin-bottom: 10px;">
+				</div>
+				<div style="margin: 10px; border-top-style: solid;">
+					<table class="table table-bordered" style="margin-top: 20px;">
+						<tbody>
+							<tr>
+								<th>No</th>
+								<th>매장</th>
+								<th>연락처</th>
+								<th>주소</th>
+							</tr>
+							<tr id="storeList"><th colspan="4" style="text-align: center;">결과가 없습니다.</th></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-default" data-dismiss="modal" onclick="popClose();">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
 </body>
 </html>

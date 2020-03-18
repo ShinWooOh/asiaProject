@@ -40,7 +40,13 @@
 		INNER JOIN PRODUCTINFO prdinfo
 		ON ordinfo.product_seq = prdinfo.product_seq
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
-		WHERE adjinfo.store_seq =#{storeSeq}
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND adjinfo.store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose>
 		AND adjinfo.del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
 			AND 
@@ -67,7 +73,13 @@
 		INNER JOIN PRODUCTINFO prdinfo
 		ON ordinfo.product_seq = prdinfo.product_seq
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
-		WHERE adjinfo.store_seq =#{storeSeq}
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND adjinfo.store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose>
 		AND adjinfo.del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
 			AND 
@@ -183,7 +195,13 @@
 		INNER JOIN PRODUCTINFO prdinfo
 		ON ordinfo.product_seq = prdinfo.product_seq
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
-		WHERE adjinfo.store_seq =#{storeSeq}
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND adjinfo.store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose>
 		AND adjinfo.del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
 			AND 

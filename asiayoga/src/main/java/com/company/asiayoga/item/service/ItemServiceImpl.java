@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.company.asiayoga.item.dao.ItemDAO;
 import com.company.asiayoga.item.domain.ItemVO;
 import com.company.asiayoga.member.domain.MemberVO;
+import com.company.asiayoga.store.domain.StoreVO;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -106,6 +107,11 @@ public class ItemServiceImpl implements ItemService {
 		}
 		
 		return sxssfWorkbook;
+	}
+
+	@Override
+	public List<StoreVO> storeSearchList(StoreVO storeVO) {
+		return itemDAO.storeSearchList(storeVO);
 	}
 
 	

@@ -38,6 +38,7 @@ public class MemberVO extends StoreVO {
     private String itemName;						// Ç°¸ñ¸í
     private int productCount;						// µî·Ï È½¼ö
     private int remainingCount;						// ÀÜ¿© È½¼ö
+    private String authority;						// ±ÇÇÑ
 	
     public int getRowNum() {
 		return rowNum;
@@ -225,5 +226,10 @@ public class MemberVO extends StoreVO {
 	public void setRemainingCount(int remainingCount) {
 		this.remainingCount = remainingCount;
 	}
-	
+	public String getAuthority() {
+		return authority;
+	}
+	public void setAuthority(String authority) {
+		this.authority = authority;
+	}
 }

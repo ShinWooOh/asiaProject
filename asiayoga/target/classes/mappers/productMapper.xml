@@ -32,7 +32,13 @@
         ON prdinfo.store_seq = stinfo.store_seq
         INNER JOIN PRODUCTITEM prditem
         ON prdinfo.item_seq = prditem.item_seq
-		WHERE prdinfo.store_seq = #{storeSeq}
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND prdinfo.store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose>
 		AND	prdinfo.del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
 			AND 
@@ -172,7 +178,13 @@
         ON prdinfo.store_seq = stinfo.store_seq
         INNER JOIN PRODUCTITEM prditem
         ON prdinfo.item_seq = prditem.item_seq
-		WHERE prdinfo.store_seq = #{storeSeq}
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND prdinfo.store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose>
 		AND	prdinfo.del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
 			AND 
@@ -182,6 +194,19 @@
 				OR 	product_price LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
+		ORDER BY row_num DESC
+	</select>
+	
+	<!-- 매장 검색 팝업에서 선택 후 상품 목록(관리자 전용)  -->
+	<select id="searchProductList" parameterType="productVO" resultType="productVO">
+		/* productMapper.searchProductList */
+		SELECT	@ROWNUM:=@ROWNUM+1 AS row_num,
+				prdinfo.product_seq,
+				prdinfo.product_name
+		FROM PRODUCTINFO prdinfo
+        INNER JOIN (SELECT @ROWNUM :=0) AS R
+		WHERE prdinfo.store_seq = #{storeSeq}
+		AND	prdinfo.del_yn = 'N'
 		ORDER BY row_num DESC
 	</select>
 

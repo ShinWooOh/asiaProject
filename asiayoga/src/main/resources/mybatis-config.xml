@@ -23,6 +23,7 @@
 		<typeAlias type="com.company.asiayoga.manage.domain.ManageVO" alias="manageVO" />
 		<typeAlias type="com.company.asiayoga.manage.domain.ManageGroupVO" alias="manageGroupVO" />
 		<typeAlias type="com.company.asiayoga.adjournment.domain.AdjournmentVO" alias="adjournmentVO" />
+		<typeAlias type="com.company.asiayoga.mobile.member.domain.MobileMemberVO" alias="mobileMemberVO" />
 		<typeAlias type="com.company.asiayoga.user.domain.CustomUserDetail" alias="customUserDetail" />
 	</typeAliases>
 

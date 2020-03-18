@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import com.company.asiayoga.item.domain.ItemVO;
+import com.company.asiayoga.store.domain.StoreVO;
 
 public interface ItemService {
 	
@@ -28,5 +29,8 @@ public interface ItemService {
 	
 	// 품목 리스트 엑셀 다운로드
 	SXSSFWorkbook itemExcelDownload(ItemVO itemVO) throws Exception;
+	
+	// 팝업에서의 매장 목록
+	List<StoreVO> storeSearchList(StoreVO storeVO);
 	
 }

@@ -47,7 +47,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">직급 등록</h1>
+                        <h1 class="m-0 text-dark">직급 상세</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -90,7 +90,7 @@
 	                            </tr>
 	                            <tr>
 	                                <th style="width: 10%">매장명</th>
-	                                <td><%= manageInfo.getStoreName() %></td>
+	                                <td>${manageGroupDetail.storeName}</td>
 	                            </tr>
                             </tbody>
                         </table>

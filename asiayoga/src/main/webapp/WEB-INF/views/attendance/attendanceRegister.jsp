@@ -105,8 +105,6 @@
 		                            	</c:choose>
 	                            	</td>
 	                            </tr>
-                           
-                            
                             </tbody>
                         </table>
                         
@@ -158,13 +156,7 @@
                             </tr>
                             <tr id="attendanceStoreSeq">
                                 <th>매장명</th>
-                            	<td>
-                            		<c:choose>
-                            			<c:when test="${orderDetail.storeSeq eq 10}">레이디요가 의정부점</c:when>
-                            			<c:when test="${orderDetail.storeSeq eq null}"></c:when>
-                            			<c:when test="${orderDetail.storeSeq eq 0}"></c:when>
-                            			<c:otherwise>준비중입니다.</c:otherwise>
-                            		</c:choose>
+                            	<td>${orderDetail.storeName}
                             	</td>
                                 <th></th>
                             	<td></td>
@@ -204,7 +196,7 @@
 	<input type="hidden" id="orderSeq" name="orderSeq">
 	<input type="hidden" id="productSeq" name="productSeq">
 	<input type="hidden" id="attendanceDate" name="attendanceDate">
-	<input type="hidden" id="name" name="name">
+	<!-- <input type="hidden" id="name" name="name"> -->
 	<input type="hidden" id="remainingCount" name="remainingCount" value="0">
 </form:form>
 <!-- REQUIRED SCRIPTS -->
@@ -218,51 +210,7 @@
 <script src="/resources/dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-	
-	$("#findName").css({
-		"margin-left"		: "5px",
-		"background-color"	: "#00c0ef",
-		"border-color"		: "#00c0ef",
-		"border-radius"		: "3px",
-		"color"				: "white",
-		"border"			: "1px solid",
-		"width"				: "80px",
-		"fontSize"			: "15px"
-	});
-	
-	$("#popFindName").css({
-		"margin-left"		: "5px",
-		"background-color"	: "#00c0ef",
-		"border-color"		: "#00c0ef",
-		"border-radius"		: "3px",
-		"color"				: "white",
-		"border"			: "1px solid",
-		"width"				: "80px",
-		"fontSize"			: "15px"
-	});
-	
-	
-	$('#datepicker').datepicker({
-		dateFormat: 'yy-mm-dd', 
-		showOtherMonths: true, 
-		showMonthAfterYear:true,
-		changeYear: true,
-		changeMonth: true,
-		showOn: "button",
-		yearSuffix: "년",
-		monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'],
-		monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-		dayNamesMin: ['일','월','화','수','목','금','토'],
-		dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'],
-		buttonImage: "/resources/image/calendar_btn.png" //버튼에 띄워줄 이미지 경로
-	});
-	
-	/* 회원검색 팝업창에서 입력 후 엔터 눌렀를 때 기능  */
-	$("#popName").keydown(function(key){
-		if(key.keyCode == 13){
-			searchName();
-		}
-	});
+	defaultCss();
 	
 });
 
@@ -292,7 +240,6 @@ function attendanceRegister(memberSeq,storeSeq,orderSeq,productSeq){
 	$("#attendanceInfo #memberSeq").val(memberSeq);
 	$("#attendanceInfo #storeSeq").val(storeSeq);
 	$("#attendanceInfo #orderSeq").val(orderSeq);
-	$("#attendanceInfo #productSeq").val(productSeq);
 	$("#attendanceInfo #productSeq").val(productSeq);
 	
 	
@@ -340,13 +287,11 @@ function searchName(){
 	}
 	
 	var paramName = $("#popName").val();
-	var paramStoreSeq = 10;
 	
  	$.ajax({
 		type: 'get',
         url : "/attendance/searchMember",
-        data: {	name : paramName,
-        		storeSeq : paramStoreSeq
+        data: {	name : paramName
         		},
         success : function(data){
             if(data.result == 'success'){
@@ -400,13 +345,14 @@ function popMemberList(popMemberList){
 		paramRemainingCount = popMemberList[i].remainingCount;
 		
 		paramList = '<td>'+popMemberList[i].rowNum+'</td>';
+		paramList += '<td>'+paramStoreName+'</td>';
 		paramList += '<td>';
  		paramList += '<a href="#" onclick="popMemberSelect('+paramMemberSeq+', \''+paramName+'\' , \''+paramPhone+'\' , \''+paramEmail+'\' , \''+paramBirth+'\' , \''+paramSex+'\' , '+paramProductSeq+' , \''+paramProductName+'\' , '+paramStoreSeq+' , \''+paramStoreName+'\' , '+paramOrderSeq+' , \''+paramItemName+'\' , '+paramProductCount+' , '+paramRemainingCount+');">'; 
-		paramList +=  popMemberList[i].name+'</a>';
+		paramList +=  paramName+'</a>';
 		paramList += '</td>';
-		paramList += '<td>'+popMemberList[i].phone+'</td>';
-		paramList += '<td>'+popMemberList[i].sex+'</td>';
-		paramList += '<td>'+popMemberList[i].productName+'</td>';
+		paramList += '<td>'+paramPhone+'</td>';
+		paramList += '<td>'+paramSex+'</td>';
+		paramList += '<td>'+paramProductName+'</td>';
 	}
 	
 	$("#memberList").text("");
@@ -474,8 +420,8 @@ function popMemberSelect(memberSeq,name,phone,email,birth,sex,productSeq,product
 	/* 하단 부분 */
 	var paramAttendanceFooter = '';
 	paramAttendanceFooter = '<div style="margin-top: 10px;" id="attendanceFooter">';
-	paramAttendanceFooter += '<input type="button" value="목록" onclick="goAttendanceList();" style="float: left; width:80px;">';
-	paramAttendanceFooter += '<input type="button" value="출석 등록" onclick="goAttendanceRegister('+memberSeq+','+storeSeq+','+orderSeq+');" style="float: right; width:80px;">';
+	paramAttendanceFooter += '<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goAttendanceList();" style="float: left; width:80px;">';
+	paramAttendanceFooter += '<input type="button" class="btn btn-block btn-success" value="등록" onclick="goAttendanceRegister('+memberSeq+','+storeSeq+','+orderSeq+','+productSeq+');" style="float: right; width:80px;">';
 	paramAttendanceFooter += '</div>';
 	$("#attendanceFooter").text("");
 	$("#attendanceFooter").append(paramAttendanceFooter);
@@ -484,6 +430,7 @@ function popMemberSelect(memberSeq,name,phone,email,birth,sex,productSeq,product
 	$("#attendanceInfo #productSeq").val(productSeq);
 	$("#attendanceInfo #remainingCount").val(remainingCount);
 	
+	defaultCss();
 	popClose();
 	$("#findMember").modal('toggle');
 }
@@ -510,6 +457,56 @@ function getFormatDate(date){
     minutes = minutes >= 10 ? minutes : '0' + minutes;       //day 두자리로 저장
     return  year + '-' + month + '-' + day + " "+ hour+":"+minutes;
 }
+
+function defaultCss() {
+	
+	$("#findName").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+	
+	$("#popFindName").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+	
+	$('#datepicker').datepicker({
+		dateFormat: 'yy-mm-dd', 
+		showOtherMonths: true, 
+		showMonthAfterYear:true,
+		changeYear: true,
+		changeMonth: true,
+		showOn: "button",
+		yearSuffix: "년",
+		monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'],
+		monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+		dayNamesMin: ['일','월','화','수','목','금','토'],
+		dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'],
+		buttonImage: "/resources/image/calendar_btn.png" //버튼에 띄워줄 이미지 경로
+	});
+	
+	/* 회원검색 팝업창에서 입력 후 엔터 눌렀를 때 기능  */
+	$("#popName").keydown(function(key){
+		if(key.keyCode == 13){
+			searchName();
+		}
+	});
+
+}
+
+
 </script>
 
 
@@ -531,12 +528,13 @@ function getFormatDate(date){
 						<tbody>
 							<tr>
 								<th>No</th>
+								<th>매장명</th>
 								<th>이름</th>
 								<th>연락처</th>
 								<th>성별</th>
 								<th>등록상품</th>
 							</tr>
-							<tr id="memberList"><th colspan="5" style="text-align: center;">결과가 없습니다.</th></tr>
+							<tr id="memberList"><th colspan="6" style="text-align: center;">결과가 없습니다.</th></tr>
 						</tbody>
 					</table>
 				</div>

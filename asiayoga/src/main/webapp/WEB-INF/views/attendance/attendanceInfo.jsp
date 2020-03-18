@@ -140,7 +140,7 @@
 				                            </c:forEach>
 		                            	</c:when>
 		                            	<c:otherwise>
-		                            		<tr><th colspan="5" style="text-align: center;">결과가 없습니다.</th></tr>
+		                            		<tr><th colspan="7" style="text-align: center;">결과가 없습니다.</th></tr>
 		                            	</c:otherwise>
 		                            </c:choose>
 	                            </tbody>
@@ -241,6 +241,10 @@
 	<input type="hidden" id="storeSeq" name="storeSeq">
 </form:form>
 
+<form:form id="attendanceDelete" name="attendanceDelete" modelAttribute="attendanceVO" method="post">
+	<input type="hidden" id="attendanceSeq" name="attendanceSeq">
+</form:form>
+
 <!-- REQUIRED SCRIPTS -->
 
 <!-- jQuery -->
@@ -292,24 +296,25 @@ function goAttendanceDel(attendanceSeq){
 	var delConfirm = confirm("출석 정보를 삭제 하시겠습니까?\n삭제 시 남은 횟수가 존재하는 경우 복구되지 않습니다.");
 	if(!delConfirm){
 		return false;
+	} else {
+		$("#attendanceDelete #attendanceSeq").val(attendanceSeq);
 	}
 	
-	 $.ajax({
-	        type:'POST',
-	        url : "/attendance/attendanceDelete",
-	        data:{	attendanceSeq : attendanceSeq	},
-	        success : function(data){
-	            if(data == 'success')
-	            {
-	              alert("삭제 하였습니다.");
-	              location.reload();
-	            }
-	        },
-	        error:function(request,status,error){
-	            alert("저장에 실패하였습니다. 관리자에게 문의하세요");
-	       }
-	        
-	    });
+	$.ajax({
+		type:'POST',
+		url : "/attendance/attendanceDelete",
+		data:$("#attendanceDelete").serialize(),
+		success : function(data){
+		if(data == 'success')	
+			{
+			alert("삭제 하였습니다.");
+			location.reload();
+			}
+		},
+		error:function(request,status,error){
+		     alert("저장에 실패하였습니다. 관리자에게 문의하세요");
+		}
+	});
 }
 
 /* 검색 조건 ,페이징  */

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.company.asiayoga.member.dao.MemberDAO;
 import com.company.asiayoga.member.domain.MemberVO;
+import com.company.asiayoga.store.domain.StoreVO;
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -127,6 +128,16 @@ public class MemberServiceImpl implements MemberService {
 		}
 		
 		return sxssfWorkbook;
+	}
+
+	@Override
+	public List<StoreVO> storeSearchList(StoreVO storeVO) throws Exception {
+		return memberDAO.storeSearchList(storeVO);
+	}
+
+	@Override
+	public int updateAdjournmentState(MemberVO memberVO) throws Exception {
+		return memberDAO.updateAdjournmentState(memberVO);
 	}
 	
 

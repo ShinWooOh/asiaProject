@@ -24,6 +24,7 @@ import com.company.asiayoga.manage.domain.ManageVO;
 import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.product.domain.ProductVO;
 import com.company.asiayoga.product.service.ProductService;
+import com.company.asiayoga.store.domain.StoreVO;
 
 @Controller
 @RequestMapping("product")
@@ -48,6 +49,7 @@ public class ProductController {
 		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		ProductVO productVO = new ProductVO();
+		productVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
 		productVO.setStoreSeq(manageVO.getStoreSeq());
 		List<ProductVO> list = productService.productList(productVO);
 		
@@ -78,6 +80,7 @@ public class ProductController {
 		
 		ManageVO manageVO = new ManageVO();
 		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		productVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
 		
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
 
@@ -250,11 +253,60 @@ public class ProductController {
 		return result;
 	}
 	
+	// 매장 찾기(관리자 전용)
+	@RequestMapping(value = "searchStore")
+	@ResponseBody
+	public HashMap<String, Object> searchStore(Model model,StoreVO storeVO) throws Exception {
+		
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		
+		storeVO.setSearchWord(storeVO.getStoreName());
+		List<StoreVO> storeList  = productService.storeSearchList(storeVO);
+		
+		if(storeList.size() >= 1){
+			hashMap.put("result", "success");
+			hashMap.put("popStoreList", storeList);
+		} else if(storeList.size() == 0) {
+			hashMap.put("result", "noCount");
+			hashMap.put("popStoreList", "");
+		} else {
+			
+		}
+		
+		return hashMap;
+	}
+	
+	// 품목 찾기(관리자 전용, 매장 선택 후 로직)
+	@RequestMapping(value = "searchItemList")
+	@ResponseBody
+	public HashMap<String, Object> searchItemList(Model model,ItemVO itemVO) throws Exception {
+		
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		
+		List<ItemVO> itemList  = productService.searchItemList(itemVO);
+		
+		if(itemList.size() >= 1){
+			hashMap.put("result", "success");
+			hashMap.put("itemList", itemList);
+		} else if(itemList.size() == 0) {
+			hashMap.put("result", "noCount");
+		} else {
+			
+		}
+		
+		return hashMap;
+	}
+	
 	// 상품 목록 엑셀 다운로드
 	@RequestMapping(value = "productExcelDownload")
 	public void productExcelDownload(HttpServletRequest request, HttpServletResponse reponse, ProductVO productVO) throws Exception{
 		
 		OutputStream out = null;
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
+		productVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
+		
 		try {
 			SXSSFWorkbook sxssfWorkbook = productService.productExcelDownload(productVO);
 			
@@ -301,5 +353,16 @@ public class ProductController {
 		}
 		
 		return paramTotalPage;
+	}
+	
+	// 권한 체크
+	public String checkAuthority(String myAuthority) {
+		String resultParam = "";
+	
+		if(myAuthority.equals("ROLE_ADMIN")) {
+			resultParam = myAuthority;
+		}
+		
+		return resultParam;
 	}
 }

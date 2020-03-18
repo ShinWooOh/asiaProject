@@ -68,6 +68,10 @@
                 <div>
                 	<div>
                 		<form:form id="memberInsert" name="memberInsert" modelAttribute="memberVO" method="post">
+               				<input type="hidden" id="checkAuthority" name="checkAuthority" value="${manageInfo.getCheckAuthority()}">
+							<c:if test="${manageInfo.getCheckAuthority() eq '1'}">
+								<input type="hidden" id="storeSeq" name="storeSeq">
+							</c:if>
 	                		<table class="table table-bordered">
 	                			<tbody>
 	                				<tr>
@@ -113,12 +117,19 @@
 					                		<input type="hidden" id="birth" name="birth">
 	                					</td>
 	                				</tr>
-	                				<tr>
+	                				<tr id="storeInfo">
 	                					<td>등록매장</td>
-	                					<td>
-					                		<c:out value="${memberInfo.storeName}"/>
-					                		<input type="hidden" id="storeSeq" name="storeSeq" value="${memberInfo.storeSeq}">
-	                					</td>
+		                                <td>
+		                                	<c:choose>
+		                                		<c:when test="${manageInfo.getAuthority() eq 'ROLE_ADMIN'}">
+		                                			<input type="text" id="paramStoreName" name="paramStoreName" readonly="readonly">
+		                            				<input type="button" id="findStoreName" name="findStoreName" value="매장 찾기" data-toggle="modal" data-target="#findStore">
+		                                		</c:when>
+		                                		<c:otherwise>
+				                                	<%= manageInfo.getStoreName() %>
+		                                		</c:otherwise>
+		                                	</c:choose>
+		                                </td>
 	                				</tr>
 	                				<tr>
 	                					<td>성별<font style="color: red;">*</font></td>
@@ -172,6 +183,20 @@
 <!-- AdminLTE App -->
 <script src="/resources/dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
+
+$(document).ready(function() {
+	
+	defaultCss();
+	
+	/* 회원검색 팝업창에서 입력 후 엔터 눌렀를 때 기능  */
+	$("#popStoreName").keydown(function(key){
+		if(key.keyCode == 13){
+			searchStore();
+		}
+	});
+	
+});
+
 
 function goInsertMember(){
 	
@@ -257,6 +282,140 @@ function insertMember(){
 function goMemberList(){
 	location.href="/member/memberList";
 }
+
+/* 팝업파트 */
+function searchStore(){
+		
+	if($("#popStoreName").val() ==''){
+		alert("매장명을 입력해 주세요");
+		$("#popStoreName").focus();
+		return false;
+	}
+	
+	var paramStoreName = $("#popStoreName").val();
+	
+	$.ajax({
+		type: 'get',
+       	url : "/manage/searchStore",
+       	data: {		storeName : paramStoreName
+       			},
+       	success : function(data){
+           if(data.result == 'success'){
+           		popStoreList(data.popStoreList);
+           }else if(data.result == 'noCount'){
+           		alert("검색 결과가 존재하지 않습니다.");
+           		return false;
+           }
+       	},
+       	error:function(request,status,error){
+			alert("저장에 실패하였습니다. 관리자에게 문의하세요");
+       	}
+   	});
+}
+	
+function popStoreList(popStoreList){
+	var paramList = '';
+	
+	for(var i = 0 ; i < popStoreList.length; i++ ){
+		var paramStoreSeq = 0;
+		var paramStoreName = '';
+		var paramStoreTel = '';
+		var paramStoreAddress = '';
+		
+		paramStoreSeq = popStoreList[i].storeSeq;
+		paramStoreName = popStoreList[i].storeName;
+		paramStoreTel = popStoreList[i].storeTel;
+		paramStoreAddress = popStoreList[i].storeAddress;
+		
+		paramList = '<td>'+popStoreList[i].rowNum+'</td>';
+		paramList += '<td>';
+		paramList += '<a href="#" onclick="popStoreSelect('+paramStoreSeq+', \''+paramStoreName+'\');">'; 
+		paramList +=  paramStoreName+'</a>';
+		paramList += '</td>';
+		paramList += '<td>'+paramStoreTel+'</td>';
+		paramList += '<td>'+paramStoreAddress+'</td>';
+	}
+	
+	$("#storeList").text("");
+	$("#storeList").append(paramList);
+}
+
+function popStoreSelect(storeSeq,storeName) {
+	
+	$("#paramStoreName").val(storeName);
+	$("#memberInsert #storeSeq").val(storeSeq);
+	
+	defaultCss();
+	popClose();
+	
+	$("#findStore").modal('toggle');
+}
+
+function popClose(){
+	$("#popStoreName").val("");
+	
+	var paramDefaultList = '<th colspan="4" style="text-align: center;">결과가 없습니다.</th>';
+	
+	$("#storeList").text("");
+	$("#storeList").append(paramDefaultList);
+}
+function defaultCss() {
+	
+	$("#findStoreName").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+	
+	$("#popFindStore").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+}
 </script>
+<!--popUp Modal -->
+<div class="modal fade" id="findStore" role="dialog" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+			  <h4 class="modal-title">매장 찾기</h4>
+			  <button type="button" class="close" data-dismiss="modal" onclick="popClose();">&times;</button>
+			</div>
+			<div class="modal-body">
+				<div style="margin: 10px;">
+					<input type="text" id="popStoreName" name="popStoreName"  placeholder="매장">
+					<input type="button" id="popFindStore" name="popFindStore" value="찾기" onclick="searchStore();" style="margin-bottom: 10px;">
+				</div>
+				<div style="margin: 10px; border-top-style: solid;">
+					<table class="table table-bordered" style="margin-top: 20px;">
+						<tbody>
+							<tr>
+								<th>No</th>
+								<th>매장</th>
+								<th>연락처</th>
+								<th>주소</th>
+							</tr>
+							<tr id="storeList"><th colspan="4" style="text-align: center;">결과가 없습니다.</th></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-default" data-dismiss="modal" onclick="popClose();">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
 </body>
 </html>

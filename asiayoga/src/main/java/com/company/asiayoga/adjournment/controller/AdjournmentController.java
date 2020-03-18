@@ -14,25 +14,16 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.company.asiayoga.adjournment.domain.AdjournmentVO;
 import com.company.asiayoga.adjournment.service.AdjournmentService;
-import com.company.asiayoga.attendance.domain.AttendanceVO;
-import com.company.asiayoga.item.domain.ItemVO;
 import com.company.asiayoga.manage.domain.ManageVO;
 import com.company.asiayoga.member.domain.MemberVO;
-import com.company.asiayoga.member.service.MemberService;
-import com.company.asiayoga.order.domain.OrderVO;
-import com.company.asiayoga.order.service.OrderService;
 
 @Controller
 @RequestMapping("adjournment")
@@ -42,12 +33,6 @@ public class AdjournmentController {
 	
 	@Inject
 	private AdjournmentService adjournmentService;
-	
-	@Inject
-	private MemberService memberService;
-	
-	@Inject
-	private OrderService orderService;
 	
 	private String menuFirstRoot = "adjournment";
 	
@@ -60,6 +45,7 @@ public class AdjournmentController {
     	
     	AdjournmentVO adjournmentVO = new AdjournmentVO();
     	adjournmentVO.setStoreSeq(manageVO.getStoreSeq());
+		adjournmentVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
     	
     	List<AdjournmentVO> list = new ArrayList<AdjournmentVO>();
     	list = adjournmentService.adjournmentList(adjournmentVO);
@@ -95,6 +81,7 @@ public class AdjournmentController {
 
  		adjournmentVO.setParamPage((adjournmentVO.getTotalRow()*adjournmentVO.getPageNum())-adjournmentVO.getTotalRow());
  		adjournmentVO.setStoreSeq(manageVO.getStoreSeq());
+ 		adjournmentVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
  		List<AdjournmentVO> list = adjournmentService.adjournmentList(adjournmentVO);
 
  		int paramTotalCount = 0;
@@ -143,6 +130,13 @@ public class AdjournmentController {
  	@RequestMapping(value = "adjournmentRegister", method = {RequestMethod.POST,RequestMethod.GET})
  	public String attendanceRegister(HttpServletRequest request,Model model,@ModelAttribute("adjournmentVO") AdjournmentVO adjournmentVO) throws Exception{
 
+ 		ManageVO manageVO = new ManageVO();
+ 		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+ 		if(manageVO.getAuthority().equals("ROLE_ADMIN")) {
+ 			
+ 		}
+ 		
+ 		
  		// 경로 체크
  		String currentPath = (String)request.getSession().getAttribute("nowPath");
  		if(!currentPath.equals(menuFirstRoot)) {
@@ -195,25 +189,25 @@ public class AdjournmentController {
 	}
 	
 	 // 휴회 상태 수정
-	 @RequestMapping(value = "updateAdjournmentState")
-	 @ResponseBody
-	 public String updateAdjournmentState(HttpServletRequest request,Model model, @ModelAttribute("adjournmentVO") AdjournmentVO adjournmentVO) throws Exception {
+	@RequestMapping(value = "updateAdjournmentState")
+	@ResponseBody
+	public String updateAdjournmentState(HttpServletRequest request,Model model, @ModelAttribute("adjournmentVO") AdjournmentVO adjournmentVO) throws Exception {
 		 
-		 String result = "fail";
+		String result = "fail";
 		 
-		 ManageVO  manageVO = new ManageVO();
-		 manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		ManageVO  manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		 
-		 adjournmentVO.setModifyId(manageVO.getId());
+		adjournmentVO.setModifyId(manageVO.getId());
 		 
-		 int paramResult = 0;
-		 paramResult = adjournmentService.updateAdjournmentState(adjournmentVO);
+		int paramResult = 0;
+		paramResult = adjournmentService.updateAdjournmentState(adjournmentVO);
 		 
-		 if(paramResult > 0) {
-			 result = "success";
-		 }
-		 return result;
-	 }
+		if(paramResult > 0) {
+			result = "success";
+		}
+		return result;
+	}
 	 
 	 // 휴회 정보 수정
 	 @RequestMapping(value = "updateAdjournment", method = RequestMethod.GET)
@@ -240,13 +234,16 @@ public class AdjournmentController {
  	// 팝업에서의 회원 찾기(List 리턴 , 상품정보 포함)
  	@RequestMapping(value = "searchMember", method = RequestMethod.GET)
  	@ResponseBody
- 	public HashMap<String, Object> searchMember(Model model,@ModelAttribute("adjournmentVO") AdjournmentVO adjournmentVO) throws Exception{
+ 	public HashMap<String, Object> searchMember(HttpServletRequest request,Model model,@ModelAttribute("adjournmentVO") AdjournmentVO adjournmentVO) throws Exception{
  		
  		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+ 		ManageVO  manageVO = new ManageVO();
+ 		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
  		
  		MemberVO memberVO = new MemberVO();
  		memberVO.setStoreSeq(adjournmentVO.getStoreSeq());
- 		memberVO.setName(adjournmentVO.getName());
+ 		memberVO.setSearchWord(adjournmentVO.getName());
+ 		memberVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
  		
  		List<MemberVO> memberList = adjournmentService.memberSearch(memberVO);
  		
@@ -265,6 +262,10 @@ public class AdjournmentController {
  	// 휴회 리스트 엑셀 다운로드
  	@RequestMapping(value = "adjournmentExcelDownload")
  	public void adjournmentExcelDownload(HttpServletRequest request, HttpServletResponse reponse,AdjournmentVO adjournmentVO) throws Exception{
+ 		
+ 		ManageVO  manageVO = new ManageVO();
+ 		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+ 		adjournmentVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
  		
  		OutputStream out = null;
  		try {
@@ -314,4 +315,15 @@ public class AdjournmentController {
  		
  		return paramTotalPage;
  	}
+ 	
+ 	// 권한 체크
+ 	public String checkAuthority(String myAuthority) {
+		String resultParam = "";
+ 		
+ 		if(myAuthority.equals("ROLE_ADMIN")) {
+ 			resultParam = myAuthority;
+ 		}
+ 		
+ 		return resultParam;
+	}
 }

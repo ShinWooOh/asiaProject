@@ -23,6 +23,8 @@ import org.springframework.ui.Model;
 
 import com.company.asiayoga.manage.domain.ManageVO;
 import com.company.asiayoga.manage.service.ManageService;
+import com.company.asiayoga.store.domain.StoreVO;
+import com.company.asiayoga.store.service.StoreService;
 import com.company.asiayoga.user.service.UserService;
 import com.mysql.cj.Session;
 
@@ -41,7 +43,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 	
 	@Inject
 	private ManageService manageService;
-
+	
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
@@ -63,6 +65,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 		// 로그인 성공 시 해당 사용자 이름 및 매장 정보 가져오기
 		ManageVO manageVO = new ManageVO();
 		manageVO.setId(userName);
+		
 		try {
 			manageVO = manageService.manageInfo(userName);
 		} catch (Exception e) {

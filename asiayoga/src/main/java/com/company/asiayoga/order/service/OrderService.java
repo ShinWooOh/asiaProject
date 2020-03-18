@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import com.company.asiayoga.order.domain.OrderVO;
+import com.company.asiayoga.product.domain.ProductVO;
+import com.company.asiayoga.store.domain.StoreVO;
 
 public interface OrderService {
 	
@@ -31,4 +33,10 @@ public interface OrderService {
 
 	// 주문 목록 엑셀 다운로드
 	SXSSFWorkbook orderExcelDown(OrderVO orderVO) throws Exception;
+	
+	// 구매 등록 화면 > 매장 검색 팝업에서 검색(관리자 전용)
+	List<StoreVO> storeSearchList(StoreVO storeVO) throws Exception;
+	
+	// 매장 검색 팝업에서 선택 후 상품 목록(관리자 전용)
+	List<ProductVO> searchProductList(ProductVO productVO) throws Exception;
 }

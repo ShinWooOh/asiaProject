@@ -15,12 +15,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.company.asiayoga.manage.domain.ManageGroupVO;
 import com.company.asiayoga.manage.domain.ManageVO;
 import com.company.asiayoga.manage.service.ManageService;
 import com.company.asiayoga.member.domain.MemberVO;
+import com.company.asiayoga.store.domain.StoreVO;
+import com.company.asiayoga.store.service.StoreService;
 
 @Controller
 @RequestMapping("manage")
@@ -30,6 +33,9 @@ public class ManageController {
 	
 	@Inject
 	private ManageService manageService;
+	
+	@Inject
+	private StoreService storeService;
 	
 	private String menuFirstRoot = "manage";
 	
@@ -75,6 +81,7 @@ public class ManageController {
 
 		manageVO.setParamPage((manageVO.getTotalRow()*manageVO.getPageNum())-manageVO.getTotalRow());
 		manageVO.setStoreSeq(vo.getStoreSeq());
+		manageVO.setAuthority(vo.getAuthority());
 		List<ManageVO> list = manageService.manageList(manageVO);
 
 		int paramTotalCount = 0;
@@ -149,6 +156,7 @@ public class ManageController {
 		
 		ManageVO manageVO = new ManageVO();
 		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
 		// 직원 그룹 리스트
 		ManageGroupVO manageGroupVO = new ManageGroupVO();
 		manageGroupVO.setStoreSeq(manageVO.getStoreSeq());
@@ -179,7 +187,10 @@ public class ManageController {
 		
 		manageVO.setRegisterId(vo.getId());
 		manageVO.setModifyId(vo.getId());
-		manageVO.setStoreSeq(vo.getStoreSeq());
+		
+		if(!vo.getAuthority().equals("ROLE_ADMIN")){
+			manageVO.setStoreSeq(vo.getStoreSeq());
+		}
 		
 		resultParam = manageService.insertManage(manageVO);
 		if(resultParam > 0) {
@@ -194,10 +205,17 @@ public class ManageController {
 		
 		ManageVO paramManageVO = new ManageVO();
 		paramManageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
 		// 직원 그룹 리스트
 		ManageGroupVO manageGroupVO = new ManageGroupVO();
-		manageGroupVO.setStoreSeq(paramManageVO.getStoreSeq());
-		List<ManageGroupVO> list = manageService.manageGroupList(manageGroupVO);
+		
+		if(paramManageVO.getAuthority().equals("ROLE_ADMIN")) {
+			manageGroupVO.setStoreSeq(manageVO.getStoreSeq());
+		} else {
+			manageGroupVO.setStoreSeq(paramManageVO.getStoreSeq());
+		}
+		
+		List<ManageGroupVO> list = manageService.manageGroupListAll(manageGroupVO);
 		model.addAttribute("manageGroupList", list);
 		
 		ManageVO vo = new ManageVO();
@@ -297,6 +315,7 @@ public class ManageController {
 
 		manageGroupVO.setParamPage((manageGroupVO.getTotalRow()*manageGroupVO.getPageNum())-manageGroupVO.getTotalRow());
 		manageGroupVO.setStoreSeq(vo.getStoreSeq());
+		manageGroupVO.setAuthority(vo.getAuthority());
 		List<ManageGroupVO> list = manageService.manageGroupList(manageGroupVO);
 
 		int paramTotalCount = 0;
@@ -373,6 +392,9 @@ public class ManageController {
 	// 직원 그룹 등록 화면 이동
 	@RequestMapping(value = "manageGroupRegister")
 	public String manageGroupRegister(HttpServletRequest request,Model model) throws Exception {
+
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		// 경로 체크
 		String currentPath = (String)request.getSession().getAttribute("nowPath");
@@ -381,6 +403,13 @@ public class ManageController {
 			request.getSession().setAttribute("nowPath", menuFirstRoot);
 		}
 		
+		// 매장 정보
+		if(manageVO.getAuthority().equals("ROLE_ADMIN")){
+			List<StoreVO> list = storeService.storeList(new StoreVO());
+			model.addAttribute("list", list);
+		}else {
+			
+		}
 		return "/manage/manageGroupRegister";
 		
 	}
@@ -396,7 +425,12 @@ public class ManageController {
 		ManageVO manageVO = new ManageVO();
 		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
-		manageGroupVO.setStoreSeq(manageVO.getStoreSeq());
+		int storeSeqParam = manageVO.getStoreSeq();
+		if(manageVO.getAuthority().equals("ROLE_ADMIN")) {
+			storeSeqParam = manageGroupVO.getStoreSeq();
+		}
+		
+		manageGroupVO.setStoreSeq(storeSeqParam);
 		manageGroupVO.setRegisterId(manageVO.getId());
 		manageGroupVO.setModifyId(manageVO.getId());
 		resultParam = manageService.insertManageGroup(manageGroupVO);
@@ -465,7 +499,12 @@ public class ManageController {
 		ManageVO manageVO = new ManageVO();
 		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
-		manageGroupVO.setStoreSeq(manageVO.getStoreSeq());
+		int storeSeqParam = manageVO.getStoreSeq();
+		if(manageVO.getAuthority().equals("ROLE_ADMIN")) {
+			storeSeqParam = manageGroupVO.getStoreSeq();
+		}
+		
+		manageGroupVO.setStoreSeq(storeSeqParam);
 		resultParam = manageService.manageGroupDupCheck(manageGroupVO);
 		if(resultParam > 0) {
 			result = "dupName";
@@ -478,6 +517,10 @@ public class ManageController {
 	// 직원 리스트 엑셀 다운로드
 	@RequestMapping(value = "manageExcelDownload")
 	public void manageExcelDownload(HttpServletRequest request, HttpServletResponse reponse, ManageVO manageVO) throws Exception{
+		
+		ManageVO vo = new ManageVO();
+		vo = (ManageVO)request.getSession().getAttribute("manageInfo");
+		manageVO.setAuthority(vo.getAuthority());
 		
 		OutputStream out = null;
 		try {
@@ -502,6 +545,10 @@ public class ManageController {
 	@RequestMapping(value = "manageGroupExcelDownload")
 	public void manageGroupExcelDownload(HttpServletRequest request, HttpServletResponse reponse,ManageGroupVO manageGroupVO) throws Exception{
 		
+		ManageVO vo = new ManageVO();
+		vo = (ManageVO)request.getSession().getAttribute("manageInfo");
+		manageGroupVO.setAuthority(vo.getAuthority());
+		
 		OutputStream out = null;
 		try {
 			SXSSFWorkbook sxssfWorkbook = manageService.manageGroupExcelDownload(manageGroupVO);
@@ -519,6 +566,49 @@ public class ManageController {
 		} finally {
 			if(out != null) { out.close(); }
 		}
+	}
+	
+	
+	// 팝업에서 매장 목록(HashMap 구조)
+	@RequestMapping(value = "searchStore", method = RequestMethod.GET)
+	@ResponseBody
+	public  HashMap<String, Object> searchStore(Model model,StoreVO storeVO) throws Exception{
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+
+		storeVO.setSearchWord(storeVO.getStoreName());
+		List<StoreVO> storeList = manageService.storeSearchList(storeVO);
+		
+		if(storeList.size() >= 1){
+			hashMap.put("result", "success");
+			hashMap.put("popStoreList", storeList);
+		} else if(storeList.size() == 0) {
+			hashMap.put("result", "noCount");
+			hashMap.put("popStoreList", "");
+		} else {
+			
+		}
+		
+		return hashMap;
+	}
+	
+	// 팝업에서 매장 선택 후 직급 List 불러오기(HashMap 구조)
+	@RequestMapping(value = "searchGroupList", method = RequestMethod.GET)
+	@ResponseBody
+	public  HashMap<String, Object> searchGroupList(Model model,ManageGroupVO manageGroupVO) throws Exception{
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		
+		List<ManageGroupVO> manageGroupList = manageService.searchGroupList(manageGroupVO);
+		
+		if(manageGroupList.size() >= 1){
+			hashMap.put("result", "success");
+			hashMap.put("manageGroupList", manageGroupList);
+		} else if(manageGroupList.size() == 0) {
+			hashMap.put("result", "noCount");
+		} else {
+			
+		}
+		
+		return hashMap;
 	}
 	
 
@@ -579,4 +669,5 @@ public class ManageController {
 		
 		return paramTotalPage;
 	}
+	
 }
