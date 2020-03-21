@@ -20,7 +20,7 @@
 			store_phone,
 			store_address,
 			store_memo
-		FROM STOREINFO, (SELECT @ROWNUM :=0) AS R
+		FROM storeinfo, (SELECT @ROWNUM :=0) AS R
 		WHERE del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
 			AND 
@@ -38,7 +38,7 @@
 	<select id="storeTotalCount" parameterType="storeVO" resultType="int">
 		/* storeMapper.storeTotalCount */
 		SELECT	COUNT(*)		
-		FROM STOREINFO
+		FROM storeinfo
 		WHERE del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
 			AND 
@@ -59,7 +59,7 @@
 				store_phone,
 				store_address,
 				store_memo
-		FROM STOREINFO
+		FROM storeinfo
 		WHERE del_yn = 'N'
 		AND store_seq = #{storeSeq}
 	</select>
@@ -67,7 +67,7 @@
 	<!-- 매장 저장  -->
 	<select id="insertStore" parameterType="storeVO">
 		/* storeMapper.insertStore */
-		INSERT INTO STOREINFO 
+		INSERT INTO storeinfo 
 				(	store_name,
 					store_tel,
 					store_phone,
@@ -96,7 +96,7 @@
 	<!-- 매장 삭제  -->
 	<update id="storeDelete" parameterType="storeVO">
 		/* storeMapper.storeDelete */
-		UPDATE STOREINFO
+		UPDATE storeinfo
 		<set>
 			del_yn = 'Y'
 		</set>
@@ -107,7 +107,7 @@
 	<!-- 매장 정보 업데이트  -->
 	<update id="updateStore" parameterType="storeVO">
 		/* storeMapper.updateStore */
-		UPDATE STOREINFO
+		UPDATE storeinfo
 		<set>
 			<if test="storeName != null and storeName != ''">store_name = #{storeName},</if>
   			<if test="storeTel != null and storeTel != ''">store_tel = #{storeTel},</if>
@@ -132,7 +132,7 @@
 			store_phone,
 			store_address,
 			store_memo
-		FROM STOREINFO, (SELECT @ROWNUM :=0) AS R
+		FROM storeinfo, (SELECT @ROWNUM :=0) AS R
 		WHERE del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
 			AND 
@@ -156,7 +156,7 @@
 			store_phone,
 			store_address,
 			store_memo
-		FROM STOREINFO, (SELECT @ROWNUM :=0) AS R
+		FROM storeinfo, (SELECT @ROWNUM :=0) AS R
 		WHERE del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
 			AND 

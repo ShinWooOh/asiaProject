@@ -28,9 +28,9 @@
 				mnggrp.modify_date, 
 				mnggrp.modify_id,
 				mnggrp.use_yn
-		FROM MANAGEGROUP mnggrp	
+		FROM managegroup mnggrp	
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
-		INNER JOIN STOREINFO stinfo
+		INNER JOIN storeinfo stinfo
 		ON mnggrp.store_seq = stinfo.store_seq
 		WHERE 1=1
 		<choose>
@@ -69,9 +69,9 @@
 				mnggrp.modify_date, 
 				mnggrp.modify_id,
 				mnggrp.use_yn
-		FROM MANAGEGROUP mnggrp	
+		FROM managegroup mnggrp	
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
-		INNER JOIN STOREINFO stinfo
+		INNER JOIN storeinfo stinfo
 		ON mnggrp.store_seq = stinfo.store_seq
 		WHERE mnggrp.store_seq = #{storeSeq}
 		ORDER BY mnggrp.modify_date DESC
@@ -81,9 +81,9 @@
  	<select id="manageGroupTotalCount" parameterType="manageGroupVO" resultType="int">
  		/* manageGroupMapper.manageGroupTotalCount */
 		SELECT	COUNT(*)
-		FROM MANAGEGROUP mnggrp
+		FROM managegroup mnggrp
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
-		INNER JOIN STOREINFO stinfo
+		INNER JOIN storeinfo stinfo
 		ON mnggrp.store_seq = stinfo.store_seq
 		WHERE 1=1
 		<choose>
@@ -104,7 +104,7 @@
 	<!-- 직원 그룹 활성화 여부 변경   -->
  	<update id="updateGroupUseYnState" parameterType="manageGroupVO">
  		/* manageGroupMapper.updateGroupUseYnState */
-		UPDATE MANAGEGROUP
+		UPDATE managegroup
 		SET use_yn = #{useYn},
 			modify_date = now(),
 			modify_id = #{modifyId}
@@ -116,7 +116,7 @@
  		/* manageGroupMapper.manageGroupDupCheck */
 		SELECT	manage_group_seq,
 				group_name
-		FROM	MANAGEGROUP
+		FROM	managegroup
 		WHERE	group_name = #{groupName}
 		AND		store_seq = #{storeSeq}
 		AND 	use_yn = 'Y' 
@@ -125,7 +125,7 @@
 	<!-- 직원 그룹 등록  -->
 	<insert id="insertManageGroup" parameterType="manageGroupVO">
  		/* manageGroupMapper.insertManageGroup */
- 		INSERT INTO MANAGEGROUP
+ 		INSERT INTO managegroup
  				(	authority,
  					group_name,
  					store_seq,
@@ -152,20 +152,20 @@
 				END AS authority_name,
 				mnggrp.group_name,
 				mnggrp.store_seq,
-				( SELECT store_name FROM STOREINFO WHERE store_seq = mnggrp.store_seq ) AS store_name,
+				( SELECT store_name FROM storeinfo WHERE store_seq = mnggrp.store_seq ) AS store_name,
 				mnggrp.register_date,
 				mnggrp.register_id,
 				mnggrp.modify_date, 
 				mnggrp.modify_id,
 				mnggrp.use_yn
-		FROM MANAGEGROUP mnggrp
+		FROM managegroup mnggrp
 		WHERE mnggrp.manage_group_seq =#{manageGroupSeq}
 	</select>
 
 	<!-- 직원 그룹 수정   -->
  	<update id="updateManageGroup" parameterType="manageGroupVO">
  		/* manageGroupMapper."updateManageGroup" */
-		UPDATE MANAGEGROUP
+		UPDATE managegroup
 		SET authority = #{authority},
 			group_name = #{groupName},
 			modify_date = now(),
@@ -187,9 +187,9 @@
 				mnggrp.group_name,
 				mnggrp.store_seq,
 				stinfo.store_name
-		FROM MANAGEGROUP mnggrp	
+		FROM managegroup mnggrp	
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
-		INNER JOIN STOREINFO stinfo
+		INNER JOIN storeinfo stinfo
 		ON mnggrp.store_seq = stinfo.store_seq
 		WHERE 1=1
 		<choose>
@@ -223,9 +223,9 @@
 				mnggrp.store_seq,
 				stinfo.store_name,
 				mnggrp.use_yn
-		FROM MANAGEGROUP mnggrp	
+		FROM managegroup mnggrp	
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
-		INNER JOIN STOREINFO stinfo
+		INNER JOIN storeinfo stinfo
 		ON mnggrp.store_seq = stinfo.store_seq
 		WHERE mnggrp.store_seq = #{storeSeq}
 		AND mnggrp.use_yn = 'Y'

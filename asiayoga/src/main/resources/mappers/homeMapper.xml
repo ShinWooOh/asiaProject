@@ -21,7 +21,7 @@
 			atdinfo.modify_id,
 			atdinfo.del_yn,
 			atdinfo.store_code 
-		FROM ATTENDANCEINFO atdinfo , (SELECT @ROWNUM :=0) AS R
+		FROM attendanceinfo atdinfo , (SELECT @ROWNUM :=0) AS R
 		WHERE atdinfo.store_code = #{storeCode}
 		AND	atdinfo.del_yn = 'N'
 		ORDER BY atdinfo.attendance_date DESC

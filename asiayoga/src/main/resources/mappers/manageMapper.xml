@@ -19,14 +19,14 @@
 				enabled,
 				store_seq,
 				use_yn
-		FROM MANAGEINFO 
+		FROM manageinfo 
 		WHERE id = #{id}
 	</select>
 	
 	<!-- 로그인 실패 시 횟수 추가 -->
 	<update id="updateFailureCount">
  		/* manageMapper.updateFailureCount */
- 		UPDATE MANAGEINFO
+ 		UPDATE manageinfo
  		SET failure_count = failure_count +1
  		WHERE id = #{id}
 	</update>
@@ -35,14 +35,14 @@
 	<select id="checkFailureCount" resultType="Integer">
  		/* manageMapper.checkFailureCount */
  		SELECT	failure_count
- 		FROM MANAGEINFO
+ 		FROM manageinfo
  		WHERE id = #{id}
 	</select>
     
 	<!-- 로그인 3회 이상 실패 시 비 활성화로 변경 -->
 	<update id="updateEnabled">
  		/* manageMapper.updateEnabled */
- 		UPDATE MANAGEINFO
+ 		UPDATE manageinfo
  		SET enabled = false
  		WHERE id = #{id}
 	</update>
@@ -50,7 +50,7 @@
 	<!-- 로그인 실패 횟수 초기화 -->
 	<update id="updateFailureCountReset">
  		/* manageMapper.updateFailureCountReset */
- 		UPDATE MANAGEINFO
+ 		UPDATE manageinfo
  		SET failure_count = 0
  		WHERE id = #{id}
 	</update>
@@ -58,7 +58,7 @@
 	<!-- 로그인 시 접속 날자 업데이트 -->
 	<update id="updateAccessDate">
  		/* manageMapper.updateAccessDate */
- 		UPDATE MANAGEINFO
+ 		UPDATE manageinfo
  		SET access_date = now(),
  			modify_date = now(),
  			modify_id = #{id}
@@ -75,12 +75,12 @@
 				mginfo.authority,
 				mginfo.enabled,
 				mginfo.store_seq,
-				( SELECT store_name FROM STOREINFO WHERE store_seq = mginfo.store_seq ) AS store_name,
+				( SELECT store_name FROM storeinfo WHERE store_seq = mginfo.store_seq ) AS store_name,
 				CASE WHEN mginfo.authority = 'ROLE_ADMIN' then '1'
 					 ELSE '9'
 				END AS check_authority,  
 				use_yn
-		FROM MANAGEINFO mginfo
+		FROM manageinfo mginfo
 		WHERE id = #{id}
 	</select>
 	
@@ -104,11 +104,11 @@
 				mginfo.access_date,
 				mginfo.enabled,
 				mginfo.store_seq,
-				( SELECT store_name FROM STOREINFO WHERE store_seq = mginfo.store_seq ) AS store_name,
+				( SELECT store_name FROM storeinfo WHERE store_seq = mginfo.store_seq ) AS store_name,
 				mginfo.use_yn
-		FROM MANAGEINFO mginfo
+		FROM manageinfo mginfo
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
-		INNER JOIN MANAGEGROUP mnggrp
+		INNER JOIN managegroup mnggrp
 		ON mginfo.manage_group_seq = mnggrp.manage_group_seq
 		WHERE 1=1
 		<choose>
@@ -132,9 +132,9 @@
  	<select id="manageTotalCount"  parameterType="manageVO" resultType="int">
  		/* manageMapper.manageTotalCount */
 		SELECT 	COUNT(*)
-		FROM MANAGEINFO mginfo
+		FROM manageinfo mginfo
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
-		INNER JOIN MANAGEGROUP mnggrp
+		INNER JOIN managegroup mnggrp
 		ON mginfo.manage_group_seq = mnggrp.manage_group_seq
 		WHERE 1=1
 		<choose>
@@ -155,7 +155,7 @@
 	<!-- 직원 계정 활성화 여부 변경   -->
  	<update id="updateEnableState" parameterType="manageVO">
  		/* manageMapper.updateEnableState */
-		UPDATE MANAGEINFO
+		UPDATE manageinfo
 		SET enabled = #{enabled},
 			modify_date = now(),
 			modify_id = #{id}
@@ -169,14 +169,14 @@
 				id,
 				name,
 				authority
-		FROM	MANAGEINFO
+		FROM	manageinfo
 		WHERE	id = #{id} 
 	</select>
 	
 	<!-- 직원 등록  -->
 	<insert id="insertManage" parameterType="manageVO">
  		/* manageMapper.insertManage */
- 		INSERT INTO MANAGEINFO
+ 		INSERT INTO manageinfo
  				(	id,
  					passwd,
  					name,
@@ -198,7 +198,7 @@
  					#{memo},
  					#{storeSeq},
  					0,
- 					( SELECT authority FROM MANAGEGROUP WHERE manage_group_seq = #{manageGroupSeq}),
+ 					( SELECT authority FROM managegroup WHERE manage_group_seq = #{manageGroupSeq}),
  					#{registerId},
  					#{modifyId}
  				)
@@ -220,18 +220,18 @@
                      ELSE '기타'
 				END AS authority_name,
 				mginfo.manage_group_seq,
-				( SELECT store_name FROM STOREINFO WHERE store_seq = mginfo.store_seq ) AS store_name,
+				( SELECT store_name FROM storeinfo WHERE store_seq = mginfo.store_seq ) AS store_name,
 				mginfo.access_date,
 				mginfo.memo,
 				mginfo.use_yn
-		FROM	MANAGEINFO mginfo
+		FROM	manageinfo mginfo
 		WHERE	mginfo.manage_seq = #{manageSeq} 
 	</select>
 	
 	<!-- 직원 정보 업데이트   -->
  	<update id="updateManage" parameterType="manageVO">
  		/* manageMapper.updateManage */
-		UPDATE	MANAGEINFO
+		UPDATE	manageinfo
 		SET	name = #{name},
 			phone = #{phone},
 			manage_group_seq = #{manageGroupSeq},
@@ -261,11 +261,11 @@
 				mginfo.access_date,
 				mginfo.enabled,
 				mginfo.store_seq,
-				( SELECT store_name FROM STOREINFO WHERE store_seq = mginfo.store_seq ) AS store_name,
+				( SELECT store_name FROM storeinfo WHERE store_seq = mginfo.store_seq ) AS store_name,
 				mginfo.use_yn
-		FROM MANAGEINFO mginfo
+		FROM manageinfo mginfo
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
-		INNER JOIN MANAGEGROUP mnggrp
+		INNER JOIN managegroup mnggrp
 		ON mginfo.manage_group_seq = mnggrp.manage_group_seq
 		WHERE 1=1
 		<choose>

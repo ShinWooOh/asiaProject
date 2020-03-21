@@ -15,11 +15,11 @@
 
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="/resources/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
-    <link rel="stylesheet" href="/resources/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/dist/css/adminlte.min.css">
     
-    <link rel="stylesheet" href="/resources/common/css/common.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/common/css/common.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
@@ -72,31 +72,31 @@
     							<tr>
 	                                <th style="width: 10%;">아이디</th>
 	                                <td>
-	                                	<c:out value="${manageInfo.id}"/>
+	                                	<c:out value="${manageDetail.id}"/>
 	                                </td>
 	                            </tr>
 	                            <tr>
 	                                <th style="width: 10%">이름</th>
-	                                <td><input type="text" id="name" name="name" value="${manageInfo.name}"></td>
+	                                <td><input type="text" id="name" name="name" value="${manageDetail.name}"></td>
 	                            </tr>
 	                            <tr>
 	                                <th style="width: 10%">연락처</th>
 	                                <td>
 	                               	 	<select id="phone1" name="phone1" style="width: 70px; margin-right: 3px;">
-	               							<option value="010" <c:if test="${manageInfo.phone1 eq '010'}">selected</c:if> >010</option>
-	               							<option value="011" <c:if test="${manageInfo.phone1 eq '011'}">selected</c:if> >011</option>
-	               							<option value="016" <c:if test="${manageInfo.phone1 eq '016'}">selected</c:if> >016</option>
-	               							<option value="017" <c:if test="${manageInfo.phone1 eq '017'}">selected</c:if> >017</option>
-	               							<option value="018" <c:if test="${manageInfo.phone1 eq '018'}">selected</c:if> >018</option>
-	               							<option value="019" <c:if test="${manageInfo.phone1 eq '019'}">selected</c:if> >019</option>
+	               							<option value="010" <c:if test="${manageDetail.phone1 eq '010'}">selected</c:if> >010</option>
+	               							<option value="011" <c:if test="${manageDetail.phone1 eq '011'}">selected</c:if> >011</option>
+	               							<option value="016" <c:if test="${manageDetail.phone1 eq '016'}">selected</c:if> >016</option>
+	               							<option value="017" <c:if test="${manageDetail.phone1 eq '017'}">selected</c:if> >017</option>
+	               							<option value="018" <c:if test="${manageDetail.phone1 eq '018'}">selected</c:if> >018</option>
+	               							<option value="019" <c:if test="${manageDetail.phone1 eq '019'}">selected</c:if> >019</option>
 	               						</select>
-									    -<input type="number" id="phone2" name="phone2" value="${manageInfo.phone2}" style="width: 70px; margin-left: 5px;">
-									    -<input type="number" id="phone3" name="phone3" value="${manageInfo.phone3}" style="width: 70px; margin-left: 5px;">
+									    -<input type="number" id="phone2" name="phone2" value="${manageDetail.phone2}" style="width: 70px; margin-left: 5px;">
+									    -<input type="number" id="phone3" name="phone3" value="${manageDetail.phone3}" style="width: 70px; margin-left: 5px;">
 	                                </td>
 	                            </tr>
 	                            <tr>
 	                                <th style="width: 10%">권한</th>
-									<td><c:out value="${manageInfo.authorityName}"/></td>	                            	
+									<td><c:out value="${manageDetail.authorityName}"/></td>	                            	
 	                            </tr>
 	                            <tr>
 	                                <th style="width: 10%">직급</th>
@@ -104,18 +104,18 @@
 	                                	<select id="manageGroupSeq" name="manageGroupSeq" style="width: 250px;">
 	                                		<option value="000">직급을 선택하세요</option>
 	                                		<c:forEach var="manageGroupList" items="${manageGroupList}">
-		                                		<option value="${manageGroupList.manageGroupSeq}" <c:if test="${manageGroupList.manageGroupSeq eq manageInfo.manageGroupSeq}">selected</c:if> >${manageGroupList.groupName}</option>
+		                                		<option value="${manageGroupList.manageGroupSeq}" <c:if test="${manageGroupList.manageGroupSeq eq manageDetail.manageGroupSeq}">selected</c:if> >${manageGroupList.groupName}</option>
 	                                		</c:forEach>
 	                                	</select>
 	                                </td>
 	                            </tr>
 	                            <tr>
 	                                <th style="width: 10%">매장명</th>
-	                                <td><c:out value="${manageInfo.storeName}"/></td>
+	                                <td><c:out value="${manageDetail.storeName}"/></td>
 	                            </tr>
                            		<tr>
                 					<th style="width: 10%">메모</th>
-                					<td><textarea id="memo" name="memo" rows="3" cols="150"><c:out value="${manageInfo.memo}"/></textarea></td>
+                					<td><textarea id="memo" name="memo" rows="3" cols="150"><c:out value="${manageDetail.memo}"/></textarea></td>
 	                			</tr>
 	                			<tr>
 	                            	<th colspan="2">
@@ -130,7 +130,7 @@
                     </div>
                     <div id="manageFooter" style="margin-top: 10px;">
                 		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goManageList();" style="float: left; width:80px;">
-                		<input type="button" class="btn btn-block btn-success" value="수정" onclick="goUpdateManage(${manageInfo.manageSeq});" style="float: right; width:80px;">
+                		<input type="button" class="btn btn-block btn-success" value="수정" onclick="goUpdateManage(${manageDetail.manageSeq});" style="float: right; width:80px;">
                 	</div>
                 </div>
             </div>
@@ -154,7 +154,7 @@
     <%-- <%@ include file="/WEB-INF/views/include/main_footer.jsp" %> --%>
 </div>
 <!-- ./wrapper -->
-<form:form id="manageInfo" name="manageInfo" modelAttribute="manageVO">
+<form:form id="manageDetail" name="manageDetail" modelAttribute="manageVO">
 	<input type="hidden" id="manageSeq" name="manageSeq">
 	<input type="hidden" id="name" name="name">
 	<input type="hidden" id="phone" name="phone">
@@ -165,12 +165,12 @@
 <!-- REQUIRED SCRIPTS -->
 
 <!-- jQuery -->
-<script src="/resources/plugins/jquery/jquery.min.js"></script>
-<script src="/resources/plugins/jquery-ui/jquery-ui.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/plugins/jquery/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/plugins/jquery-ui/jquery-ui.min.js"></script>
 <!-- Bootstrap 4 -->
-<script src="/resources/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
-<script src="/resources/dist/js/adminlte.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
 	
@@ -219,7 +219,7 @@ function goUpdateManage(manageSeq){
 
 function manageRegister(manageSeq){
 	
-	$("#manageInfo #manageSeq").val(manageSeq);
+	$("#manageDetail #manageSeq").val(manageSeq);
 	
 	var phone1 = $("#phone1").val();
 	var phone2 = $("#phone2").val();
@@ -227,17 +227,17 @@ function manageRegister(manageSeq){
 	var phone = '';
 	
 	phone = phone1 +'-'+ phone2 +'-'+ phone3;
-	$("#manageInfo #phone").val(phone);
-	$("#manageInfo #name").val($("#name").val());
+	$("#manageDetail #phone").val(phone);
+	$("#manageDetail #name").val($("#name").val());
 	
 	var manageGroupSeq = $("#manageGroupSeq option:selected").val();
-	$("#manageInfo #manageGroupSeq").val(manageGroupSeq);
-	$("#manageInfo #memo").val($("#memo").val());
+	$("#manageDetail #manageGroupSeq").val(manageGroupSeq);
+	$("#manageDetail #memo").val($("#memo").val());
 	
 	$.ajax({
 		type: 'POST',
         url : "/manage/updateManage",
-        data: $("#manageInfo").serialize(),
+        data: $("#manageDetail").serialize(),
         success : function(data){
             if(data == 'success')
             {

@@ -30,10 +30,10 @@
      	FROM  ( SELECT 	atdinfo.attendance_seq, 
 						atdinfo.member_seq,
 						atdinfo.product_seq,
-						( SELECT product_name FROM PRODUCTINFO WHERE product_seq = atdinfo.product_seq ) AS product_name,
-						( SELECT name FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS name,
-						( SELECT phone FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS phone,
-						( SELECT sex FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS sex,
+						( SELECT product_name FROM productinfo WHERE product_seq = atdinfo.product_seq ) AS product_name,
+						( SELECT name FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS name,
+						( SELECT phone FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS phone,
+						( SELECT sex FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS sex,
 						atdinfo.attendance_date,
 						atdinfo.register_date,
 						atdinfo.register_id,
@@ -41,7 +41,7 @@
 						atdinfo.modify_id,
 						atdinfo.del_yn,
 						atdinfo.store_seq 
-				FROM ATTENDANCEINFO atdinfo
+				FROM asiayoga.attendanceinfo atdinfo
 				WHERE 1=1
 				<choose>
 					<when test="authority != 'ROLE_ADMIN'">
@@ -72,10 +72,10 @@
      	FROM  ( SELECT 	atdinfo.attendance_seq, 
 						atdinfo.member_seq,
 						atdinfo.product_seq,
-						( SELECT product_name FROM PRODUCTINFO WHERE product_seq = atdinfo.product_seq ) AS product_name,
-						( SELECT name FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS name,
-						( SELECT phone FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS phone,
-						( SELECT sex FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS sex,
+						( SELECT product_name FROM productinfo WHERE product_seq = atdinfo.product_seq ) AS product_name,
+						( SELECT name FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS name,
+						( SELECT phone FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS phone,
+						( SELECT sex FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS sex,
 						atdinfo.attendance_date,
 						atdinfo.register_date,
 						atdinfo.register_id,
@@ -83,7 +83,7 @@
 						atdinfo.modify_id,
 						atdinfo.del_yn,
 						atdinfo.store_seq 
-				FROM ATTENDANCEINFO atdinfo
+				FROM attendanceinfo atdinfo
 				WHERE 1=1
 				<choose>
 					<when test="authority != 'ROLE_ADMIN'">
@@ -129,11 +129,11 @@
 						mbinfo.email,
 						mbinfo.memo,
 						mbinfo.store_seq,
-						( SELECT store_name FROM STOREINFO WHERE store_seq = mbinfo.store_seq) AS store_name,
+						( SELECT store_name FROM storeinfo WHERE store_seq = mbinfo.store_seq) AS store_name,
 						atdinfo.attendance_seq,
 						atdinfo.attendance_date
-				FROM MEMBERINFO mbinfo
-				INNER JOIN ATTENDANCEINFO atdinfo 
+				FROM memberinfo mbinfo
+				INNER JOIN attendanceinfo atdinfo 
 				ON mbinfo.member_seq =  atdinfo.member_seq
 				WHERE mbinfo.del_yn = 'N'
 				AND atdinfo.del_yn ='N'
@@ -147,7 +147,7 @@
 	<!-- 출석 정보 등록 -->
 	<insert id="insertAttendance" parameterType="attendanceVO">
 		/* attendanceMapper.insertAttendance */
-		INSERT INTO ATTENDANCEINFO
+		INSERT INTO attendanceinfo
 				( 	member_seq,
 				  	product_seq,
 				  	attendance_date,
@@ -174,7 +174,7 @@
 	<!-- 출석 정보 삭제 -->
 	<update id="attendanceDelete" parameterType="attendanceVO">
 		/* attendanceMapper.attendanceDelete */
-		UPDATE ATTENDANCEINFO
+		UPDATE attendanceinfo
 		SET del_yn = 'Y' , 
 			modify_date = now(),
 			modify_id= #{modifyId}
@@ -197,13 +197,13 @@
      	FROM  ( SELECT 	atdinfo.attendance_seq, 
 						atdinfo.member_seq,
 						atdinfo.product_seq,
-						( SELECT product_name FROM PRODUCTINFO WHERE product_seq = atdinfo.product_seq ) AS product_name,
-						( SELECT name FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS name,
-						( SELECT phone FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS phone,
-						( SELECT sex FROM MEMBERINFO WHERE member_seq = atdinfo.member_seq) AS sex,
+						( SELECT product_name FROM productinfo WHERE product_seq = atdinfo.product_seq ) AS product_name,
+						( SELECT name FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS name,
+						( SELECT phone FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS phone,
+						( SELECT sex FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS sex,
 						atdinfo.attendance_date,
 						atdinfo.store_seq 
-				FROM ATTENDANCEINFO atdinfo
+				FROM attendanceinfo atdinfo
 				WHERE 1=1
 				<choose>
 					<when test="authority != 'ROLE_ADMIN'">

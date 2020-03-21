@@ -26,11 +26,11 @@
             stinfo.store_name,
             prdinfo.item_seq,
             prditem.item_name
-		FROM PRODUCTINFO prdinfo
+		FROM productinfo prdinfo
         INNER JOIN (SELECT @ROWNUM :=0) AS R
-        INNER JOIN STOREINFO stinfo
+        INNER JOIN storeinfo stinfo
         ON prdinfo.store_seq = stinfo.store_seq
-        INNER JOIN PRODUCTITEM prditem
+        INNER JOIN productitem prditem
         ON prdinfo.item_seq = prditem.item_seq
 		WHERE 1=1
 		<choose>
@@ -56,10 +56,10 @@
 	<select id="productTotalCount" parameterType="productVO" resultType="int">
 		/* productMapper.productTotalCount */
 		SELECT	COUNT(*)
-		FROM PRODUCTINFO prdinfo
-		INNER JOIN STOREINFO stinfo
+		FROM productinfo prdinfo
+		INNER JOIN storeinfo stinfo
         ON prdinfo.store_seq = stinfo.store_seq
-        INNER JOIN PRODUCTITEM prditem
+        INNER JOIN productitem prditem
         ON prdinfo.item_seq = prditem.item_seq
 		WHERE prdinfo.store_seq = #{storeSeq}
 		AND	prdinfo.del_yn = 'N'
@@ -77,7 +77,7 @@
 	<!-- 상품 등록  -->
 	<insert id="insertProduct" parameterType="productVO">
 		/* productMapper.insertProduct */
-		INSERT INTO PRODUCTINFO
+		INSERT INTO productinfo
 				(
 					store_seq,
 					item_seq,
@@ -111,7 +111,7 @@
 	<!-- 상품 삭제  -->
 	<update id="productDelete" parameterType="productVO">
 		/* productMapper.productDelete */
-		UPDATE PRODUCTINFO
+		UPDATE productinfo
 		SET del_yn ='Y'
 		WHERE product_seq = #{productSeq}
 		AND store_seq = #{storeSeq}
@@ -133,11 +133,11 @@
 			prdinfo.register_id,
 			prdinfo.modify_date,
 			prdinfo.modify_id,
-            ( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} ) AS store_name,
+            ( SELECT store_name FROM storeinfo WHERE store_seq = #{storeSeq} ) AS store_name,
             prdinfo.item_seq,
-            ( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_name,
-            ( SELECT large_category FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq) AS large_category
-		FROM PRODUCTINFO prdinfo
+            ( SELECT item_name FROM productitem WHERE item_seq = prdinfo.item_seq ) AS item_name,
+            ( SELECT large_category FROM productitem WHERE item_seq = prdinfo.item_seq) AS large_category
+		FROM productinfo prdinfo
 		WHERE prdinfo.product_seq = #{productSeq} 
 		AND prdinfo.store_seq = #{storeSeq}
 		AND	prdinfo.del_yn = 'N'
@@ -145,7 +145,7 @@
 	
 	<update id="updateProduct" parameterType="productVO">
 		/* productMapper.updateProduct */
-		UPDATE PRODUCTINFO
+		UPDATE productinfo
 		<set>
 			item_seq =#{itemSeq},
 			product_name = #{productName},
@@ -172,11 +172,11 @@
             stinfo.store_name,
             prdinfo.item_seq,
             prditem.item_name
-		FROM PRODUCTINFO prdinfo
+		FROM productinfo prdinfo
         INNER JOIN (SELECT @ROWNUM :=0) AS R
-        INNER JOIN STOREINFO stinfo
+        INNER JOIN storeinfo stinfo
         ON prdinfo.store_seq = stinfo.store_seq
-        INNER JOIN PRODUCTITEM prditem
+        INNER JOIN productitem prditem
         ON prdinfo.item_seq = prditem.item_seq
 		WHERE 1=1
 		<choose>
@@ -203,7 +203,7 @@
 		SELECT	@ROWNUM:=@ROWNUM+1 AS row_num,
 				prdinfo.product_seq,
 				prdinfo.product_name
-		FROM PRODUCTINFO prdinfo
+		FROM productinfo prdinfo
         INNER JOIN (SELECT @ROWNUM :=0) AS R
 		WHERE prdinfo.store_seq = #{storeSeq}
 		AND	prdinfo.del_yn = 'N'

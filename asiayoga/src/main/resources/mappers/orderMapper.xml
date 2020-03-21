@@ -37,17 +37,17 @@
 		                ordinfo.expiration_yn,
 						ordinfo.locker_seq,
 						ordinfo.del_yn,
-		                ( SELECT store_name FROM STOREINFO WHERE store_seq = stinfo.store_seq) AS store_name,
+		                ( SELECT store_name FROM storeinfo WHERE store_seq = stinfo.store_seq) AS store_name,
                 		prdinfo.product_name,
-                		( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq) As item_name,
+                		( SELECT item_name FROM productitem WHERE item_seq = prdinfo.item_seq) As item_name,
 		                mbrinfo.name,
 		                mbrinfo.phone
-				FROM ORDERINFO ordinfo
-		        INNER JOIN MEMBERINFO mbrinfo
+				FROM orderinfo ordinfo
+		        INNER JOIN memberinfo mbrinfo
 		        ON ordinfo.member_seq = mbrinfo.member_seq
-		        INNER JOIN PRODUCTINFO prdinfo
+		        INNER JOIN productinfo prdinfo
 		        ON ordinfo.product_seq = prdinfo.product_Seq
-		        INNER JOIN STOREINFO stinfo
+		        INNER JOIN storeinfo stinfo
 		        ON ordinfo.store_seq = stinfo.store_seq
 				WHERE 1=1
 				<choose>
@@ -89,17 +89,17 @@
 		                ordinfo.expiration_yn,
 						ordinfo.locker_seq,
 						ordinfo.del_yn,
-		                ( SELECT store_name FROM STOREINFO WHERE store_Seq = stinfo.store_seq) AS store_name,
+		                ( SELECT store_name FROM storeinfo WHERE store_Seq = stinfo.store_seq) AS store_name,
                 		prdinfo.product_name,
-                		( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq) As item_name,
+                		( SELECT item_name FROM productitem WHERE item_seq = prdinfo.item_seq) As item_name,
 		                mbrinfo.name,
 		                mbrinfo.phone
-				FROM ORDERINFO ordinfo
-		        INNER JOIN MEMBERINFO mbrinfo
+				FROM orderinfo ordinfo
+		        INNER JOIN memberinfo mbrinfo
 		        ON ordinfo.member_seq = mbrinfo.member_seq
-		        INNER JOIN PRODUCTINFO prdinfo
+		        INNER JOIN productinfo prdinfo
 		        ON ordinfo.product_seq = prdinfo.product_Seq
-		        INNER JOIN STOREINFO stinfo
+		        INNER JOIN storeinfo stinfo
 		        ON ordinfo.store_seq = stinfo.store_seq
 				WHERE 1=1
 				<choose>
@@ -145,11 +145,11 @@
 				ordinfo.del_yn,
 				ordinfo.modify_date,
 				prdinfo.product_name,
-				( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} ) AS store_name,
-				( SELECT item_seq FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_seq,
-				( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_name
-		FROM ORDERINFO ordinfo
-		INNER JOIN PRODUCTINFO prdinfo
+				( SELECT store_name FROM storeinfo WHERE store_seq = #{storeSeq} ) AS store_name,
+				( SELECT item_seq FROM productitem WHERE item_seq = prdinfo.item_seq ) AS item_seq,
+				( SELECT item_name FROM productitem WHERE item_seq = prdinfo.item_seq ) AS item_name
+		FROM orderinfo ordinfo
+		INNER JOIN productinfo prdinfo
 		ON ordinfo.product_seq = prdinfo.product_seq
 		WHERE ordinfo.store_seq = #{storeSeq}
 		AND ordinfo.member_seq = #{memberSeq}
@@ -175,12 +175,12 @@
 				ordinfo.del_yn,
 				prdinfo.product_name,
                 prdinfo.item_seq,
-                ( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_name,
-                ( SELECT store_name FROM STOREINFO WHERE store_seq = prdinfo.store_seq ) AS store_name,
-                ( SELECT name FROM MEMBERINFO WHERE member_seq = ordinfo.member_seq ) AS name,
-                ( SELECT phone FROM MEMBERINFO WHERE member_seq = ordinfo.member_seq ) AS phone
-		FROM ORDERINFO ordinfo
-		INNER JOIN PRODUCTINFO prdinfo
+                ( SELECT item_name FROM productitem WHERE item_seq = prdinfo.item_seq ) AS item_name,
+                ( SELECT store_name FROM storeinfo WHERE store_seq = prdinfo.store_seq ) AS store_name,
+                ( SELECT name FROM memberinfo WHERE member_seq = ordinfo.member_seq ) AS name,
+                ( SELECT phone FROM memberinfo WHERE member_seq = ordinfo.member_seq ) AS phone
+		FROM orderinfo ordinfo
+		INNER JOIN productinfo prdinfo
 		ON ordinfo.product_seq = prdinfo.product_seq
 		WHERE ordinfo.order_seq = ${orderSeq}
 		AND ordinfo.del_yn = 'N';
@@ -189,7 +189,7 @@
 	<!-- 횟수제 상품일 경우 횟수 업데이트 -->
 	<update id="updateOrderCount" parameterType="orderVO">
  		/* orderMapper.updateOrderCount */
-		UPDATE ORDERINFO
+		UPDATE orderinfo
 		SET remaining_count = #{remainingCount}
 		WHERE order_seq = #{orderSeq}
 		AND del_yn = 'N'
@@ -198,7 +198,7 @@
 	<!-- 구매내역 삭제 -->
 	<update id="orderDelete" parameterType="orderVO">
  		/* orderMapper.orderDelete */
-		UPDATE ORDERINFO
+		UPDATE orderinfo
 		SET del_yn = 'Y'
 		WHERE order_seq = #{orderSeq}
 		AND store_seq = #{storeSeq}
@@ -208,7 +208,7 @@
 	<!-- 구매내역 등록 -->
 	<insert id="insertOrder" parameterType="orderVO">
  		/* orderMapper.insertOrder */
-		INSERT INTO ORDERINFO
+		INSERT INTO orderinfo
 				(	store_seq,
 					product_seq,
 					member_seq,
@@ -252,7 +252,7 @@
 	<!-- 구매 내역 업데이트 -->
 	<update id="updateOrder" parameterType="orderVO">
  		/* orderMapper.updateOrder */
- 		UPDATE ORDERINFO
+ 		UPDATE orderinfo
  		<set>
  			product_seq = ${productSeq},
  			start_day = #{startDay},
@@ -273,7 +273,7 @@
 	<!-- 휴회 상태 변경 -->
 	<update id="updateAdjournmentState" parameterType="orderVO">
  		/* orderMapper.updateAdjournmentState */
- 		UPDATE ORDERINFO
+ 		UPDATE orderinfo
  		<set>
  			adjournment_state = #{adjournmentState},
  			modify_date = now(),
@@ -307,15 +307,15 @@
 						ordinfo.expiration_day,
 		                ordinfo.expiration_yn,
 						ordinfo.del_yn,
-		                ( SELECT store_name FROM STOREINFO WHERE store_Seq = ordinfo.store_seq) AS store_name,
+		                ( SELECT store_name FROM storeinfo WHERE store_Seq = ordinfo.store_seq) AS store_name,
                 		prdinfo.product_name,
-                		( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq) As item_name,
+                		( SELECT item_name FROM productitem WHERE item_seq = prdinfo.item_seq) As item_name,
 		                mbrinfo.name,
 		                mbrinfo.phone
-				FROM ORDERINFO ordinfo
-		        INNER JOIN MEMBERINFO mbrinfo
+				FROM orderinfo ordinfo
+		        INNER JOIN memberinfo mbrinfo
 		        ON ordinfo.member_seq = mbrinfo.member_seq
-		        INNER JOIN PRODUCTINFO prdinfo
+		        INNER JOIN productinfo prdinfo
 		        ON ordinfo.product_seq = prdinfo.product_Seq
 		        WHERE 1=1
 				<choose>

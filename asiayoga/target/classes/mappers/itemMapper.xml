@@ -26,7 +26,7 @@
 			tempA.modify_id
 		FROM (	SELECT	prditem.item_seq,
 						prditem.store_seq,
-						( SELECT store_name FROM STOREINFO WHERE store_seq = prditem.store_seq AND del_yn ='N') AS store_name,
+						( SELECT store_name FROM storeinfo WHERE store_seq = prditem.store_seq AND del_yn ='N') AS store_name,
 						prditem.large_category,
 						prditem.item_name,
 						prditem.del_yn,
@@ -34,7 +34,7 @@
 						prditem.register_id,
 						prditem.modify_date,
 						prditem.modify_id
-				FROM PRODUCTITEM prditem
+				FROM productitem prditem
 				WHERE 1=1
 				<choose>
 					<when test="authority != 'ROLE_ADMIN'">
@@ -62,7 +62,7 @@
 		SELECT COUNT(*)
 		FROM (	SELECT	prditem.item_seq,
 						prditem.store_seq,
-						( SELECT store_name FROM STOREINFO WHERE store_seq = prditem.store_seq AND del_yn ='N') AS store_name,
+						( SELECT store_name FROM storeinfo WHERE store_seq = prditem.store_seq AND del_yn ='N') AS store_name,
 						prditem.large_category,
 						prditem.item_name,
 						prditem.del_yn,
@@ -70,7 +70,7 @@
 						prditem.register_id,
 						prditem.modify_date,
 						prditem.modify_id
-				FROM PRODUCTITEM prditem
+				FROM productitem prditem
 				WHERE 1=1
 				<choose>
 					<when test="authority != 'ROLE_ADMIN'">
@@ -92,7 +92,7 @@
 	<!-- 품목 저장  -->
 	<insert id="insertItem" parameterType="itemVO" useGeneratedKeys="true" keyProperty="itemSeq">
 		/* itemMapper.insertItem */
-		INSERT INTO PRODUCTITEM
+		INSERT INTO productitem
 				(	store_seq,
 				 	item_name,
 				 	large_category,
@@ -118,7 +118,7 @@
 	<!-- 품목 insert 후 품목 SEQ를 이용하여 상품 코드 업데이트  -->
 	<update id="updateProductCode" parameterType="itemVO">
 		/* itemMapper.updateProductCode */
-		UPDATE PRODUCTITEM
+		UPDATE productitem
 		SET product_code = #{productCode}
 		WHERE item_seq = #{itemSeq}
 		AND del_yn ='N'
@@ -127,7 +127,7 @@
 	<!-- 품목 삭제  -->
 	<update id="itemDelete" parameterType="itemVO">
 		/* itemMapper.itemDelete */
-		UPDATE PRODUCTITEM
+		UPDATE productitem
 		SET del_yn = 'Y'
 		WHERE item_seq = #{itemSeq}
 		AND del_yn ='N'
@@ -145,7 +145,7 @@
 				register_id,
 				modify_date,
 				modify_id
-		FROM PRODUCTITEM 
+		FROM productitem 
 		WHERE item_seq= #{itemSeq}
 		AND store_seq= #{storeSeq}
 		AND del_yn ='N'
@@ -154,7 +154,7 @@
 	<!-- 품목 수정  -->
 	<update id="updateItem" parameterType="itemVO">
 		/* itemMapper.updateItem */
-		UPDATE PRODUCTITEM
+		UPDATE productitem
 		<set>
   			<if test="itemName != null and itemName != ''">item_name = #{itemName},</if>
   			<if test="largeCategory != null and largeCategory != ''">large_category = #{largeCategory},</if>
@@ -177,10 +177,10 @@
 			tempA.item_name
 		FROM (	SELECT	prditem.item_seq,
 						prditem.store_seq,
-						( SELECT store_name FROM STOREINFO WHERE store_seq = prditem.store_seq AND del_yn ='N') AS store_name,
+						( SELECT store_name FROM storeinfo WHERE store_seq = prditem.store_seq AND del_yn ='N') AS store_name,
 						prditem.large_category,
 						prditem.item_name
-				FROM PRODUCTITEM prditem 
+				FROM productitem prditem 
 				WHERE 1=1
 				<choose>
 					<when test="authority != 'ROLE_ADMIN'">
@@ -206,11 +206,11 @@
 		/* itemMapper.searchItemList */
 		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
 				item_seq,
-				( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} AND del_yn ='N') AS store_name,
+				( SELECT store_name FROM storeinfo WHERE store_seq = #{storeSeq} AND del_yn ='N') AS store_name,
 				large_category,
 				item_name,
 				del_yn
-		FROM PRODUCTITEM, (SELECT @ROWNUM :=0) AS R
+		FROM productitem, (SELECT @ROWNUM :=0) AS R
 		WHERE store_seq = #{storeSeq}
 		AND del_yn ='N'
 		ORDER BY modify_date ASC

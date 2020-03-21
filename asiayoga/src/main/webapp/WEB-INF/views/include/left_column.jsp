@@ -32,7 +32,7 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="/resources/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                <img src="${pageContext.request.contextPath}/resources/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
             	<sec:authorize access="isAuthenticated()">
@@ -116,6 +116,7 @@
                         </li>
                     </ul>
                 </li>
+                
 				<c:choose>
 					<c:when test="${nowPath eq 'order'}">
 						<li class="nav-item has-treeview menu-open">
@@ -145,93 +146,105 @@
                         </li>
                     </ul>
                 </li>
-				<c:choose>
-					<c:when test="${nowPath eq 'product'}">
-						<li class="nav-item has-treeview menu-open">
-					</c:when>
-					<c:otherwise>
-						<li class="nav-item has-treeview" >
-					</c:otherwise>
-				</c:choose>
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>판매 상품
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="/product/productList" class="nav-link active">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>상품 목록</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/product/productRegister" class="nav-link active">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>상품 등록</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-				<c:choose>
-					<c:when test="${nowPath eq 'item'}">
-						<li class="nav-item has-treeview menu-open">
-					</c:when>
-					<c:otherwise>
-						<li class="nav-item has-treeview" >
-					</c:otherwise>
-				</c:choose>
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>상품 품목
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="/item/itemList" class="nav-link active">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>품목 관리</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/item/itemRegister" class="nav-link active">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>품목 등록</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-				<c:choose>
-					<c:when test="${nowPath eq 'store'}">
-						<li class="nav-item has-treeview menu-open">
-					</c:when>
-					<c:otherwise>
-						<li class="nav-item has-treeview" >
-					</c:otherwise>
-				</c:choose>
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>매장
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="/store/storeList" class="nav-link active">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>매장 목록</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/store/storeRegister" class="nav-link active">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>매장 등록</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                
+                <c:choose>
+                	<c:when test="${manageInfo.getAuthority() ne 'ROLE_STAFF'}">
+						<c:choose>
+							<c:when test="${nowPath eq 'product'}">
+								<li class="nav-item has-treeview menu-open">
+							</c:when>
+							<c:otherwise>
+								<li class="nav-item has-treeview" >
+							</c:otherwise>
+						</c:choose>
+		                    <a href="#" class="nav-link active">
+		                        <i class="nav-icon fas fa-tachometer-alt"></i>
+		                        <p>판매 상품
+		                            <i class="right fas fa-angle-left"></i>
+		                        </p>
+		                    </a>
+		                    <ul class="nav nav-treeview">
+		                        <li class="nav-item">
+		                            <a href="/product/productList" class="nav-link active">
+		                                <i class="far fa-circle nav-icon"></i>
+		                                <p>상품 목록</p>
+		                            </a>
+		                        </li>
+		                        <li class="nav-item">
+		                            <a href="/product/productRegister" class="nav-link active">
+		                                <i class="far fa-circle nav-icon"></i>
+		                                <p>상품 등록</p>
+		                            </a>
+		                        </li>
+		                    </ul>
+		                </li>
+						<c:choose>
+							<c:when test="${nowPath eq 'item'}">
+								<li class="nav-item has-treeview menu-open">
+							</c:when>
+							<c:otherwise>
+								<li class="nav-item has-treeview" >
+							</c:otherwise>
+						</c:choose>
+		                    <a href="#" class="nav-link active">
+		                        <i class="nav-icon fas fa-tachometer-alt"></i>
+		                        <p>상품 품목
+		                            <i class="right fas fa-angle-left"></i>
+		                        </p>
+		                    </a>
+		                    <ul class="nav nav-treeview">
+		                        <li class="nav-item">
+		                            <a href="/item/itemList" class="nav-link active">
+		                                <i class="far fa-circle nav-icon"></i>
+		                                <p>품목 관리</p>
+		                            </a>
+		                        </li>
+		                        <li class="nav-item">
+		                            <a href="/item/itemRegister" class="nav-link active">
+		                                <i class="far fa-circle nav-icon"></i>
+		                                <p>품목 등록</p>
+		                            </a>
+		                        </li>
+		                    </ul>
+		                </li>
+                	</c:when>
+                	<c:otherwise></c:otherwise>
+                </c:choose>
+                
+                <c:choose>
+                	<c:when test="${manageInfo.getAuthority() eq 'ROLE_ADMIN'}">
+						<c:choose>
+							<c:when test="${nowPath eq 'store'}">
+								<li class="nav-item has-treeview menu-open">
+							</c:when>
+							<c:otherwise>
+								<li class="nav-item has-treeview" >
+							</c:otherwise>
+						</c:choose>
+		                    <a href="#" class="nav-link active">
+		                        <i class="nav-icon fas fa-tachometer-alt"></i>
+		                        <p>매장
+		                            <i class="right fas fa-angle-left"></i>
+		                        </p>
+		                    </a>
+		                    <ul class="nav nav-treeview">
+		                        <li class="nav-item">
+		                            <a href="/store/storeList" class="nav-link active">
+		                                <i class="far fa-circle nav-icon"></i>
+		                                <p>매장 목록</p>
+		                            </a>
+		                        </li>
+		                        <li class="nav-item">
+		                            <a href="/store/storeRegister" class="nav-link active">
+		                                <i class="far fa-circle nav-icon"></i>
+		                                <p>매장 등록</p>
+		                            </a>
+		                        </li>
+		                    </ul>
+		                </li>
+                	</c:when>
+                	<c:otherwise></c:otherwise>
+                </c:choose>
                 
 				<c:choose>
 					<c:when test="${nowPath eq 'adjournment'}">
@@ -263,47 +276,53 @@
                     </ul>
                 </li>
                 
-				<c:choose>
-					<c:when test="${nowPath eq 'manage'}">
-						<li class="nav-item has-treeview menu-open">
-					</c:when>
-					<c:otherwise>
-						<li class="nav-item has-treeview" >
-					</c:otherwise>
-				</c:choose>
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>직원 관리
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="/manage/manageList" class="nav-link active">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>직원 목록</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/manage/manageRegister" class="nav-link active">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>직원 등록</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/manage/manageGroupList" class="nav-link active">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>직급 목록</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/manage/manageGroupRegister" class="nav-link active">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>직급 등록</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                
+                <c:choose>
+                	<c:when test="${manageInfo.getAuthority() ne 'ROLE_STAFF'}">
+						<c:choose>
+							<c:when test="${nowPath eq 'manage'}">
+								<li class="nav-item has-treeview menu-open">
+							</c:when>
+							<c:otherwise>
+								<li class="nav-item has-treeview" >
+							</c:otherwise>
+						</c:choose>
+		                    <a href="#" class="nav-link active">
+		                        <i class="nav-icon fas fa-tachometer-alt"></i>
+		                        <p>직원 관리
+		                            <i class="right fas fa-angle-left"></i>
+		                        </p>
+		                    </a>
+		                    <ul class="nav nav-treeview">
+		                        <li class="nav-item">
+		                            <a href="/manage/manageList" class="nav-link active">
+		                                <i class="far fa-circle nav-icon"></i>
+		                                <p>직원 목록</p>
+		                            </a>
+		                        </li>
+		                        <li class="nav-item">
+		                            <a href="/manage/manageRegister" class="nav-link active">
+		                                <i class="far fa-circle nav-icon"></i>
+		                                <p>직원 등록</p>
+		                            </a>
+		                        </li>
+		                        <li class="nav-item">
+		                            <a href="/manage/manageGroupList" class="nav-link active">
+		                                <i class="far fa-circle nav-icon"></i>
+		                                <p>직급 목록</p>
+		                            </a>
+		                        </li>
+		                        <li class="nav-item">
+		                            <a href="/manage/manageGroupRegister" class="nav-link active">
+		                                <i class="far fa-circle nav-icon"></i>
+		                                <p>직급 등록</p>
+		                            </a>
+		                        </li>
+		                    </ul>
+		                </li>
+                	</c:when>
+                	<c:otherwise></c:otherwise>
+                </c:choose>
               <%--  <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-th"></i>

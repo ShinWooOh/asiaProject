@@ -13,9 +13,9 @@
 	<!-- Bootstrap core CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 	<!-- Font Awesome Icons -->
-	<link rel="stylesheet" href="/resources/plugins/fontawesome-free/css/all.min.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/fontawesome-free/css/all.min.css">
 	<!-- Theme style -->
-	<link rel="stylesheet" href="/resources/dist/css/adminlte.min.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/dist/css/adminlte.min.css">
 	
 	<!-- <link rel="stylesheet" href="/resources/common/css/common.css"> -->
 	<!-- Google Font: Source Sans Pro -->
@@ -53,11 +53,11 @@
 
 
 <!-- jQuery -->
-<script src="/resources/plugins/jquery/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
-<script src="/resources/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
-<script src="/resources/dist/js/adminlte.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
 
 $(document).ready(function() {

@@ -21,10 +21,10 @@
 	            mbinfo.birth,
 	            mbinfo.memo,
 	            mbinfo.store_seq,
-	            ( SELECT store_name FROM STOREINFO WHERE store_seq = mbinfo.store_seq) AS store_name,
+	            ( SELECT store_name FROM storeinfo WHERE store_seq = mbinfo.store_seq) AS store_name,
 	            mbinfo.register_date,
 	            mbinfo.adjournment_state
-		FROM MEMBERINFO mbinfo , (SELECT @ROWNUM :=0) AS R
+		FROM memberinfo mbinfo , (SELECT @ROWNUM :=0) AS R
 		WHERE 1=1
 		<choose>
 			<when test="authority != 'ROLE_ADMIN'">
@@ -49,7 +49,7 @@
 	<select id="memberTotalCount" parameterType="memberVO" resultType="int">
   		/* memberMapper.memberTotalCount */
 		SELECT count(*)
-		FROM MEMBERINFO mbinfo
+		FROM memberinfo mbinfo
 		WHERE 1=1
 		<choose>
 			<when test="authority != 'ROLE_ADMIN'">
@@ -80,8 +80,8 @@
 	            memo,
 	            store_seq,
 	            register_date,
-	            ( SELECt store_name FROM STOREINFO WHERE store_seq = #{storeSeq} ) AS store_name
-		FROM MEMBERINFO
+	            ( SELECt store_name FROM storeinfo WHERE store_seq = #{storeSeq} ) AS store_name
+		FROM memberinfo
 	    WHERE member_seq = #{memberSeq}
 	    AND store_seq = #{storeSeq}
 	</select>
@@ -90,7 +90,7 @@
 	<!-- 회원 정보 등록  -->
 	<insert id="memberInsert" parameterType="memberVO">
   		/* memberMapper.memberInsert */
-		INSERT INTO MEMBERINFO
+		INSERT INTO memberinfo
 				(	name,
 				 	sex,
 					birth,
@@ -122,7 +122,7 @@
 	<!-- 회원 정보 삭제  -->
 	<update id="memberDel" parameterType="memberVO">
   		/* memberMapper.memberDel */
-  		UPDATE MEMBERINFO 
+  		UPDATE memberinfo 
   		SET del_yn = 'Y',
   			modify_date = now(),
   			modify_id = #{modifyId}
@@ -134,7 +134,7 @@
 	<!-- 회원 정보 업데이트  -->
 	<update id="memberEdit" parameterType="memberVO">
   		/* memberMapper.memberEdit */
-  		UPDATE MEMBERINFO 
+  		UPDATE memberinfo 
   		<set>
   			<if test="name != null and name != ''">name = #{name},</if>
   			<if test="sex != null and sex != ''">sex = #{sex},</if>
@@ -163,18 +163,18 @@
 	            mbinfo.birth,
 	            mbinfo.memo,
 	            mbinfo.store_seq,
-	            ( SELECT store_name FROM STOREINFO WHERE store_seq= mbinfo.store_seq ) AS store_name,
+	            ( SELECT store_name FROM storeinfo WHERE store_seq= mbinfo.store_seq ) AS store_name,
 	            mbinfo.register_date,
 	            ordinfo.order_seq,
             	ordinfo.product_count,
                 ordinfo.remaining_count,
                 prdinfo.product_seq,
 				prdinfo.product_name,
-				( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_name
-		FROM MEMBERINFO mbinfo
-        INNER JOIN ORDERINFO ordinfo
+				( SELECT item_name FROM productitem WHERE item_seq = prdinfo.item_seq ) AS item_name
+		FROM memberinfo mbinfo
+        INNER JOIN orderinfo ordinfo
         ON mbinfo.member_seq = ordinfo.member_seq
-        INNER JOIN PRODUCTINFO prdinfo
+        INNER JOIN productinfo prdinfo
     	ON ordinfo.product_seq = prdinfo.product_seq
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
 		WHERE 1=1
@@ -210,7 +210,7 @@
 	            memo,
 	            store_seq,
 	            register_date
-		FROM MEMBERINFO , (SELECT @ROWNUM :=0) AS R
+		FROM memberinfo , (SELECT @ROWNUM :=0) AS R
 		WHERE store_seq = #{storeSeq}
 		<if test="searchWord != null and searchWord != ''">
 			AND 
@@ -238,7 +238,7 @@
 	            mbinfo.store_seq,
 	            mbinfo.register_date,
 	            mbinfo.adjournment_state
-		FROM MEMBERINFO mbinfo, (SELECT @ROWNUM :=0) AS R
+		FROM memberinfo mbinfo, (SELECT @ROWNUM :=0) AS R
 		WHERE 1=1
 		<choose>
 			<when test="authority != 'ROLE_ADMIN'">
@@ -261,12 +261,12 @@
 	<!-- 회원 휴회 상태 변경  -->
 	<update id="updateAdjournmentState" parameterType="memberVO">
   		/* memberMapper.updateAdjournmentState */
-  		UPDATE MEMBERINFO 
+  		UPDATE memberinfo 
   		SET adjournment_state = #{adjournmentState},
   			modify_date = now(),
   			modify_id = #{modifyId}
-  		WHERE member_seq = (SELECT member_seq FROM ORDERINFO WHERE order_seq =#{orderSeq} AND del_yn = 'N' LIMIT 1)
-  		AND store_seq = (SELECT store_seq FROM ORDERINFO WHERE order_seq =#{orderSeq} AND del_yn = 'N' LIMIT 1) 
+  		WHERE member_seq = (SELECT member_seq FROM orderinfo WHERE order_seq =#{orderSeq} AND del_yn = 'N' LIMIT 1)
+  		AND store_seq = (SELECT store_seq FROM orderinfo WHERE order_seq =#{orderSeq} AND del_yn = 'N' LIMIT 1) 
 	</update>
 	
   </mapper>

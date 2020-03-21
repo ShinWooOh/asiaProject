@@ -220,7 +220,7 @@ public class ManageController {
 		
 		ManageVO vo = new ManageVO();
 		vo = manageService.manageInfo(manageVO);
-		model.addAttribute("manageInfo", vo);
+		model.addAttribute("manageDetail", vo);
 		
 		
 		// 경로 체크

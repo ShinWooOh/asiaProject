@@ -30,14 +30,14 @@
 				mbinfo.phone,
 				stinfo.store_name,
 				prdinfo.product_name
-		FROM ADJOURNMENTINFO adjinfo
-		INNER JOIN ORDERINFO ordinfo
+		FROM adjournmentinfo adjinfo
+		INNER JOIN orderinfo ordinfo
 		ON adjinfo.order_seq = ordinfo.order_seq
-		INNER JOIN MEMBERINFO mbinfo
+		INNER JOIN memberinfo mbinfo
 		ON adjinfo.member_seq = mbinfo.member_seq
-		INNER JOIN STOREINFO stinfo
+		INNER JOIN storeinfo stinfo
 		ON adjinfo.store_seq = stinfo.store_seq
-		INNER JOIN PRODUCTINFO prdinfo
+		INNER JOIN productinfo prdinfo
 		ON ordinfo.product_seq = prdinfo.product_seq
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
 		WHERE 1=1
@@ -63,14 +63,14 @@
  	<select id="adjournmentTotalCount" parameterType="adjournmentVO" resultType="int">
  		/* adjournmentMapper."adjournmentTotalCount" */
 		SELECT	COUNT(*)
-		FROM ADJOURNMENTINFO adjinfo
-		INNER JOIN ORDERINFO ordinfo
+		FROM adjournmentinfo adjinfo
+		INNER JOIN orderinfo ordinfo
 		ON adjinfo.order_seq = ordinfo.order_seq
-		INNER JOIN MEMBERINFO mbinfo
+		INNER JOIN memberinfo mbinfo
 		ON adjinfo.member_seq = mbinfo.member_seq
-		INNER JOIN STOREINFO stinfo
+		INNER JOIN storeinfo stinfo
 		ON adjinfo.store_seq = stinfo.store_seq
-		INNER JOIN PRODUCTINFO prdinfo
+		INNER JOIN productinfo prdinfo
 		ON ordinfo.product_seq = prdinfo.product_seq
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
 		WHERE 1=1
@@ -93,7 +93,7 @@
     <!-- 휴회 등록  -->
     <insert id="insertAdjournment" parameterType="adjournmentVO">
  		/* adjournmentMapper."insertAdjournment" */
- 		INSERT INTO ADJOURNMENTINFO
+ 		INSERT INTO adjournmentinfo
  				( 	member_seq,
  					store_seq,
  					order_seq,
@@ -119,7 +119,7 @@
     <!-- 휴회 상태 업데이트  -->
     <update id="updateAdjournmentState" parameterType="adjournmentVO">
  		/* adjournmentMapper.updateAdjournmentState */
- 		UPDATE ADJOURNMENTINFO
+ 		UPDATE adjournmentinfo
  		SET adjournment_state = #{adjournmentState},
  			modify_date = now(),
  			modify_id = #{modifyId}
@@ -143,16 +143,16 @@
 	            mbrinfo.birth,
 	            mbrinfo.sex,
 				prdinfo.product_name,
-	            ( SELECT item_name FROM PRODUCTITEM WHERE item_seq = prdinfo.item_seq ) AS item_name,
+	            ( SELECT item_name FROM productitem WHERE item_seq = prdinfo.item_seq ) AS item_name,
 	            ordinfo.remaining_count,
 	            ordinfo.product_count,
-	            ( SELECT store_name FROM STOREINFO where store_seq = adjinfo.store_seq ) AS store_name
-		FROM ADJOURNMENTINFO adjinfo
-        INNER JOIN MEMBERINFO mbrinfo
+	            ( SELECT store_name FROM storeinfo where store_seq = adjinfo.store_seq ) AS store_name
+		FROM adjournmentinfo adjinfo
+        INNER JOIN memberinfo mbrinfo
         ON adjinfo.member_seq = mbrinfo.member_seq
-        INNER JOIN ORDERINFO ordinfo
+        INNER JOIN orderinfo ordinfo
         ON adjinfo.order_seq = ordinfo.order_seq
-        INNER JOIN PRODUCTINFO prdinfo
+        INNER JOIN productinfo prdinfo
         ON ordinfo.product_seq = prdinfo.product_seq
         WHERE adjinfo.adjournment_seq = #{adjournmentSeq}
     </select>
@@ -160,7 +160,7 @@
     <!-- 휴회 정보 업데이트  -->
     <update id="updateAdjournment" parameterType="adjournmentVO">
  		/* adjournmentMapper.updateAdjournment */
- 		UPDATE ADJOURNMENTINFO
+ 		UPDATE adjournmentinfo
  		SET	adjournment_start = #{adjournmentStart},
  			adjournment_end = #{adjournmentEnd},
  		 	adjournment_state = #{adjournmentState},
@@ -185,14 +185,14 @@
 				mbinfo.phone,
 				stinfo.store_name,
 				prdinfo.product_name
-		FROM ADJOURNMENTINFO adjinfo
-		INNER JOIN ORDERINFO ordinfo
+		FROM adjournmentinfo adjinfo
+		INNER JOIN orderinfo ordinfo
 		ON adjinfo.order_seq = ordinfo.order_seq
-		INNER JOIN MEMBERINFO mbinfo
+		INNER JOIN memberinfo mbinfo
 		ON adjinfo.member_seq = mbinfo.member_seq
-		INNER JOIN STOREINFO stinfo
+		INNER JOIN storeinfo stinfo
 		ON adjinfo.store_seq = stinfo.store_seq
-		INNER JOIN PRODUCTINFO prdinfo
+		INNER JOIN productinfo prdinfo
 		ON ordinfo.product_seq = prdinfo.product_seq
 		INNER JOIN (SELECT @ROWNUM :=0) AS R
 		WHERE 1=1
