@@ -12,6 +12,9 @@
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<annotation-driven>
 	</annotation-driven>
+	<interceptors>
+		<beans:bean class="org.springframework.mobile.device.DeviceResolverHandlerInterceptor"/>
+	</interceptors>
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
 	<resources mapping="/resources/**" location="/resources/" />
@@ -24,7 +27,7 @@
 	</beans:bean>
 	
 
-	<context:component-scan base-package="com.company.asiayoga" />
+	<context:component-scan base-package="com.company.*" />
 	
 	
 	

@@ -43,7 +43,7 @@
 	<update id="updateEnabled">
  		/* manageMapper.updateEnabled */
  		UPDATE manageinfo
- 		SET enabled = false
+ 		SET enabled = 'N'
  		WHERE id = #{id}
 	</update>
 	
@@ -52,6 +52,7 @@
  		/* manageMapper.updateFailureCountReset */
  		UPDATE manageinfo
  		SET failure_count = 0
+ 		AND enabled = 'Y'
  		WHERE id = #{id}
 	</update>
 	

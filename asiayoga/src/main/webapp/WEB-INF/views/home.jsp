@@ -29,7 +29,7 @@
 		<h1 class="form-signin-heading">ASIA MANAGE LOGIN</h1>
 	</div>
 	<div class="login-box-body">
-		<form class="form-signin" action="attendance/info" method="post">
+		<form class="form-signin" action="/" method="post">
 			<div class="form-group has-feedback">
 				<input type="text" id="id" name="id" class="form-control" placeholder="아이디를 입력하세요." required autofocus value="${id}" style=" height: 34px; font-size: 14px;">
 			</div>

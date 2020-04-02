@@ -24,6 +24,7 @@
       <br><br>
       <div class="container text-center">
           <h6 class="font-italic text-danger">권한이 없어 접근이 불가합니다.<br>관리자에게 문의하세요.</h6>
+          <%= System.out.println("요청 결과 여기는 나오네요") %>
       </div>
       <br><br>
       <div class="container text-center">
