@@ -58,7 +58,6 @@ public class HomeController {
 			deviceType = "tablet";
 		} 
 		
-		logger.info("device Type : "+deviceType);
 		return paramUrl;
 	}
 	
@@ -67,7 +66,6 @@ public class HomeController {
 	@RequestMapping(value = "/accessDeniedPage")
 	public String accessDeniedPage(Locale locale, Model model) {
 		
-		logger.info("여기 에러으로 옵니다.");
 		return "/error/accessDeniedPage";
 	}
 	

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.company.asiayoga.mapper.mobileMapper">
+	
+	<!-- 매장 정보  -->
+ 	<select id="mobileStoreInfo" parameterType="mobileVO" resultType="mobileVO">
+ 		/* mobileMapper."mobileStoreInfo" */
+		SELECT	store_seq,
+				store_name,
+				store_tel,
+				store_phone,
+				store_address,
+				store_memo
+		FROM storeinfo
+		WHERE del_yn = 'N'
+		AND store_seq = #{storeSeq}
+	</select>
+	
+	<!-- 고객 정보  -->
+ 	<select id="mobileMeberInfo" parameterType="mobileVO" resultType="mobileVO">
+ 		/* mobileMapper.mobileMeberInfo */
+		SELECT	member_seq,
+				name,
+	            sex,
+	            phone,
+	            store_seq,
+	            adjournment_state,
+	            register_date
+		FROM memberinfo
+	    WHERE phone = #{phone}
+	    AND store_seq = #{storeSeq}
+	</select>
+	
+	<!-- 모바일에서의 출석 정보 등록 -->
+	<insert id="mobileInsertAttendance" parameterType="mobileVO">
+		/* mobileMapper.mobileInsertAttendance */
+		INSERT INTO attendanceinfo
+				( 	member_seq,
+				  	attendance_date,
+				  	register_date,
+				  	register_id,
+				  	modify_date,
+				  	modify_id,
+				  	store_seq
+				)
+		VALUES
+				( 	#{memberSeq},
+				  	now(),
+				  	now(),
+				  	'admin',
+				  	now(),
+				  	'admin',
+				  	#{storeSeq}
+				)
+	</insert>
+	
+	
+    
+   
+	
+</mapper>

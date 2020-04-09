@@ -1,9 +1,9 @@
 <%@page import="java.util.HashMap"%>
-<%@ page import="com.company.asiayoga.mobile.member.domain.MobileMemberVO"%>
+<%@ page import="com.company.asiayoga.mobile.domain.MobileVO"%>
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"
 %>
-<%@ page import="com.company.asiayoga.mobile.member.MobileController" %>
+<%@ page import="com.company.asiayoga.mobile.controller.MobileController" %>
 
 <%
 	// 이곳에서 request.getParameter로 안드로이드에서 보낸 값들을 받음
@@ -12,7 +12,7 @@
 	String phone = request.getParameter("phone");
 	int storeSeq = Integer.parseInt(request.getParameter("storeSeq"));
 	
-	MobileMemberVO mobileMeberVO = new MobileMemberVO();
+	MobileVO mobileMeberVO = new MobileVO();
 	mobileMeberVO.setPhone(phone);
 	mobileMeberVO.setStoreSeq(storeSeq);
 	
