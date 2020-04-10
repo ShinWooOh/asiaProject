@@ -19,6 +19,7 @@
 	            mbinfo.phone,
 	            mbinfo.email,
 	            mbinfo.birth,
+	            mbinfo.join_date,
 	            mbinfo.memo,
 	            mbinfo.store_seq,
 	            ( SELECT store_name FROM storeinfo WHERE store_seq = mbinfo.store_seq) AS store_name,
@@ -79,6 +80,7 @@
 	            birth,
 	            memo,
 	            store_seq,
+	            join_date,
 	            register_date,
 	            ( SELECt store_name FROM storeinfo WHERE store_seq = #{storeSeq} ) AS store_name
 		FROM memberinfo
@@ -98,9 +100,8 @@
 					email,
 					memo,
 					store_seq,
-					register_date,
+					join_date,
 					register_id,
-					modify_date,
 					modify_id,
 					del_yn
 				)
@@ -113,6 +114,7 @@
 					#{email},
 					#{memo},
 					#{storeSeq},
+					#{joinDate},
 					#{registerId},
 					#{registerId}
 					'N'
@@ -142,6 +144,7 @@
   			<if test="phone != null and phone != ''">phone = #{phone},</if>
   			<if test="email != null and email != ''">email = #{email},</if>
   			<if test="memo != null and memo != ''">memo = #{memo},</if>
+  			join_date = #{joinDate},
   			modify_date= now(),
   			modify_id = #{modifyId}
   		</set> 
@@ -161,6 +164,7 @@
 	            mbinfo.phone,
 	            mbinfo.email,
 	            mbinfo.birth,
+	            mbinfo.join_date,
 	            mbinfo.memo,
 	            mbinfo.store_seq,
 	            ( SELECT store_name FROM storeinfo WHERE store_seq= mbinfo.store_seq ) AS store_name,
@@ -207,6 +211,7 @@
 	            phone,
 	            email,
 	            birth,
+	            join_date,
 	            memo,
 	            store_seq,
 	            register_date
@@ -234,6 +239,7 @@
 	            mbinfo.phone,
 	            mbinfo.email,
 	            mbinfo.birth,
+	            mbinfo.join_date,
 	            mbinfo.memo,
 	            mbinfo.store_seq,
 	            mbinfo.register_date,

@@ -2,6 +2,7 @@ package com.company.asiayoga.attendance.controller;
 
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -171,6 +172,9 @@ public class AttendanceController {
 	@RequestMapping(value = "attendanceRegister", method = {RequestMethod.POST,RequestMethod.GET})
 	public String attendanceRegister(HttpServletRequest request,Model model,@ModelAttribute("attendanceVO") AttendanceVO attendanceVO) throws Exception{
 
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
 		// 회원 정보
 		MemberVO memberVO = new MemberVO();
 		
@@ -181,12 +185,16 @@ public class AttendanceController {
 			memberVO.setStoreSeq(attendanceVO.getStoreSeq());
 			memberVO = memberService.memberDetail(memberVO);
 		}
+		memberVO.setAttendanceDate(new Date());
 		model.addAttribute("memberDetail", memberVO);
 		
 		// 고객이 가진 상품 정보(주문번호에 의한, 단품)
 		OrderVO orderVO = new OrderVO();
 		if(attendanceVO.getOrderSeq() == 0) {
-			
+			if(!manageVO.getAuthority().equals("ROLE_ADMIN")) {
+				orderVO.setStoreSeq(manageVO.getStoreSeq());
+				orderVO.setStoreName(manageVO.getStoreName());
+			}
 		} else {
 			orderVO.setOrderSeq(attendanceVO.getOrderSeq());
 			orderVO = orderService.customerOrder(orderVO);
@@ -255,7 +263,7 @@ public class AttendanceController {
 		
 		MemberVO vo = new MemberVO();
 		vo.setAuthority(this.checkAuthority(manageVO.getAuthority()));
-		vo.setStoreSeq(attendanceVO.getStoreSeq());
+		vo.setStoreSeq(manageVO.getStoreSeq());
 		vo.setSearchWord(attendanceVO.getName());
 		
 		List<MemberVO> memberList = attendanceService.memberSearch(vo);

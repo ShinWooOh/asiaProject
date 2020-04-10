@@ -2,6 +2,9 @@ package com.company.asiayoga.member.controller;
 
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -144,7 +147,6 @@ public class MemberController {
 			request.getSession().setAttribute("nowPath", menuFirstRoot);
 		}
 		
-		
 		return "/member/memberDetail";
 	}
 	
@@ -158,6 +160,7 @@ public class MemberController {
 		MemberVO memberVO = new MemberVO();
 		memberVO.setStoreSeq(manageVO.getStoreSeq());
 		memberVO.setStoreName(manageVO.getStoreName());
+		memberVO.setJoinDate(new Date());
 		
 		model.addAttribute("memberInfo", memberVO);
 		

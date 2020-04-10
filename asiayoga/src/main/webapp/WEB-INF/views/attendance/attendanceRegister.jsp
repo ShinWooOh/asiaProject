@@ -34,6 +34,9 @@
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
             </li>
         </ul>
+        
+        <!-- Right navbar links  -->
+		<%@ include file="/WEB-INF/views/include/main_header.jsp" %>
     </nav>
     <!-- /.navbar -->
 
@@ -113,7 +116,8 @@
                             <tr>
                                 <th style="width: 10%;">출석날짜</th>
                             	<td style="width: 40%;">
-                            		<input type="text" id="datepicker" name="datepicker" readonly="readonly">
+                            		<fmt:formatDate pattern="yyyy-MM-dd" value="${memberDetail.attendanceDate}" var="datepicker" />
+                            		<input type="text" id="datepicker" name="datepicker" value="${datepicker}" readonly="readonly">
                             	</td>
                                 <th style="width: 10%;"></th>
                             	<td style="width: 40%;"></td>
@@ -156,8 +160,7 @@
                             </tr>
                             <tr id="attendanceStoreSeq">
                                 <th>매장명</th>
-                            	<td>${orderDetail.storeName}
-                            	</td>
+                            	<td>${orderDetail.storeName}</td>
                                 <th></th>
                             	<td></td>
                             </tr>
@@ -311,7 +314,14 @@ function searchName(){
 /* 팝업파트 */
 function popMemberList(popMemberList){
 	var paramList = '';
-	
+	paramList = "<tr>";
+	paramList += "<th>No</th>";
+	paramList += "<th>매장명</th>";
+	paramList += "<th>이름</th>";
+	paramList += "<th>연락처</th>";
+	paramList += "<th>성별</th>";
+	paramList += "<th>등록상품</th>";
+	paramList += "</tr>";
 	for(var i = 0 ; i < popMemberList.length; i++ ){
 		var paramMemberSeq = 0;
 		var paramName = '';
@@ -344,7 +354,8 @@ function popMemberList(popMemberList){
 		paramProductCount = popMemberList[i].productCount;
 		paramRemainingCount = popMemberList[i].remainingCount;
 		
-		paramList = '<td>'+popMemberList[i].rowNum+'</td>';
+		paramList += "<tr>";
+		paramList += '<td>'+popMemberList[i].rowNum+'</td>';
 		paramList += '<td>'+paramStoreName+'</td>';
 		paramList += '<td>';
  		paramList += '<a href="#" onclick="popMemberSelect('+paramMemberSeq+', \''+paramName+'\' , \''+paramPhone+'\' , \''+paramEmail+'\' , \''+paramBirth+'\' , \''+paramSex+'\' , '+paramProductSeq+' , \''+paramProductName+'\' , '+paramStoreSeq+' , \''+paramStoreName+'\' , '+paramOrderSeq+' , \''+paramItemName+'\' , '+paramProductCount+' , '+paramRemainingCount+');">'; 
@@ -353,6 +364,7 @@ function popMemberList(popMemberList){
 		paramList += '<td>'+paramPhone+'</td>';
 		paramList += '<td>'+paramSex+'</td>';
 		paramList += '<td>'+paramProductName+'</td>';
+		paramList += "</tr>";
 	}
 	
 	$("#memberList").text("");
@@ -525,7 +537,7 @@ function defaultCss() {
 				</div>
 				<div style="margin: 10px; border-top-style: solid;">
 					<table class="table table-bordered" style="margin-top: 20px;">
-						<tbody>
+						<tbody id="memberList">
 							<tr>
 								<th>No</th>
 								<th>매장명</th>
@@ -534,7 +546,7 @@ function defaultCss() {
 								<th>성별</th>
 								<th>등록상품</th>
 							</tr>
-							<tr id="memberList"><th colspan="6" style="text-align: center;">결과가 없습니다.</th></tr>
+							<tr><th colspan="6" style="text-align: center;">결과가 없습니다.</th></tr>
 						</tbody>
 					</table>
 				</div>

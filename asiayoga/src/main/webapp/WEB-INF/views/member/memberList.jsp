@@ -137,7 +137,7 @@
 																<c:otherwise></c:otherwise>
 															</c:choose>
 														</td>
-														<td><fmt:formatDate value="${memberList.registerDate}" pattern="yyyy-MM-dd"/></td>
+														<td><fmt:formatDate value="${memberList.joinDate}" pattern="yyyy-MM-dd"/></td>
 														<td><input type="button" class="btn btn-block btn-warning btn-sm" onclick="goMemberDel(${memberList.memberSeq},${memberList.storeSeq});" value="삭제"></td>                		
 					                            	</tr>
 					                            </c:forEach>
@@ -154,13 +154,13 @@
 				</div>
 				<div class="row" style="width: 100%; padding: 5px; margin-top: -25px;">
 					<div class="col-sm-5">
-						<div class="dataTables_info" role="status" aria-live="polite">
+					<!-- 	<div class="dataTables_info" role="status" aria-live="polite">
 						<ul class="pagination">
 							<li class="paginate_button active">
 								총 100개 중 1번 부터10번까지의 게시물
 							</li>
 						</ul>
-						</div>
+						</div> -->
 					</div>
 					<div class="col-sm-7">
 						<div class="dataTables_paginate paging_simple_numbers"  style="text-align: right;">
@@ -381,7 +381,7 @@ function goRefreshMemberList(memberList) {
 		var paramEmail = '';
 		var paramSex = '';
 		var paramAdjournmentState= '';
-		var paramRegisterDate = '';
+		var paramJoinDate = '';
 		
 		paramRowNum = memberList[i].rowNum;
 		paramMemberSeq = memberList[i].memberSeq;
@@ -393,7 +393,7 @@ function goRefreshMemberList(memberList) {
 		paramEmail = memberList[i].email;
 		paramSex = memberList[i].sex;
 		paramAdjournmentState = memberList[i].adjournmentState;
-		paramRegisterDate = memberList[i].registerDate;
+		paramJoinDate = memberList[i].joinDate;
 		
 		paramMemberList += '<tr>';
 		paramMemberList += '<td>'+paramRowNum+'</td>';
@@ -419,7 +419,7 @@ function goRefreshMemberList(memberList) {
 			paramMemberList += '<td></td>';
 		}
 		
-		var date = new Date(paramRegisterDate);
+		var date = new Date(paramJoinDate);
 		var year = date.getFullYear();
 		var month = date.getMonth()+1;
 		var day = date.getDate();

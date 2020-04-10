@@ -20,6 +20,7 @@ public class MemberVO extends StoreVO {
     private String phone3;							// 연락처3
     private String email;							// 이메일
     private String sex;								// 성별
+    private Date joinDate;	              			// 가입일
     private String memo;							// 메모
     private Date attendanceDate;              		// 출석 일자
     private Date registerDate;                 		// 등록 일자
@@ -123,6 +124,12 @@ public class MemberVO extends StoreVO {
 	}
 	public void setSex(String sex) {
 		this.sex = sex;
+	}
+	public Date getJoinDate() {
+		return joinDate;
+	}
+	public void setJoinDate(Date joinDate) {
+		this.joinDate = joinDate;
 	}
 	public String getMemo() {
 		return memo;

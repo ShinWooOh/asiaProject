@@ -33,6 +33,9 @@
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
             </li>
         </ul>
+        
+        <!-- Right navbar links  -->
+		<%@ include file="/WEB-INF/views/include/main_header.jsp" %>
     </nav>
     <!-- /.navbar -->
 
@@ -64,7 +67,7 @@
         <section class="content container-fluid" style="background-color: #FFFFFF">
 
             <div class="col-lg-12">
-            <form:form action="/member/memberUpdate" id="memberUpdate" name="memberUpdate" modelAttribute="memberVO" method="post">
+            <form:form action="/member/memberUpdate" id="memberUpdate" name="memberUpdate" modelAttribute="memberVO" method="POST">
                 <div>
                     <div>
                     	<c:set var="memberDetail" value="${memberDetail}" />
@@ -82,6 +85,17 @@
                             	<td>
                             		<c:out value="${memberDetail.name}"/>
 									<input type="hidden" id="name" name="name" value="${memberDetail.name}">
+                            	</td>
+                            </tr>
+                            <tr>
+                            	<td>성별</td>
+                            	<td>
+	                            	<c:choose>
+	                            		<c:when test="${memberDetail.sex eq 'M'}">남</c:when>
+	                            		<c:when test="${memberDetail.sex eq 'W'}">여</c:when>
+	                            		<c:otherwise></c:otherwise>
+	                            	</c:choose>
+									<input type="hidden" id="sex" name="sex" value="${memberDetail.sex}">
                             	</td>
                             </tr>
                             <tr>
@@ -114,13 +128,10 @@
                             	</td>
                             </tr>
                             <tr>
-                            	<td>성별</td>
+                            	<td>가입일</td>
                             	<td>
-	                            	<c:choose>
-	                            		<c:when test="${memberDetail.sex eq 'M'}">남</c:when>
-	                            		<c:otherwise>여</c:otherwise>
-	                            	</c:choose>
-									<input type="hidden" id="sex" name="sex" value="${memberDetail.sex}">
+                            		<fmt:formatDate value="${memberDetail.joinDate}" pattern="yyyy-MM-dd" var="joinDate"/>${joinDate}
+                            		<input type="hidden" id="joinDate" name="joinDate" value="${joinDate}">
                             	</td>
                             </tr>
                             <tr>
@@ -175,6 +186,11 @@ function goUpdateMember(){
 	
 	var insertConfirm = confirm("확인 버튼 클릭 시 수정화면으로 이동합니다.");
 	if(insertConfirm){
+		var joinDate = $("#joinDate").val();
+		
+		var joinDateSplit = joinDate.split("-");
+	 	$("#joinDate").val(new Date(joinDateSplit[0],joinDateSplit[1]-1,joinDateSplit[2]));
+	 	
 		$("#memberUpdate").submit();
 	}
 }

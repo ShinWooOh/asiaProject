@@ -34,6 +34,9 @@
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
             </li>
         </ul>
+        
+        <!-- Right navbar links  -->
+		<%@ include file="/WEB-INF/views/include/main_header.jsp" %>
     </nav>
     <!-- /.navbar -->
 
@@ -68,7 +71,6 @@
                 <div>
                 	<div>
                 		<form:form id="memberEdit" name="memberEdit" modelAttribute="memberVO" method="post">
-                			<c:set var="memberInfo" value="${memberInfo}" />
 	                		<table class="table table-bordered">
 	                			<tbody>
 	                				<tr>
@@ -76,6 +78,25 @@
 	                					<td>
 	                						<input type="text" id="name" name="name" value="${memberInfo.name}">
 	                						<input type="hidden" id="memberSeq" name="memberSeq" value="${memberInfo.memberSeq}">
+	                					</td>
+	                				</tr>
+	                				<tr>
+	                					<td>성별<font style="color: red;">*</font></td>
+	                					<td>
+	                						<c:choose>
+	                							<c:when test="${memberInfo.sex eq 'M'}">
+							                		<input type="radio" name="sex" value="M" checked="checked">남
+							                		<input type="radio" name="sex" value="W" style="margin-left: 5px;">여
+	                							</c:when>
+	                							<c:when test="${memberInfo.sex eq 'W'}">
+							                		<input type="radio" name="sex" value="M">남
+							                		<input type="radio" name="sex" value="W" style="margin-left: 5px;" checked="checked">여
+	                							</c:when>
+	                							<c:otherwise>
+							                		<input type="radio" name="sex" value="M">남
+							                		<input type="radio" name="sex" value="W" style="margin-left: 5px;">여
+	                							</c:otherwise>
+	                						</c:choose>
 	                					</td>
 	                				</tr>
 	                				<tr>
@@ -129,25 +150,14 @@
 			                           		<input type="hidden" id="storeSeq" name="storeSeq" value="${memberInfo.storeSeq}">
 			                           	</td>
 		                            </tr>
-	                				<tr>
-	                					<td>성별<font style="color: red;">*</font></td>
-	                					<td>
-	                						<c:choose>
-	                							<c:when test="${memberInfo.sex eq 'M'}">
-							                		<input type="radio" name="sex" value="M" checked="checked">남
-							                		<input type="radio" name="sex" value="W" style="margin-left: 5px;">여
-	                							</c:when>
-	                							<c:when test="${memberInfo.sex eq 'W'}">
-							                		<input type="radio" name="sex" value="M">남
-							                		<input type="radio" name="sex" value="W" style="margin-left: 5px;" checked="checked">여
-	                							</c:when>
-	                							<c:otherwise>
-							                		<input type="radio" name="sex" value="M">남
-							                		<input type="radio" name="sex" value="W" style="margin-left: 5px;">여
-	                							</c:otherwise>
-	                						</c:choose>
-	                					</td>
-	                				</tr>
+		                            <tr>
+		                            	<td>가입일</td>
+		                            	<td>
+                            				<fmt:formatDate pattern="yyyy-MM-dd" value="${memberInfo.joinDate}" var="joinDate" />
+		                                	<input type="text" id="paramJoinDate" name="paramJoinDate" value="${joinDate}" readonly="readonly">
+		                                	<input type="hidden" id="joinDate" name="joinDate" value="${joinDate}" readonly="readonly">
+                            			</td>
+                            		</tr>
 	                				<tr>
 	                					<td>메모</td>
 	                					<td><textarea id="memo" name="memo" rows="3" cols="150"><c:out value="${memberInfo.memo}"/></textarea>
@@ -189,11 +199,31 @@
 
 <!-- jQuery -->
 <script src="${pageContext.request.contextPath}/resources/plugins/jquery/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/plugins/jquery-ui/jquery-ui.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="${pageContext.request.contextPath}/resources/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="${pageContext.request.contextPath}/resources/dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
+
+$(document).ready(function() {
+	
+	$('#paramJoinDate').datepicker({
+		dateFormat: 'yy-mm-dd', 
+		showOtherMonths: true, 
+		showMonthAfterYear:true,
+		changeYear: true,
+		changeMonth: true,
+		showOn: "button",
+		yearSuffix: "년",
+		monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'],
+		monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+		dayNamesMin: ['일','월','화','수','목','금','토'],
+		dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'],
+		buttonImage: "/resources/image/calendar_btn.png" //버튼에 띄워줄 이미지 경로
+	});
+	
+});
 
 function goEditMember(){
 	
@@ -257,6 +287,10 @@ function editMember(){
 	
 	birth = birth1 +'-'+ birth2 +'-'+ birth3;
 	$("#birth").val(birth);
+	
+	var joinDate = $("#paramJoinDate").val();
+	var joinDateSplit = joinDate.split("-");
+ 	$("#joinDate").val(new Date(joinDateSplit[0],joinDateSplit[1]-1,joinDateSplit[2]));
 	
 	 $.ajax({
 	        type:'POST',
