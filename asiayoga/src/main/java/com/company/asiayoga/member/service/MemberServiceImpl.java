@@ -121,7 +121,7 @@ public class MemberServiceImpl implements MemberService {
 			}
 
 			cell = row.createCell(7);
-			Date date = vo.getRegisterDate();
+			Date date = vo.getJoinDate();
 			Timestamp ts = new Timestamp(date.getTime());
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			cell.setCellValue(formatter.format(ts));
