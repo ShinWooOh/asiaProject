@@ -103,10 +103,10 @@
 		                        <table class="table table-bordered">
 		                            <tbody id="productHeader" style="vertical-align: middle;">
 			                            <tr>
-			                                <th style="width: 5%">No</th>
+			                                <th style="width: 7%">No</th>
 			                                <th style="width: 20%">매장명</th>
 			                                <th style="width: 13%">품목구분</th>
-			                                <th style="width: 40%">상품명</th>
+			                                <th style="width: 38%">상품명</th>
 			                                <th style="width: 15%">상품가격</th>
 			                                <th style="width: 7%"></th>
 			                            </tr>

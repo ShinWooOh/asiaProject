@@ -104,8 +104,8 @@
 		                        <table class="table table-bordered">
 		                            <tbody id="manageHeader" style="vertical-align: middle;">
 			                            <tr>
-			                                <th style="width: 10%;">No</th>
-			                                <th style="width: 20%;">관리자명</th>
+			                                <th style="width: 7%;">No</th>
+			                                <th style="width: 23%;">관리자명</th>
 			                                <th style="width: 10%;">권한</th>
 			                                <th style="width: 15%;">직급</th>
 			                                <th style="width: 15%;">최종 접속 일자</th>

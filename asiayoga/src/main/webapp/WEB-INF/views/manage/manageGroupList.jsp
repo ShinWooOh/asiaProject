@@ -105,8 +105,8 @@
 		                        <table class="table table-bordered">
 		                            <tbody id="manageGroupHeader" style="vertical-align: middle;">
 		                            <tr>
-		                                <th style="width: 10%;">No</th>
-		                                <th style="width: 30%;">직급명</th>
+		                                <th style="width: 7%;">No</th>
+		                                <th style="width: 33%;">직급명</th>
 		                                <th style="width: 20%;">권한</th>
 		                                <th style="width: 30%;">매장</th>
 		                                <th style="width: 10%;">상태</th>

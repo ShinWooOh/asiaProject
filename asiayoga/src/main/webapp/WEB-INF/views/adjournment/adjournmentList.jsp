@@ -104,10 +104,10 @@
 		                        <table class="table table-bordered">
 		                            <tbody id="adjournmentHeader" style="vertical-align: middle;">
 			                            <tr>
-			                                <th style="width: 10%;">No</th>
+			                                <th style="width: 7%;">No</th>
 			                                <th style="width: 15%;">회원명</th>
 			                                <th style="width: 15%;">연락처</th>
-			                                <th style="width: 33%;">상품명</th>
+			                                <th style="width: 36%;">상품명</th>
 			                                <th style="width: 10%;">휴회 시작일</th>
 			                                <th style="width: 10%;">휴회 종료일</th>
 			                                <th style="width: 7%;" align="center">상태</th>

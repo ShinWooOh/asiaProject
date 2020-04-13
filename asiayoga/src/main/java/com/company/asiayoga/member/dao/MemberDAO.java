@@ -69,4 +69,9 @@ public class MemberDAO {
 	public int updateAdjournmentState(MemberVO memberVO) {
 		return sqlSession.update(MEMBER_NAMESPACE+".updateAdjournmentState", memberVO);
 	}
+	
+	// 회원 통계 
+	public MemberVO memberStatistics(MemberVO memberVO) {
+		return sqlSession.selectOne(MEMBER_NAMESPACE+".memberStatistics", memberVO);
+	}
 }

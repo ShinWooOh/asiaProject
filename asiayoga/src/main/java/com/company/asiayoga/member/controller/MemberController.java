@@ -64,6 +64,16 @@ public class MemberController {
 		
 		model.addAttribute("memberVO", memberVO);
 		
+		// 매장 별 회원 통계정보
+		MemberVO memberStat = new MemberVO();
+		memberStat.setStoreSeq(memberVO.getStoreSeq());
+		memberStat.setAuthority(memberVO.getAuthority());
+		memberStat = memberService.memberStatistics(memberStat);
+		if((memberStat == null) == true) {
+			return "/error/accessDeniedPage";
+		}
+		model.addAttribute("memberStat", memberStat);
+		
 		// 경로 체크
 		String currentPath = (String)request.getSession().getAttribute("nowPath");
 		if(!currentPath.equals(menuFirstRoot)) {
@@ -377,6 +387,13 @@ public class MemberController {
 		}
 		
 		return resultParam;
+	}
+	
+	// 매장별 통계 정보
+	public MemberVO storeMemberStat(MemberVO memberVO) {
+		
+		
+		return memberVO;
 	}
 
 }

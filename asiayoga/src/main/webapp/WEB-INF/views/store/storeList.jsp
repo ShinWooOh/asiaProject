@@ -102,9 +102,9 @@
 		                        <table class="table table-bordered">
 		                            <tbody id="storeHeader"style="vertical-align: middle;">
 			                            <tr>
-			                                <th style="width: 10%">No</th>
+			                                <th style="width: 7%">No</th>
 			                                <th style="width: 10%">매장번호</th>
-			                                <th style="width: 18%">매장명</th>
+			                                <th style="width: 21%">매장명</th>
 			                                <th style="width: 10%">매장 전화번호</th>
 			                                <th style="width: 10%">매장 전화번호<br>(핸드폰)</th>
 			                                <th style="width: 35%">매장 주소</th>

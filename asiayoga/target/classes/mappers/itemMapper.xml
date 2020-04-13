@@ -138,7 +138,7 @@
 		/* itemMapper.itemDetail */
 		SELECT	item_seq,
 				store_seq,
-				( SELECT store_name FROM STOREINFO WHERE store_seq = #{storeSeq} AND del_yn ='N') AS store_name,
+				( SELECT store_name FROM storeinfo WHERE store_seq = #{storeSeq} AND del_yn ='N') AS store_name,
 				item_name,
 				large_category,
 				register_date, 
@@ -213,6 +213,6 @@
 		FROM productitem, (SELECT @ROWNUM :=0) AS R
 		WHERE store_seq = #{storeSeq}
 		AND del_yn ='N'
-		ORDER BY modify_date ASC
+		ORDER BY modify_date ASC,row_num DESC
 	</select>
 </mapper>

@@ -110,7 +110,6 @@
 		                                	<input type="text" id="name" name="name" placeholder="검색 버튼을 눌러주세요." data-toggle="modal" data-target="#findMember">
 		                                	<input type="hidden" id="memberSeq" name="memberSeq">
 		                                	<input type="button" id="searchName" name="searchName" value="검색" readonly="readonly" data-toggle="modal" data-target="#findMember">
-<!-- 		                                	<input type="button" id="searchName" name="searchName" value="검색" readonly="readonly" style="margin-left: 5px; background-color: #00c0ef; border-color: #00c0ef; border-radius: 3px; color: white; border: 1px solid; width: 80px;"   data-toggle="modal" data-target="#findMember"> -->
 		                                </td>
 		                                <th style="width: 15%;">연락처<font style="color: red;">&nbsp;*</font></th>
 		                                <td style="width: 30%;">
@@ -145,11 +144,13 @@
 		                            <tr>
 		                                <th style="width: 15%;">시작일<font style="color: red;">&nbsp;*</font></th>
 		                                <td style="width: 30%;">
-		                                	<input type="text" id="startDay" name="startDay" readonly="readonly">
+		                                	<input type="text" id="paramStartDay" name="paramStartDay" readonly="readonly">
+		                                	<input type="hidden" id="startDay" name="startDay">
 		                                </td>
 		                                <th style="width: 15%;">만료일<font style="color: red;">&nbsp;*</font></th>
 		                                <td style="width: 30%;">
-		                                	<input type="text" id="expirationDay" name="expirationDay" readonly="readonly">
+		                                	<input type="text" id="paramExpirationDay" name="paramExpirationDay" readonly="readonly">
+		                                	<input type="hidden" id="expirationDay" name="expirationDay">
 		                                </td>
 		                            </tr>
 		                            <tr>
@@ -204,7 +205,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	
-	$('#startDay').datepicker({
+	$('#paramStartDay').datepicker({
 		dateFormat: 'yy-mm-dd', 
 		showOtherMonths: true, 
 		showMonthAfterYear:true,
@@ -219,7 +220,7 @@ $(document).ready(function() {
 		buttonImage: "/resources/image/calendar_btn.png" //버튼에 띄워줄 이미지 경로
 	});
 	
-	$('#expirationDay').datepicker({
+	$('#paramExpirationDay').datepicker({
 		dateFormat: 'yy-mm-dd', 
 		showOtherMonths: true, 
 		showMonthAfterYear:true,
@@ -345,12 +346,12 @@ function goOrderRegister(){
 		return false;
 	}
 	
-	if($("#startDay").val() == ''){
+	if($("#paramStartDay").val() == ''){
 		alert("시작일자를 선택해주세요.");
 		return false;
 	}
 	
-	if($("#expirationDay").val() == ''){
+	if($("#paramExpirationDay").val() == ''){
 		alert("만료일자를 선택해주세요.");
 		return false;
 	}
@@ -372,8 +373,8 @@ function goOrderRegister(){
 function orderRegister(){
 	
 	
-	var startDay = $("#startDay").val();
-	var expirationDay = $("#expirationDay").val();
+	var startDay = $("#paramStartDay").val();
+	var expirationDay = $("#paramExpirationDay").val();
 	
 	var startDateSplit = startDay.split("-");
 	var expirationDateSplit = expirationDay.split("-");
@@ -433,7 +434,14 @@ function searchName(){
 
 function popMemberList(popMemberList){
 	var paramList = '';
+	paramList +='<tr>';
+	paramList +='<th>No</th>';
+	paramList +='<th>이름</th>';
+	paramList +='<th>연락처</th>';
+	paramList +='<th>성별</th>';
+	paramList +='</tr>';
 	
+
 	for(var i = 0 ; i < popMemberList.length; i++ ){
 		var paramMemberSeq = 0;
 		var paramName = '';
@@ -445,13 +453,15 @@ function popMemberList(popMemberList){
 		paramPhone = popMemberList[i].phone;
 		paramSex = popMemberList[i].sex;
 		
-		paramList = '<td>'+popMemberList[i].rowNum+'</td>';
+		paramList += '<tr>';
+		paramList += '<td>'+popMemberList[i].rowNum+'</td>';
 		paramList += '<td>';
  		paramList += '<a href="#" onclick="popMemberSelect('+paramMemberSeq+', \''+paramName+'\' , \''+paramPhone+'\');">'; 
 		paramList +=  popMemberList[i].name+'</a>';
 		paramList += '</td>';
 		paramList += '<td>'+popMemberList[i].phone+'</td>';
 		paramList += '<td>'+popMemberList[i].sex+'</td>';
+		paramList += '</tr>';
 	}
 	
 	$("#memberList").text("");
@@ -476,7 +486,16 @@ function popMemberSelect(memberSeq,name,phone) {
 function popNameClose(){
 	$("#popName").val("");
 	
-	var paramDefaultList = '<th colspan="4" style="text-align: center;">결과가 없습니다.</th>';
+	var paramDefaultList = '';
+	paramDefaultList +='<tr>';
+	paramDefaultList +='<th>No</th>';
+	paramDefaultList +='<th>이름</th>';
+	paramDefaultList +='<th>연락처</th>';
+	paramDefaultList +='<th>성별</th>';
+	paramDefaultList +='</tr>';
+	paramDefaultList += '<tr>';
+	paramDefaultList +=	'<th colspan="4" style="text-align: center;">결과가 없습니다.</th>';
+	paramDefaultList += '</tr>';
 	
 	$("#memberList").text("");
 	$("#memberList").append(paramDefaultList);
@@ -514,43 +533,52 @@ function searchStore(){
    	});
 }
  	
- function popStoreList(popStoreList){
- 	var paramList = '';
- 	
- 	for(var i = 0 ; i < popStoreList.length; i++ ){
- 		var paramStoreSeq = 0;
- 		var paramStoreName = '';
- 		var paramStoreTel = '';
- 		var paramStoreAddress = '';
- 		
- 		paramStoreSeq = popStoreList[i].storeSeq;
- 		paramStoreName = popStoreList[i].storeName;
- 		paramStoreTel = popStoreList[i].storeTel;
- 		paramStoreAddress = popStoreList[i].storeAddress;
- 		
- 		paramList = '<td>'+popStoreList[i].rowNum+'</td>';
- 		paramList += '<td>';
- 		paramList += '<a href="#" onclick="popStoreSelect('+paramStoreSeq+', \''+paramStoreName+'\');">'; 
- 		paramList +=  paramStoreName+'</a>';
- 		paramList += '</td>';
- 		paramList += '<td>'+paramStoreTel+'</td>';
- 		paramList += '<td>'+paramStoreAddress+'</td>';
- 	}
- 	
- 	$("#storeList").text("");
- 	$("#storeList").append(paramList);
- 	
- }
+function popStoreList(popStoreList){
+	var paramList = '';
+	paramList +='<tr>';
+	paramList +='<th>No</th>';
+	paramList +='<th>매장</th>';
+	paramList +='<th>연락처</th>';
+	paramList +='<th>주소</th>';
+	paramList +='</tr>';
 
- function popStoreSelect(storeSeq,storeName) {
- 	
- 	$("#paramStoreName").val(storeName);
- 	$("#orderInfo #storeSeq").val(storeSeq);
- 	$("#orderInfo #storeName").val(storeName);
- 	
- 	
- 	popStoreSelectAfter(storeSeq);
- }
+	
+	for(var i = 0 ; i < popStoreList.length; i++ ){
+		var paramStoreSeq = 0;
+		var paramStoreName = '';
+		var paramStoreTel = '';
+		var paramStoreAddress = '';
+		
+		paramStoreSeq = popStoreList[i].storeSeq;
+		paramStoreName = popStoreList[i].storeName;
+		paramStoreTel = popStoreList[i].storeTel;
+		paramStoreAddress = popStoreList[i].storeAddress;
+		
+		paramList += '<tr>';
+		paramList += '<td>'+popStoreList[i].rowNum+'</td>';
+		paramList += '<td>';
+		paramList += '<a href="#" onclick="popStoreSelect('+paramStoreSeq+', \''+paramStoreName+'\');">'; 
+		paramList +=  paramStoreName+'</a>';
+		paramList += '</td>';
+		paramList += '<td>'+paramStoreTel+'</td>';
+		paramList += '<td>'+paramStoreAddress+'</td>';
+		paramList += '</tr>';
+	}
+	
+	$("#storeList").text("");
+	$("#storeList").append(paramList);
+	
+}
+
+function popStoreSelect(storeSeq,storeName) {
+	
+	$("#paramStoreName").val(storeName);
+	$("#orderInfo #storeSeq").val(storeSeq);
+	$("#orderInfo #storeName").val(storeName);
+	
+	
+	popStoreSelectAfter(storeSeq);
+}
 
  
 /* 팝업에서 매장 선택 후 상품이 있는 경우 selectBox로 기능 구현 */
@@ -598,13 +626,6 @@ function productList(productList) {
 	$("#productInfo").text("");
 	$("#productInfo").append(paramProductList);
 	
-	/* 하단 등록 버튼 영역  */
-	/* var productFooter = '';
-	productFooter += '<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goProductList();" style="float: left; width:80px;">';
-	productFooter += '<input type="button" class="btn btn-block btn-success" value="등록" onclick="goProductRegister();" style="float: right; width:80px;">';
-	$("#productFooter").text("");
-	$("#productFooter").append(productFooter); */
-
  	defaultCss();
  	popStoreClose();
  	
@@ -615,7 +636,16 @@ function productList(productList) {
 function popStoreClose(){
 	$("#popStoreName").val("");
 	
-	var paramDefaultList = '<th colspan="4" style="text-align: center;">결과가 없습니다.</th>';
+	var paramDefaultList = '';
+	paramDefaultList +='<tr>';
+	paramDefaultList +='<th>No</th>';
+	paramDefaultList +='<th>매장</th>';
+	paramDefaultList +='<th>연락처</th>';
+	paramDefaultList +='<th>주소</th>';
+	paramDefaultList +='</tr>';
+	paramDefaultList += '<tr>';	
+	paramDefaultList += '<th colspan="4" style="text-align: center;">결과가 없습니다.</th>';
+	paramDefaultList += '</tr>';	
 	
 	$("#storeList").text("");
 	$("#storeList").append(paramDefaultList);
@@ -690,7 +720,7 @@ function defaultCss() {
 		<div class="modal-content">
 			<div class="modal-header">
 			  <h4 class="modal-title">회원 찾기</h4>
-			  <button type="button" class="close" data-dismiss="modal" onclick="popClose();">&times;</button>
+			  <button type="button" class="close" data-dismiss="modal" onclick="popNameClose();">&times;</button>
 			</div>
 			<div class="modal-body">
 				<div style="margin: 10px;">
@@ -699,20 +729,20 @@ function defaultCss() {
 				</div>
 				<div style="margin: 10px; border-top-style: solid;">
 					<table class="table table-bordered" style="margin-top: 20px;">
-						<tbody>
+						<tbody id="memberList">
 							<tr>
 								<th>No</th>
 								<th>이름</th>
 								<th>연락처</th>
 								<th>성별</th>
 							</tr>
-							<tr id="memberList"><th colspan="4" style="text-align: center;">결과가 없습니다.</th></tr>
+							<tr><th colspan="4" style="text-align: center;">결과가 없습니다.</th></tr>
 						</tbody>
 					</table>
 				</div>
 			</div>
 			<div class="modal-footer">
-			  <button type="button" class="btn btn-default" data-dismiss="modal" onclick="popClose();">Close</button>
+			  <button type="button" class="btn btn-default" data-dismiss="modal" onclick="popNameClose();">Close</button>
 			</div>
 		</div>
 	</div>
@@ -723,7 +753,7 @@ function defaultCss() {
 		<div class="modal-content">
 			<div class="modal-header">
 			  <h4 class="modal-title">매장 찾기</h4>
-			  <button type="button" class="close" data-dismiss="modal" onclick="popClose();">&times;</button>
+			  <button type="button" class="close" data-dismiss="modal" onclick="popStoreClose();">&times;</button>
 			</div>
 			<div class="modal-body">
 				<div style="margin: 10px;">
@@ -732,20 +762,20 @@ function defaultCss() {
 				</div>
 				<div style="margin: 10px; border-top-style: solid;">
 					<table class="table table-bordered" style="margin-top: 20px;">
-						<tbody>
+						<tbody id="storeList">
 							<tr>
 								<th>No</th>
 								<th>매장</th>
 								<th>연락처</th>
 								<th>주소</th>
 							</tr>
-							<tr id="storeList"><th colspan="4" style="text-align: center;">결과가 없습니다.</th></tr>
+							<tr><th colspan="4" style="text-align: center;">결과가 없습니다.</th></tr>
 						</tbody>
 					</table>
 				</div>
 			</div>
 			<div class="modal-footer">
-			  <button type="button" class="btn btn-default" data-dismiss="modal" onclick="popClose();">Close</button>
+			  <button type="button" class="btn btn-default" data-dismiss="modal" onclick="popStoreClose();">Close</button>
 			</div>
 		</div>
 	</div>

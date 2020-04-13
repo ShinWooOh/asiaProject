@@ -40,6 +40,17 @@ public class MemberVO extends StoreVO {
     private int productCount;						// 등록 횟수
     private int remainingCount;						// 잔여 횟수
     private String authority;						// 권한
+    private int totalMember;						// 전체회원
+    private int newDayMember;						// 금일 신규 가입자
+    private int newWeekMember;						// 금주 신규 가입자
+    private int newMonthMember;						// 금월 신규 가입자
+    private int adjournmentYes;						// 휴회 회원 수
+    private int adjournmentNo;						// 미휴회 회원 수
+    private int newDayAdjournment;					// 금일 휴회 회원
+    private int newWeekAdjournment;					// 금주 휴회 회원
+    private int newMonthAdjournment;				// 금월 휴회 회원
+    private int thisMonth;							// 이번달
+    
 	
     public int getRowNum() {
 		return rowNum;
@@ -239,4 +250,65 @@ public class MemberVO extends StoreVO {
 	public void setAuthority(String authority) {
 		this.authority = authority;
 	}
+	public int getTotalMember() {
+		return totalMember;
+	}
+	public void setTotalMember(int totalMember) {
+		this.totalMember = totalMember;
+	}
+	public int getNewDayMember() {
+		return newDayMember;
+	}
+	public void setNewDayMember(int newDayMember) {
+		this.newDayMember = newDayMember;
+	}
+	public int getNewWeekMember() {
+		return newWeekMember;
+	}
+	public void setNewWeekMember(int newWeekMember) {
+		this.newWeekMember = newWeekMember;
+	}
+	public int getNewMonthMember() {
+		return newMonthMember;
+	}
+	public void setNewMonthMember(int newMonthMember) {
+		this.newMonthMember = newMonthMember;
+	}
+	public int getAdjournmentYes() {
+		return adjournmentYes;
+	}
+	public void setAdjournmentYes(int adjournmentYes) {
+		this.adjournmentYes = adjournmentYes;
+	}
+	public int getAdjournmentNo() {
+		return adjournmentNo;
+	}
+	public void setAdjournmentNo(int adjournmentNo) {
+		this.adjournmentNo = adjournmentNo;
+	}
+	public int getNewDayAdjournment() {
+		return newDayAdjournment;
+	}
+	public void setNewDayAdjournment(int newDayAdjournment) {
+		this.newDayAdjournment = newDayAdjournment;
+	}
+	public int getNewWeekAdjournment() {
+		return newWeekAdjournment;
+	}
+	public void setNewWeekAdjournment(int newWeekAdjournment) {
+		this.newWeekAdjournment = newWeekAdjournment;
+	}
+	public int getNewMonthAdjournment() {
+		return newMonthAdjournment;
+	}
+	public void setNewMonthAdjournment(int newMonthAdjournment) {
+		this.newMonthAdjournment = newMonthAdjournment;
+	}
+	public int getThisMonth() {
+		return thisMonth;
+	}
+	public void setThisMonth(int thisMonth) {
+		this.thisMonth = thisMonth;
+	}
+	
 }

@@ -30,7 +30,7 @@
 				OR 	store_address LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
-		ORDER BY store_seq DESC
+		ORDER BY store_seq DESC,row_num DESC
 		<include refid="commomPaging"/>
 	</select>
 	
@@ -142,7 +142,7 @@
 				OR 	store_address LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
-		ORDER BY store_seq DESC
+		ORDER BY store_seq DESC,row_num DESC
 	</select>
 
 	<!-- 팝업에서의 매장 목록  -->
@@ -166,6 +166,6 @@
 				OR 	store_address LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
-		ORDER BY store_seq DESC
+		ORDER BY store_seq DESC,row_num DESC
 	</select>
 </mapper>

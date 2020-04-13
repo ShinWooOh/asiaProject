@@ -103,11 +103,11 @@
 		                        <table class="table table-bordered">
 		                            <tbody id="itemHeader"style="vertical-align: middle;">
 			                            <tr>
-			                                <th style="width: 5%">No</th>
+			                                <th style="width: 7%">No</th>
 			                                <th style="width: 15%">등록매장</th>
 			                                <th style="width: 10%">품목번호</th>
 			                                <th style="width: 15%">품목구분</th>
-			                                <th style="width: 48%">품목명</th>
+			                                <th style="width: 46%">품목명</th>
 			                                <th style="width: 7%"></th>
 			                            </tr>
 			                            <c:choose>

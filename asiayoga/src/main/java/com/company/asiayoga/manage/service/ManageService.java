@@ -6,6 +6,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import com.company.asiayoga.manage.domain.ManageGroupVO;
 import com.company.asiayoga.manage.domain.ManageVO;
+import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.store.domain.StoreVO;
 
 public interface ManageService {
@@ -71,4 +72,5 @@ public interface ManageService {
 	
 	// 검색 조건 없는 직급 목록
 	public List<ManageGroupVO> manageGroupListAll(ManageGroupVO manageGroupVO) throws Exception;
+	
 }

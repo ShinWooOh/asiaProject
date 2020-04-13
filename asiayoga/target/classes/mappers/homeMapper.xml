@@ -24,7 +24,7 @@
 		FROM attendanceinfo atdinfo , (SELECT @ROWNUM :=0) AS R
 		WHERE atdinfo.store_code = #{storeCode}
 		AND	atdinfo.del_yn = 'N'
-		ORDER BY atdinfo.attendance_date DESC
+		ORDER BY atdinfo.attendance_date DESC,row_num DESC
 	</select>
     
 </mapper>

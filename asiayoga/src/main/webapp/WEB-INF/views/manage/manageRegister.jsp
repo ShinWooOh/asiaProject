@@ -344,6 +344,12 @@ function searchStore(){
 	
 function popStoreList(popStoreList){
 	var paramList = '';
+	paramList += '<tr>';
+	paramList += '<th>No</th>';
+	paramList += '<th>매장</th>';
+	paramList += '<th>연락처</th>';
+	paramList += '<th>주소</th>';
+	paramList += '</tr>';
 	
 	for(var i = 0 ; i < popStoreList.length; i++ ){
 		var paramStoreSeq = 0;
@@ -356,13 +362,15 @@ function popStoreList(popStoreList){
 		paramStoreTel = popStoreList[i].storeTel;
 		paramStoreAddress = popStoreList[i].storeAddress;
 		
-		paramList = '<td>'+popStoreList[i].rowNum+'</td>';
+		paramList += '<tr>';
+		paramList += '<td>'+popStoreList[i].rowNum+'</td>';
 		paramList += '<td>';
 		paramList += '<a href="#" onclick="popStoreSelect('+paramStoreSeq+', \''+paramStoreName+'\');">'; 
 		paramList +=  paramStoreName+'</a>';
 		paramList += '</td>';
 		paramList += '<td>'+paramStoreTel+'</td>';
 		paramList += '<td>'+paramStoreAddress+'</td>';
+		paramList += '</tr>';
 	}
 	
 	$("#storeList").text("");
@@ -429,7 +437,17 @@ function groupList(manageGroupList) {
 function popClose(){
 	$("#popStoreName").val("");
 	
-	var paramDefaultList = '<th colspan="4" style="text-align: center;">결과가 없습니다.</th>';
+	var paramDefaultList = '';
+		
+	paramDefaultList += '<tr>';
+	paramDefaultList += '<th>No</th>';
+	paramDefaultList += '<th>매장</th>';
+	paramDefaultList += '<th>연락처</th>';
+	paramDefaultList += '<th>주소</th>';
+	paramDefaultList += '</tr>';	
+	paramDefaultList += '<tr>';
+	paramDefaultList += '<th colspan="4" style="text-align: center;">결과가 없습니다.</th>';
+	paramDefaultList += '</tr>';
 	
 	$("#storeList").text("");
 	$("#storeList").append(paramDefaultList);
@@ -501,14 +519,14 @@ function defaultCss() {
 				</div>
 				<div style="margin: 10px; border-top-style: solid;">
 					<table class="table table-bordered" style="margin-top: 20px;">
-						<tbody>
+						<tbody id="storeList">
 							<tr>
 								<th>No</th>
 								<th>매장</th>
 								<th>연락처</th>
 								<th>주소</th>
 							</tr>
-							<tr id="storeList"><th colspan="4" style="text-align: center;">결과가 없습니다.</th></tr>
+							<tr><th colspan="4" style="text-align: center;">결과가 없습니다.</th></tr>
 						</tbody>
 					</table>
 				</div>

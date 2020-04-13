@@ -46,7 +46,7 @@
 				OR 	stinfo.store_name LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
-		ORDER BY mnggrp.modify_date DESC
+		ORDER BY mnggrp.modify_date DESC,row_num DESC
 		<include refid="commomPaging"/>
 	</select>
 	
@@ -74,7 +74,7 @@
 		INNER JOIN storeinfo stinfo
 		ON mnggrp.store_seq = stinfo.store_seq
 		WHERE mnggrp.store_seq = #{storeSeq}
-		ORDER BY mnggrp.modify_date DESC
+		ORDER BY mnggrp.modify_date DESC,row_num DESC
 	</select>
 	
 	<!-- 직원 그룹 목록 갯수 -->
@@ -229,6 +229,6 @@
 		ON mnggrp.store_seq = stinfo.store_seq
 		WHERE mnggrp.store_seq = #{storeSeq}
 		AND mnggrp.use_yn = 'Y'
-		ORDER BY mnggrp.modify_date DESC
+		ORDER BY mnggrp.modify_date DESC,row_num DESC
 	</select>
 </mapper>

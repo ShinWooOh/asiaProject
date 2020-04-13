@@ -101,9 +101,8 @@
 		                            <tr>
 		                                <th style="width: 15%;">이름<font style="color: red;">&nbsp;*</font></th>
 		                                <td style="width: 30%;">
-		                                	<input type="text" id="name" name="name" value="${customerOrderDetail.name}" placeholder="검색 버튼을 눌러주세요." data-toggle="modal" data-target="#findMember">
+		                                	<c:out value="${customerOrderDetail.name}"/>
 		                                	<input type="hidden" id="memberSeq" name="memberSeq" value="${customerOrderDetail.memberSeq}">
-		                                	<input type="button" id="searchName" name="searchName" value="검색" readonly="readonly" data-toggle="modal" data-target="#findMember">
 		                                </td>
 		                                <th style="width: 15%;">연락처<font style="color: red;">&nbsp;*</font></th>
 		                                <td style="width: 30%;">

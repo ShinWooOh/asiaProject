@@ -104,12 +104,12 @@
 	                        <table class="table table-bordered">
 	                            <tbody id="attendanceHeader" style="vertical-align: middle;">
 		                            <tr>
-		                                <th style="width: 10%;">No</th>
+		                                <th style="width: 7%;">No</th>
 		                                <th style="width: 15%;">회원명</th>
-		                                <th style="width: 33%;">상품명</th>
+		                                <th style="width: 34%;">상품명</th>
 		                                <th style="width: 15%;">출석일</th>
 		                                <th style="width: 15%;">연락처</th>
-		                                <th style="width: 5%;">성별</th>
+		                                <th style="width: 7%;">성별</th>
 		                                <th style="width: 7%;"></th>
 		                            </tr>
 		                            <c:choose>

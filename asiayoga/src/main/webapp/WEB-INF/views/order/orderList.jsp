@@ -104,7 +104,7 @@
 		                        <table class="table table-bordered">
 		                            <tbody id="orderHeader"style="vertical-align: middle;">
 			                            <tr>
-			                                <th style="width: 5%;">No</th>
+			                                <th style="width: 7%;">No</th>
 			                                <th style="width: 14%;">매장</th>
 			                                <th style="width: 12%;">품목구분</th>
 			                                <th style="width: 18%;">상품</th>

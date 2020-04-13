@@ -33,6 +33,18 @@
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" style="font-weight:bold;">금일 신규 가입자 : <c:out value="${memberStat.newDayMember}"/> 명</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" style="font-weight:bold;">금주 신규 가입자 : <c:out value="${memberStat.newWeekMember}"/> 명</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" style="font-weight:bold;"><c:out value="${memberStat.thisMonth}"/>월 신규 가입자 : <c:out value="${memberStat.newMonthMember}"/> 명</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" style="font-weight:bold;">총 가입자 : <c:out value="${memberStat.totalMember}"/> 명(미휴회 : <c:out value="${memberStat.adjournmentNo}"/>명  / 휴회 : <c:out value="${memberStat.adjournmentYes}"/>명 )</a>
+            </li>
         </ul>
         
         <!-- Right navbar links  -->
@@ -47,10 +59,10 @@
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <div class="content-header" style="margin-bottom: -20px;">
+        <div class="content-header" style="margin-bottom: -10px;">
             <div class="container-fluid">
                 <div class="row mb-2">
-                    <div class="col-sm-6">
+                    <div class="col-sm-6"">
                         <h3 class="m-0 text-dark">회원 목록</h3>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
@@ -71,16 +83,16 @@
 				<div class="row" style="width: 100%; margin: 10px;">
 					<div class="col-sm-6">
 						<div class="dataTables_length" style="float: left; margin-left: -10px;">
-							<label>Show  &nbsp;
+							<label>게시글 &nbsp;
 								<select class="form-control input-sm" id="memberRow" onchange="goChangeMemberList();">
 									<option value="10">10</option>
 									<option value="20">20</option>
 									<option value="30">30</option>
 									<option value="50">50</option>
 								</select> &nbsp;
-								entries
+								개 씩 보기 
 							</label>
-						</div>	
+						</div>
 					</div>
 					<div class="col-sm-6">
 						<div class="dataTables_filter" style="float: right;">
@@ -103,8 +115,8 @@
 		                        <table class="table table-bordered">
 		                            <tbody id="memberHeader" style="vertical-align: middle;">
 			                            <tr>
-			                                <th style="width: 10%;">No</th>
-			                                <th style="width: 10%;">매장명</th>
+			                                <th style="width: 7%;">No</th>
+			                                <th style="width: 13%;">매장명</th>
 			                                <th style="width: 13%;">회원명</th>
 			                                <th style="width: 10%;">생년월일</th>
 			                                <th style="width: 13%;">연락처</th>

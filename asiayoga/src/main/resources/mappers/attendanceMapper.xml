@@ -16,7 +16,9 @@
 				temp.attendance_seq,
 	            temp.member_seq,
 				temp.product_seq,
-				temp.product_name,
+				case when temp.product_name is null then "일반출석"
+					 else temp.product_name
+				 end as product_name,  
 				temp.name,
 	            temp.phone,
 	            temp.sex,
@@ -57,7 +59,7 @@
 		AND 
 				(		temp.name LIKE CONCAT('%',#{searchWord},'%')
 					OR 	temp.phone LIKE CONCAT('%',#{searchWord},'%')
-					OR 	temp.product_name LIKE CONCAT('%',#{searchWord},'%')
+					OR 	product_name LIKE CONCAT('%',#{searchWord},'%')
 					OR 	DATE_FORMAT(temp.attendance_date, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
 				)
 		</if>

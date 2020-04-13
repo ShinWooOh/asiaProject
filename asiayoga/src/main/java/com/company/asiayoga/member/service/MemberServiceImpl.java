@@ -139,6 +139,11 @@ public class MemberServiceImpl implements MemberService {
 	public int updateAdjournmentState(MemberVO memberVO) throws Exception {
 		return memberDAO.updateAdjournmentState(memberVO);
 	}
+
+	@Override
+	public MemberVO memberStatistics(MemberVO memberVO) throws Exception {
+		return memberDAO.memberStatistics(memberVO);
+	}
 	
 
 }

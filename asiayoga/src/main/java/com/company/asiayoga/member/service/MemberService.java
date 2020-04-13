@@ -39,4 +39,6 @@ public interface MemberService {
 	// 회원 휴회 상태 변경
 	public int updateAdjournmentState(MemberVO memberVO) throws Exception;
 
+	// 회원 통계
+	public MemberVO memberStatistics(MemberVO memberVO) throws Exception;
 }

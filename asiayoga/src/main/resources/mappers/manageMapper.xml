@@ -125,7 +125,7 @@
 				OR 	mnggrp.group_name LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
-		ORDER BY mginfo.store_seq DESC
+		ORDER BY mginfo.store_seq DESC,row_num DESC
 		<include refid="commomPaging"/>
 	</select>
 	
@@ -282,6 +282,6 @@
 				OR 	mnggrp.group_name LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
-		ORDER BY mginfo.store_seq DESC
+		ORDER BY mginfo.store_seq DESC,row_num DESC
 	</select>
 </mapper>
