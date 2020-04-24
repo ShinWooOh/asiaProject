@@ -13,6 +13,7 @@ import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.company.asiayoga.attendance.dao.AttendanceDAO;
 import com.company.asiayoga.attendance.domain.AttendanceVO;
@@ -44,6 +45,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 		return attendanceDAO.attendanceDetail(attendanceVO);
 	}
 
+	@Transactional
 	@Override
 	public int insertAttendance(AttendanceVO attendanceVO) throws Exception {
 		
@@ -72,6 +74,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 		return attendanceDAO.memberSearch(memberVO);
 	}
 
+	@Transactional
 	@Override
 	public int attendanceDelete(AttendanceVO attendanceVO) throws Exception {
 		return attendanceDAO.attendanceDelete(attendanceVO);
@@ -79,7 +82,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 	@Override
 	public SXSSFWorkbook attendanceExcelDownload(AttendanceVO attendanceVO) throws Exception {
-SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
+		
+		SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
 		
 		SXSSFSheet sheet = sxssfWorkbook.createSheet("출석 정보");
 		
@@ -90,7 +94,7 @@ SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
 		list = attendanceDAO.attendanceExcelDownload(attendanceVO);
 		
 		row = sheet.createRow(0);
-		String[] headerKey = {"No","회원명","상품명","출석일","연락처","성별"};
+		String[] headerKey = {"No","회원번호","회원명","상품명","출석일","연락처","성별"};
 
 		
 		for(int i = 0; i < headerKey.length; i++) {
@@ -107,21 +111,24 @@ SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
 			cell.setCellValue(vo.getRowNum());
 			
 			cell = row.createCell(1);
-			cell.setCellValue(vo.getName());
+			cell.setCellValue(vo.getMyMembership());
 			
 			cell = row.createCell(2);
-			cell.setCellValue(vo.getProductName());
+			cell.setCellValue(vo.getName());
 			
 			cell = row.createCell(3);
-			Date date = vo.getAttendanceDate();
-			Timestamp ts = new Timestamp(date.getTime());
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-			cell.setCellValue(formatter.format(ts));
+			cell.setCellValue(vo.getProductName());
 			
 			cell = row.createCell(4);
-			cell.setCellValue(vo.getPhone());
+			Date date = vo.getAttendanceDate();
+			Timestamp ts = new Timestamp(date.getTime());
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			cell.setCellValue(formatter.format(ts));
 			
 			cell = row.createCell(5);
+			cell.setCellValue(vo.getPhone());
+			
+			cell = row.createCell(6);
 			if(vo.getSex().equals("M")) {
 				cell.setCellValue("남");
 			} else if(vo.getSex().equals("W")) {

@@ -20,17 +20,20 @@
         <property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"></property>
         
         <!-- test server -->
-        <property name="url" value="jdbc:log4jdbc:mysql://asiaproject-1.cfpzbbo4fvrr.ap-northeast-2.rds.amazonaws.com:3306/asiayoga?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=Asia/Seoul"/>
+<!--         <property name="url" value="jdbc:log4jdbc:mysql://asiaproject-1.cfpzbbo4fvrr.ap-northeast-2.rds.amazonaws.com:3306/asiayoga?useSSL=false&amp;allowPublicKeyRetrieval=true"/>
         <property name="username" value="admin"></property>
-        <property name="password" value="asia1234"></property>
+        <property name="password" value="asia1234"></property> -->
         
-        <!-- <property name="url" value="jdbc:log4jdbc:mariadb://13.125.58.7:3306/asiayoga?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=Asia/Seoul"/> -->
-        <!-- <property name="url" value="jdbc:log4jdbc:mysql://127.0.0.1:3306/asiayoga?useSSL=false&amp;serverTimezone=Asia/Seoul"/> -->
+        
+        <!--real server  -->
+ <!--    	<property name="url" value="jdbc:log4jdbc:mariadb://asiayoga.cafe24.com:3306/asiayoga?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=Asia/Seoul"/>
+        <property name="username" value="asiayoga"></property>
+        <property name="password" value="belief8682!"></property> -->
         
         <!-- local server -->
-        <!-- <property name="url" value="jdbc:log4jdbc:mariadb://127.0.0.1:3306/asiayoga?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=Asia/Seoul"/>
+        <property name="url" value="jdbc:log4jdbc:mariadb://127.0.0.1:3306/asiayoga?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=Asia/Seoul"/>
         <property name="username" value="root"></property>
-        <property name="password" value="new1234!@"></property> -->
+        <property name="password" value="new1234!@"></property>
     </bean>
     
     
@@ -41,17 +44,18 @@
         <property name="mapperLocations" value="classpath:mappers/**/*Mapper.xml"></property>
     </bean>
 
-    <!-- transaction설정 -->
-    <tx:annotation-driven transaction-manager="transactionManager" />
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
     
     <!-- mybatis -->
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
         <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"></constructor-arg>
     </bean>
 
+    <!-- transaction설정 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <tx:annotation-driven/>
+    
 	<!-- spring security error message  -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames">
@@ -60,7 +64,7 @@
             </list>
         </property>
         <property name="defaultEncoding" value="UTF-8"/>
-        <property name="cacheSeconds" value="3600"/>
+        <property name="cacheSeconds" value="21600"/>
     </bean>
     
      <bean id="messageSourceAccessor" class="org.springframework.context.support.MessageSourceAccessor">
@@ -71,6 +75,6 @@
         <property name="messageSourceAccessor" ref="messageSourceAccessor"/>
     </bean>
 
-	<context:component-scan base-package="com.company.*"></context:component-scan>
+	<context:component-scan base-package="com.company.asiayoga.*"></context:component-scan>
 	
 </beans>

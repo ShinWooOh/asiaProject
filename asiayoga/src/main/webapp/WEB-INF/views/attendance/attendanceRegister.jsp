@@ -44,7 +44,7 @@
     <%@ include file="/WEB-INF/views/include/left_column.jsp" %>
 
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
+    <div class="content-wrapper" style="margin-bottom: -10px;">
         <!-- Content Header (Page header) -->
         <div class="content-header">
             <div class="container-fluid">
@@ -85,7 +85,7 @@
 	                            <tr id="memberInfo">
 	                            	<td align="center">
 	                       				<c:choose>
-	                            			<c:when test="${memberDetail.memberSeq > 0}"><c:out value="${memberDetail.memberSeq}"/></c:when>
+	                            			<c:when test="${memberDetail.memberSeq > 0}"><c:out value="${memberDetail.myMembership}"/></c:when>
 	                            			<c:otherwise></c:otherwise>
 	                            		</c:choose>
 	                            	<td>
@@ -316,6 +316,7 @@ function popMemberList(popMemberList){
 	var paramList = '';
 	paramList = "<tr>";
 	paramList += "<th>No</th>";
+	paramList += "<th>회원번호</th>";
 	paramList += "<th>매장명</th>";
 	paramList += "<th>이름</th>";
 	paramList += "<th>연락처</th>";
@@ -324,6 +325,7 @@ function popMemberList(popMemberList){
 	paramList += "</tr>";
 	for(var i = 0 ; i < popMemberList.length; i++ ){
 		var paramMemberSeq = 0;
+		var paramMembership = 0;
 		var paramName = '';
 		var paramPhone = '';
 		var paramEmail = '';
@@ -340,6 +342,7 @@ function popMemberList(popMemberList){
 		var paramRemainingCount = 0;
 		
 		paramMemberSeq = popMemberList[i].memberSeq;
+		paramMyMembership = popMemberList[i].myMembership;
 		paramName = popMemberList[i].name;
 		paramPhone = popMemberList[i].phone;
 		paramEmail = popMemberList[i].email;
@@ -356,9 +359,10 @@ function popMemberList(popMemberList){
 		
 		paramList += "<tr>";
 		paramList += '<td>'+popMemberList[i].rowNum+'</td>';
+		paramList += '<td>'+paramMyMembership+'</td>';
 		paramList += '<td>'+paramStoreName+'</td>';
 		paramList += '<td>';
- 		paramList += '<a href="#" onclick="popMemberSelect('+paramMemberSeq+', \''+paramName+'\' , \''+paramPhone+'\' , \''+paramEmail+'\' , \''+paramBirth+'\' , \''+paramSex+'\' , '+paramProductSeq+' , \''+paramProductName+'\' , '+paramStoreSeq+' , \''+paramStoreName+'\' , '+paramOrderSeq+' , \''+paramItemName+'\' , '+paramProductCount+' , '+paramRemainingCount+');">'; 
+ 		paramList += '<a href="#" onclick="popMemberSelect('+paramMemberSeq+','+paramMyMembership+', \''+paramName+'\' , \''+paramPhone+'\' , \''+paramEmail+'\' , \''+paramBirth+'\' , \''+paramSex+'\' , '+paramProductSeq+' , \''+paramProductName+'\' , '+paramStoreSeq+' , \''+paramStoreName+'\' , '+paramOrderSeq+' , \''+paramItemName+'\' , '+paramProductCount+' , '+paramRemainingCount+');">'; 
 		paramList +=  paramName+'</a>';
 		paramList += '</td>';
 		paramList += '<td>'+paramPhone+'</td>';
@@ -371,10 +375,10 @@ function popMemberList(popMemberList){
 	$("#memberList").append(paramList);
 }
 
-function popMemberSelect(memberSeq,name,phone,email,birth,sex,productSeq,productName,storeSeq,storeName,orderSeq,itemName,productCount,remainingCount) {
+function popMemberSelect(memberSeq,myMembership,name,phone,email,birth,sex,productSeq,productName,storeSeq,storeName,orderSeq,itemName,productCount,remainingCount) {
 	
 	var paramMemberInfo = '';
-	paramMemberInfo = '<td>'+memberSeq+'</td>';
+	paramMemberInfo = '<td>'+myMembership+'</td>';
 	paramMemberInfo += '<td>';
 	paramMemberInfo += '<input type="text" id="paramName" name="paramName" readonly="readonly" value='+name+'>';
 	paramMemberInfo += '<input type="button" id="findName" name="findName" value="이름찾기" data-toggle="modal" data-target="#findMember">';
@@ -450,7 +454,7 @@ function popMemberSelect(memberSeq,name,phone,email,birth,sex,productSeq,product
 function popClose(){
 	$("#popName").val("");
 	
-	var paramDefaultList = '<th colspan="5" style="text-align: center;">결과가 없습니다.</th>';
+	var paramDefaultList = '<th colspan="7" style="text-align: center;">결과가 없습니다.</th>';
 	
 	$("#memberList").text("");
 	$("#memberList").append(paramDefaultList);
@@ -540,13 +544,14 @@ function defaultCss() {
 						<tbody id="memberList">
 							<tr>
 								<th>No</th>
+								<th>회원번호</th>
 								<th>매장명</th>
 								<th>이름</th>
 								<th>연락처</th>
 								<th>성별</th>
 								<th>등록상품</th>
 							</tr>
-							<tr><th colspan="6" style="text-align: center;">결과가 없습니다.</th></tr>
+							<tr><th colspan="7" style="text-align: center;">결과가 없습니다.</th></tr>
 						</tbody>
 					</table>
 				</div>

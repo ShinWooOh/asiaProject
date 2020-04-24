@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.company.asiayoga.mobile.domain.MobileVO;
@@ -22,7 +23,6 @@ public class MobileController {
 	
 	@Inject
 	private MobileService mobileService;
-	
 	
 	// 모바일 화면이동 
 	// Android App 에서 storeSeq 와 mobileAppFlag 를 전달해 준다.
@@ -97,6 +97,7 @@ public class MobileController {
 			} else {
 				mobileVO.setRegisterId(mobileVO.getMobileAppFlag());
 				mobileVO.setModifyId(mobileVO.getMobileAppFlag());
+				mobileVO.setProductSeq(5);
 				result = mobileService.mobileInsertAttendance(mobileVO);
 				
 				if(result > 0) {
@@ -107,6 +108,17 @@ public class MobileController {
 				}
 			}
 		}
+		
+		return hashMap;
+	}
+	
+	// test
+	@RequestMapping(value = "/mobile/mobileTest", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	public HashMap<String, Object> mobileTest(HttpServletRequest request,Model model,MobileVO mobileVO) throws Exception {
+		
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		
+		logger.info("이곳은 테스트 페이지입니다. 진입 성공하였습니다.");
 		
 		return hashMap;
 	}

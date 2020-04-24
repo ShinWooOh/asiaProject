@@ -46,17 +46,18 @@
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <div class="content-header">
+        <div class="content-header" style="margin-bottom: -10px;">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">구매 등록</h1>
+                        <h1 class="m-0 text-dark">결제 등록</h1>
+                        <font style="color: red; font-weight: bold; font-size: 14px;" >*표시는 필수 입력입니다.</font>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item">구매 관리</li>
-                            <li class="breadcrumb-item active">구매 등록</li>
+                            <li class="breadcrumb-item">결제 내역</li>
+                            <li class="breadcrumb-item active">결제 등록</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -75,7 +76,27 @@
 	                        <table class="table table-bordered">
 	                            <tbody>
 		                            <tr>
-		                                <th id="storeInfo">매장명</th>
+		                                <th style="width: 15%;">이름<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></th>
+		                                <td style="width: 30%;">
+		                                	<input type="text" id="name" name="name" placeholder="검색 버튼을 눌러주세요." data-toggle="modal" data-target="#findMember">
+		                                	<input type="hidden" id="memberSeq" name="memberSeq">
+		                                	<input type="button" id="searchName" name="searchName" value="검색" readonly="readonly" data-toggle="modal" data-target="#findMember">
+		                                </td>
+		                                <th style="width: 15%;">회원번호</th>
+		                                <td id="myMembershipRow" style="width: 30%;">
+		                                </td>
+		                            </tr>
+		                            <tr>
+		                                <th style="width: 15%;">연락처</th>
+		                                <td id="phoneRow" style="width: 30%;">
+		                                	
+		                                </td>
+		                                <th style="width: 15%;">가입일</th>
+		                                <td id="joinDateRow" style="width: 30%;">
+		                                </td>
+		                            </tr>
+		                            <tr>
+		                                <th id="storeInfo">매장명<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></th>
 		                                <td colspan="3">
 		                            	    <c:choose>
 		                                		<c:when test="${manageInfo.getAuthority() eq 'ROLE_ADMIN'}">
@@ -91,32 +112,14 @@
 		                            	</td>
 		                            </tr>
 		                            <tr id="productInfo">
-		                                <th style="width: 15%;">상품<font style="color: red;">&nbsp;*</font></th>
-		                                <td style="width: 30%;">
+		                                <th style="width: 15%;">상품<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></th>
+		                                <td colspan="3">
 		                                	<select id="productSeq" name="productSeq" onchange="goSearchProduct();">
 		                                		<option value="0">상품을 선택해주세요</option>
 		                                		<c:forEach var="productList" items="${productList}">
 			                                		<option value="${productList.productSeq}">${productList.productName}</option>
 		                                		</c:forEach>
 		                                	</select>
-		                                </td>
-		                                <th style="width: 15%;">품목명</th>
-		                                <td id= "itemImfo" style="width: 30%;">               	
-		                                </td>
-		                            </tr>
-		                            <tr>
-		                                <th style="width: 15%;">이름<font style="color: red;">&nbsp;*</font></th>
-		                                <td style="width: 30%;">
-		                                	<input type="text" id="name" name="name" placeholder="검색 버튼을 눌러주세요." data-toggle="modal" data-target="#findMember">
-		                                	<input type="hidden" id="memberSeq" name="memberSeq">
-		                                	<input type="button" id="searchName" name="searchName" value="검색" readonly="readonly" data-toggle="modal" data-target="#findMember">
-		                                </td>
-		                                <th style="width: 15%;">연락처<font style="color: red;">&nbsp;*</font></th>
-		                                <td style="width: 30%;">
-		                                	<input type="text" id="phone1" name="phone1" style="margin-right: 5px; width: 15%;">&nbsp;-
-		                                	<input type="text" id="phone2" name="phone2" style="margin-left: 5px; margin-right: 5px; width: 15%;">&nbsp;-
-		                                	<input type="text" id="phone3" name="phone3" style="margin-left: 5px; width: 15%;">
-		                                	<input type="hidden" id="phone" name="phone">
 		                                </td>
 		                            </tr>
 		                            <tr>
@@ -129,25 +132,13 @@
 		                                	<input type="text" id="productPrice" name="productPrice" value="0" style="width: 20%;">
 		                                </td>
 		                            </tr>
-		                            <tr id="productCountInfo">
-		                                <th style="width: 15%;">횟수</th>
-		                                <td style="width: 30%;">
-		                                	<input type="text" id="productCount" name="productCount" value="0" style="width: 20%;">
-		                                </td>
-		                            </tr>
-		                            <tr id ="lockerInfo">
-		                                <th style="width: 15%;">락커 번호</th>
-		                                <td  colspan="3">
-		                                	<input type="text" id="lockerSeq" name="lockerSeq" value="0" style="width: 15%;">
-		                                </td>
-		                            </tr>
 		                            <tr>
-		                                <th style="width: 15%;">시작일<font style="color: red;">&nbsp;*</font></th>
+		                                <th style="width: 15%;">시작일<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></th>
 		                                <td style="width: 30%;">
 		                                	<input type="text" id="paramStartDay" name="paramStartDay" readonly="readonly">
 		                                	<input type="hidden" id="startDay" name="startDay">
 		                                </td>
-		                                <th style="width: 15%;">만료일<font style="color: red;">&nbsp;*</font></th>
+		                                <th style="width: 15%;">만료일<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></th>
 		                                <td style="width: 30%;">
 		                                	<input type="text" id="paramExpirationDay" name="paramExpirationDay" readonly="readonly">
 		                                	<input type="hidden" id="expirationDay" name="expirationDay">
@@ -155,11 +146,8 @@
 		                            </tr>
 		                            <tr>
 		                                <th style="width: 15%;">메모</th>
-		                                <td colspan="3"><textarea id="memo" name="orderMemo" rows="3" cols="150"></textarea></td>
+		                                <td colspan="3"><textarea id="memo" name="orderMemo" rows="6" cols="150"></textarea></td>
 		                            </tr>
-		                            <tr>
-				                    	<th colspan="4"><font style="color: red;">* 는 필수 사항입니다.</font></th>
-				                    </tr>
 	                            </tbody>
 	                        </table>
                         </form:form>
@@ -436,31 +424,54 @@ function popMemberList(popMemberList){
 	var paramList = '';
 	paramList +='<tr>';
 	paramList +='<th>No</th>';
+	paramList +='<th>회원번호</th>';
 	paramList +='<th>이름</th>';
 	paramList +='<th>연락처</th>';
 	paramList +='<th>성별</th>';
+	paramList +='<th>가입일</th>';
 	paramList +='</tr>';
 	
 
 	for(var i = 0 ; i < popMemberList.length; i++ ){
+		var paramMyMembership = 0;
 		var paramMemberSeq = 0;
 		var paramName = '';
 		var paramPhone = '';
 		var paramSex = '';
+		var paramJoinDate = '';
 		
+		paramMyMembership = popMemberList[i].myMembership;
 		paramMemberSeq = popMemberList[i].memberSeq;
 		paramName = popMemberList[i].name;
 		paramPhone = popMemberList[i].phone;
 		paramSex = popMemberList[i].sex;
+		paramJoinDate = popMemberList[i].joinDate;
+		
+		
+		var date = new Date(paramJoinDate);
+		var year = date.getFullYear();
+		var month = date.getMonth()+1;
+		var day = date.getDate();
+		if(month < 10){
+			month = '0'+month;
+		}
+		if(day < 10){
+			day = '0'+day;
+		}
+		var joinDate = year+'-'+month+'-'+day;
 		
 		paramList += '<tr>';
 		paramList += '<td>'+popMemberList[i].rowNum+'</td>';
 		paramList += '<td>';
- 		paramList += '<a href="#" onclick="popMemberSelect('+paramMemberSeq+', \''+paramName+'\' , \''+paramPhone+'\');">'; 
-		paramList +=  popMemberList[i].name+'</a>';
+ 		paramList += '<a href="#" onclick="popMemberSelect('+paramMemberSeq+', '+paramMyMembership+',\''+paramName+'\' , \''+paramPhone+'\',\''+joinDate+'\');">'; 
+		paramList +=  paramMyMembership+'</a>';
+		paramList += '<td>';
+ 		paramList += '<a href="#" onclick="popMemberSelect('+paramMemberSeq+', '+paramMyMembership+', \''+paramName+'\' , \''+paramPhone+'\',\''+joinDate+'\');">'; 
+		paramList +=  paramName+'</a>';
 		paramList += '</td>';
-		paramList += '<td>'+popMemberList[i].phone+'</td>';
-		paramList += '<td>'+popMemberList[i].sex+'</td>';
+		paramList += '<td>'+paramPhone+'</td>';
+		paramList += '<td>'+paramSex+'</td>';
+		paramList += '<td>'+joinDate+'</td>';
 		paramList += '</tr>';
 	}
 	
@@ -468,16 +479,19 @@ function popMemberList(popMemberList){
 	$("#memberList").append(paramList);
 }
 
-function popMemberSelect(memberSeq,name,phone) {
+function popMemberSelect(memberSeq,myMembership,name,phone,joinDate) {
 	
 	$("#name").val(name);
 	$("#memberSeq").val(memberSeq);
 	
-	var paramMemberPhoneInfo = phone.split('-');
-	$("#phone1").val(paramMemberPhoneInfo[0]);
-	$("#phone2").val(paramMemberPhoneInfo[1]);
-	$("#phone3").val(paramMemberPhoneInfo[2]);
-	$("#phone").val(phone);
+	$("#myMembershipRow").text("");
+	$("#myMembershipRow").text(myMembership);
+	
+	$("#phoneRow").text("");
+	$("#phoneRow").text(phone);
+	
+	$("#joinDateRow").text("");
+	$("#joinDateRow").text(joinDate);
 	
 	popNameClose();
 	$("#findMember").modal('toggle');
@@ -489,12 +503,13 @@ function popNameClose(){
 	var paramDefaultList = '';
 	paramDefaultList +='<tr>';
 	paramDefaultList +='<th>No</th>';
+	paramDefaultList +='<th>회원번호</th>';
 	paramDefaultList +='<th>이름</th>';
 	paramDefaultList +='<th>연락처</th>';
 	paramDefaultList +='<th>성별</th>';
 	paramDefaultList +='</tr>';
 	paramDefaultList += '<tr>';
-	paramDefaultList +=	'<th colspan="4" style="text-align: center;">결과가 없습니다.</th>';
+	paramDefaultList +=	'<th colspan="5" style="text-align: center;">결과가 없습니다.</th>';
 	paramDefaultList += '</tr>';
 	
 	$("#memberList").text("");
@@ -609,7 +624,7 @@ function productList(productList) {
 	var paramProductList ='';
 	
 	paramProductList+= '<th style="width: 15%;">상품<font style="color: red;">&nbsp;*</font></th>';
-	paramProductList+= '<td style="width: 30%;">';
+	paramProductList+= '<td colspan="3">';
 	paramProductList+= '<select id="productSeq" name="productSeq" onchange="goSearchProduct();">';
 	paramProductList+= '<option value="0">상품을 선택해주세요</option>';
 	
@@ -618,10 +633,6 @@ function productList(productList) {
 	}
 	
 	paramProductList+= '</select>';
-	paramProductList+= '</td>';
-	paramProductList+= '<th style="width: 15%;">품목명</th>';
-	paramProductList+= '<td id= "itemImfo" style="width: 30%;"> ';
-	paramProductList+= '</td>';
 	
 	$("#productInfo").text("");
 	$("#productInfo").append(paramProductList);

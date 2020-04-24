@@ -66,6 +66,8 @@ public class HomeController {
 	@RequestMapping(value = "/accessDeniedPage")
 	public String accessDeniedPage(Locale locale, Model model) {
 		
+		logger.info("여기는 권한 접근 금지");
+		
 		return "/error/accessDeniedPage";
 	}
 	

@@ -293,11 +293,15 @@ public class OrderController {
 	// 구매 등록
 	@RequestMapping(value = "insertOrder")
 	@ResponseBody
-	public String insertOrder(Model model,OrderVO orderVO) throws Exception{
+	public String insertOrder(HttpServletRequest request,Model model,OrderVO orderVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		int paramResult = 0;
 		String result = "fail";
 		
+		orderVO.setRegisterId(manageVO.getId());
 		paramResult = orderService.insertOrder(orderVO);
 		
 		if(paramResult > 0) {

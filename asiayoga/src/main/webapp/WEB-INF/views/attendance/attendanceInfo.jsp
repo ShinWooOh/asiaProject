@@ -48,7 +48,7 @@
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <div class="content-header">
+        <div class="content-header" style="margin-bottom: -10px;">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
@@ -105,8 +105,9 @@
 	                            <tbody id="attendanceHeader" style="vertical-align: middle;">
 		                            <tr>
 		                                <th style="width: 7%;">No</th>
+		                                <th style="width: 10%;">회원번호</th>
 		                                <th style="width: 15%;">회원명</th>
-		                                <th style="width: 34%;">상품명</th>
+		                                <th style="width: 24%;">상품명</th>
 		                                <th style="width: 15%;">출석일</th>
 		                                <th style="width: 15%;">연락처</th>
 		                                <th style="width: 7%;">성별</th>
@@ -117,6 +118,7 @@
 				                            <c:forEach var="attendanceList" items="${attendanceList}">
 				                            	<tr>
 													<td><c:out value="${attendanceList.rowNum}"/></td>                            		
+													<td><c:out value="${attendanceList.myMembership}"/></td>                            		
 													<td>
 														<a href="javascript:void(0);" onclick="goAttendanceDetail(${attendanceList.memberSeq},${attendanceList.storeSeq});"><c:out value="${attendanceList.name}"/></a> 
 													</td>
@@ -140,7 +142,7 @@
 				                            </c:forEach>
 		                            	</c:when>
 		                            	<c:otherwise>
-		                            		<tr><th colspan="7" style="text-align: center;">결과가 없습니다.</th></tr>
+		                            		<tr><th colspan="8" style="text-align: center;">결과가 없습니다.</th></tr>
 		                            	</c:otherwise>
 		                            </c:choose>
 	                            </tbody>
@@ -357,12 +359,13 @@ function goRefreshAttendanceList(attendanceList) {
     
 	var paramAttendanceList = '';
 	paramAttendanceList += '<tr>';
-	paramAttendanceList += '<th style="width: 10%;">No</th>';
+	paramAttendanceList += '<th style="width: 7%;">No</th>';
+	paramAttendanceList += '<th style="width: 10%;">회원번호</th>';
 	paramAttendanceList += '<th style="width: 15%;">회원명</th>';
-	paramAttendanceList += '<th style="width: 33%;">상품명</th>';
+	paramAttendanceList += '<th style="width: 24%;">상품명</th>';
 	paramAttendanceList += '<th style="width: 15%;">출석일</th>';
 	paramAttendanceList += '<th style="width: 15%;">연락처</th>';
-	paramAttendanceList += '<th style="width: 5%;">성별</th>';
+	paramAttendanceList += '<th style="width: 7%;">성별</th>';
 	paramAttendanceList += '<th style="width: 7%;"></th>';
 	paramAttendanceList += '</tr>';
 	
@@ -370,6 +373,7 @@ function goRefreshAttendanceList(attendanceList) {
 		var paramRowNum = 0;
 		var paramAttendanceSeq = 0;
 		var paramMemberSeq = 0;
+		var paramMyMembership = 0;
 		var paramStoreSeq = 0;
 		var paramProductName = '';
 		var paramAttendanceDate = '';
@@ -381,6 +385,7 @@ function goRefreshAttendanceList(attendanceList) {
 		paramRowNum = attendanceList[i].rowNum;
 		paramAttendanceSeq = attendanceList[i].attendanceSeq;
 		paramMemberSeq = attendanceList[i].memberSeq;
+		paramMyMembership = attendanceList[i].myMembership;
 		paramStoreSeq = attendanceList[i].storeSeq;
 		paramProductName = attendanceList[i].productName;
 		paramAttendanceDate = attendanceList[i].attendanceDate;
@@ -391,6 +396,7 @@ function goRefreshAttendanceList(attendanceList) {
 		
 		paramAttendanceList += '<tr>';
 		paramAttendanceList += '<td>'+paramRowNum+'</td>';
+		paramAttendanceList += '<td>'+paramMyMembership+'</td>';
 		paramAttendanceList += '<td><a href="javascript:void(0);" onclick="goAttendanceDetail('+paramMemberSeq+','+paramStoreSeq+')">'+paramName+'</a></td>';
 		paramAttendanceList += '<td><a href="javascript:void(0);" onclick="goAttendanceDetail('+paramMemberSeq+','+paramStoreSeq+')">'+paramProductName+'</a></td>';
 		
@@ -481,15 +487,16 @@ function goRefreshPage(attendanceVO) {
 function goRefreshAttendanceNoCount() {
 	var paramAttendanceList = '';
 	paramAttendanceList += '<tr>';
-	paramAttendanceList += '<th style="width: 10%;">No</th>';
+	paramAttendanceList += '<th style="width: 7%;">No</th>';
+	paramAttendanceList += '<th style="width: 10%;">회원번호</th>';
 	paramAttendanceList += '<th style="width: 15%;">회원명</th>';
-	paramAttendanceList += '<th style="width: 33%;">상품명</th>';
+	paramAttendanceList += '<th style="width: 24%;">상품명</th>';
 	paramAttendanceList += '<th style="width: 15%;">출석일</th>';
 	paramAttendanceList += '<th style="width: 15%;">연락처</th>';
-	paramAttendanceList += '<th style="width: 5%;">성별</th>';
+	paramAttendanceList += '<th style="width: 7%;">성별</th>';
 	paramAttendanceList += '<th style="width: 7%;"></th>';
 	paramAttendanceList += '</tr>';
-	paramAttendanceList += '<tr><th colspan="7" style="text-align: center;">결과가 없습니다.</th></tr>';
+	paramAttendanceList += '<tr><th colspan="8" style="text-align: center;">결과가 없습니다.</th></tr>';
 	
 	$("#attendanceHeader").text("");
 	$("#attendanceHeader").append(paramAttendanceList);

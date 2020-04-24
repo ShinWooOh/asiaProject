@@ -13,6 +13,7 @@ import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.store.dao.StoreDAO;
@@ -61,16 +62,19 @@ public class StoreServiceImpl implements StoreService{
 		return storeVO;
 	}
 	
+	@Transactional
 	@Override
 	public int insertStore(StoreVO storeVO) throws Exception {
 		return storeDAO.insertStore(storeVO);
 	}
 	
+	@Transactional
 	@Override
 	public int storeDelete(StoreVO storeVO) throws Exception {
 		return storeDAO.storeDelete(storeVO);
 	}
 
+	@Transactional
 	@Override
 	public int updateStore(StoreVO storeVO) throws Exception {
 		return storeDAO.updateStore(storeVO);
@@ -124,10 +128,5 @@ public class StoreServiceImpl implements StoreService{
 		
 		return sxssfWorkbook;
 	}
-
-
-
-
-	
 
 }

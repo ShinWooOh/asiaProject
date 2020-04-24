@@ -102,16 +102,13 @@ function insertNumber(paramNum) {
 	if(paramLength == 0){
 		paramPhone += paramNum;
 	} else {
-		if(paramLength == 3 || paramLength == 8){
-			paramPhone += "-"+paramNum;
-		} else if(paramLength == 13) {
+		if(paramLength == 5) {
 			
 		} else {
 			paramPhone += paramNum;
 		}
 	}
 	
-	/* $("#rightRow3").css("margin-top","6px"); */
 	$("#rightbtn2").val(paramPhone);
 }
 
@@ -137,7 +134,7 @@ function confirmNumber() {
         url : "/mobile/mobileAttendance",
         data:{ 	storeSeq		:	$("#storeSeq").val(),
         		storeName		:	$("#storeName").val(),
-        		phone			:	$("#rightbtn2").val(),
+        		myMembership	:	$("#rightbtn2").val(),
         		mobileAppFlag	:	$("#mobileAppFlag").val()
         	},
         success : function(data){
@@ -145,7 +142,7 @@ function confirmNumber() {
             	resultInfo(data.mobileVO);
             } else if(data.result == 'noMember'){
 				$("#rightbtn1").text("");
-				$("#rightbtn1").append("존재하지 않는 회원 정보 입니다.<br>직원 호출 부탁드리겠습니다.");
+				$("#rightbtn1").append("회원 정보가 없습니다.<br>직원 호출 부탁드리겠습니다.");
 				defaultCss();
 	            return false;
             } else if (data.result == 'adjournmentMember'){

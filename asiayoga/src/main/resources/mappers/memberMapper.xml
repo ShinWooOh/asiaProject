@@ -6,44 +6,62 @@
   <mapper namespace="com.company.asiayoga.mapper.memberMapper">
   
   	<sql id="commomPaging">
-  		LIMIT #{totalRow} OFFSET #{paramPage};
+  		LIMIT #{totalRow} OFFSET #{paramPage}
   	</sql>
   
 	<!-- 회원 목록  -->
 	<select id="memberList" parameterType="memberVO" resultType="memberVO">
   		/* memberMapper.memberList */
-		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
-				mbinfo.member_seq,
-				mbinfo.name,
-	            mbinfo.sex,
-	            mbinfo.phone,
-	            mbinfo.email,
-	            mbinfo.birth,
-	            mbinfo.join_date,
-	            mbinfo.memo,
-	            mbinfo.store_seq,
-	            ( SELECT store_name FROM storeinfo WHERE store_seq = mbinfo.store_seq) AS store_name,
-	            mbinfo.register_date,
-	            mbinfo.adjournment_state
-		FROM memberinfo mbinfo , (SELECT @ROWNUM :=0) AS R
-		WHERE 1=1
-		<choose>
-			<when test="authority != 'ROLE_ADMIN'">
-				AND mbinfo.store_seq = #{storeSeq}
-			</when>
-			<otherwise></otherwise>
-		</choose>
-		AND mbinfo.del_yn = 'N'
-		<if test="searchWord != null and searchWord != ''">
-			AND 
-			(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	mbinfo.birth LIKE CONCAT('%',#{searchWord},'%')
-				OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
-				OR 	mbinfo.email LIKE CONCAT('%',#{searchWord},'%')
-			)
-		</if>
-	    ORDER BY mbinfo.join_date DESC, row_num DESC
-	    <include refid="commomPaging"/>
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+				tempA.member_seq, 
+				tempA.name, 
+				tempA.my_membership, 
+				tempA.sex, 
+				tempA.phone, 
+				tempA.email, 
+				tempA.birth, 
+				tempA.join_date, 
+				tempA.memo, 
+				tempA.store_seq,
+				tempA.store_name,
+				tempA.register_date, 
+				tempA.adjournment_state 	
+		FROM (
+				SELECT	mbinfo.member_seq,
+						mbinfo.name,
+						mbinfo.my_membership,
+			            mbinfo.sex,
+			            mbinfo.phone,
+			            mbinfo.email,
+			            mbinfo.birth,
+			            mbinfo.join_date,
+			            mbinfo.memo,
+			            mbinfo.store_seq,
+			            ( SELECT store_name FROM storeinfo WHERE store_seq = mbinfo.store_seq) AS store_name,
+			            mbinfo.register_date,
+			            mbinfo.adjournment_state
+				FROM memberinfo mbinfo 
+				WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND mbinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
+				AND mbinfo.del_yn = 'N'
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.birth LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.email LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+			    ORDER BY mbinfo.join_date ASC
+			    <include refid="commomPaging"/>
+			    ) AS tempA, (SELECT @ROWNUM :=0) AS R
+	    ORDER BY row_num DESC
 	</select>
 	
 	<!-- 회원 목록 갯수  -->
@@ -62,6 +80,7 @@
 		<if test="searchWord != null and searchWord != ''">
 			AND 
 			(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
 				OR 	mbinfo.birth LIKE CONCAT('%',#{searchWord},'%')
 				OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
 				OR 	mbinfo.email LIKE CONCAT('%',#{searchWord},'%')
@@ -74,6 +93,7 @@
   		/* memberMapper.memberDetail */
 		SELECT	member_seq,
 				name,
+				my_membership,
 	            sex,
 	            phone,
 	            email,
@@ -90,10 +110,11 @@
 	
 	
 	<!-- 회원 정보 등록  -->
-	<insert id="memberInsert" parameterType="memberVO">
+	<insert id="memberInsert" parameterType="memberVO" useGeneratedKeys="true" keyProperty="memberSeq">
   		/* memberMapper.memberInsert */
 		INSERT INTO memberinfo
 				(	name,
+					my_membership,
 				 	sex,
 					birth,
 					phone,
@@ -107,6 +128,7 @@
 		VALUES
 				(
 					#{name},
+					#{myMembership},
 					#{sex},
 					#{birth},
 					#{phone},
@@ -137,6 +159,7 @@
   		UPDATE memberinfo 
   		<set>
   			<if test="name != null and name != ''">name = #{name},</if>
+  			<if test="myMembership != null and name != ''">my_membership = #{myMembership},</if>
   			<if test="sex != null and sex != ''">sex = #{sex},</if>
   			<if test="birth != null and birth != ''">birth = #{birth},</if>
   			<if test="phone != null and phone != ''">phone = #{phone},</if>
@@ -158,6 +181,7 @@
 		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
 				mbinfo.member_seq,
 				mbinfo.name,
+				mbinfo.my_membership,
 	            mbinfo.sex,
 	            mbinfo.phone,
 	            mbinfo.email,
@@ -189,6 +213,7 @@
 		<if test="searchWord != null and searchWord != ''">
 			AND 
 			(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
 				OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
 				OR 	mbinfo.email LIKE CONCAT('%',#{searchWord},'%')
 			)
@@ -196,7 +221,7 @@
 		AND mbinfo.del_yn = 'N'
         AND ordinfo.expiration_yn = 'N'
         AND ordinfo.del_yn = 'N'
-	     ORDER BY row_num DESC,mbinfo.join_date DESC;
+	    ORDER BY row_num DESC,mbinfo.join_date DESC
 	</select>
 	
 	<!-- 검색 조건 팝업 창에서의 회원 목록  -->
@@ -205,6 +230,7 @@
 		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
 				member_seq,
 				name,
+				my_membership,
 	            sex,
 	            phone,
 	            email,
@@ -218,6 +244,7 @@
 		<if test="searchWord != null and searchWord != ''">
 			AND 
 			(		name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	my_membership LIKE CONCAT('%',#{searchWord},'%')
 				OR 	birth LIKE CONCAT('%',#{searchWord},'%')
 				OR 	phone LIKE CONCAT('%',#{searchWord},'%')
 				OR 	email LIKE CONCAT('%',#{searchWord},'%')
@@ -227,39 +254,96 @@
 	    ORDER BY join_date DESC, row_num DESC
 	</select>
 	
-	<!-- 회원 목록 , 엑셀 다운로드 시 쓰인다.  -->
-	<select id="memberExcelDown" parameterType="memberVO" resultType="memberVO">
-  		/* memberMapper.memberExcelDown */
-		SELECT	@ROWNUM:=@ROWNUM+1 as row_num,
-				mbinfo.member_seq,
-				mbinfo.name,
-	            mbinfo.sex,
-	            mbinfo.phone,
-	            mbinfo.email,
-	            mbinfo.birth,
-	            mbinfo.join_date,
-	            mbinfo.memo,
-	            mbinfo.store_seq,
-	            mbinfo.register_date,
-	            mbinfo.adjournment_state
-		FROM memberinfo mbinfo, (SELECT @ROWNUM :=0) AS R
-		WHERE 1=1
+	<!-- 검색 조건 팝업 창에서의 상품목록  -->
+	<select id="searchProductList" parameterType="productVO" resultType="productVO">
+  		/* memberMapper.searchProductList */
+		SELECT	@ROWNUM:=@ROWNUM+1 as row_num, 
+				tempA.product_seq,
+				tempA.store_seq,
+				tempA.store_name,
+				tempA.product_name,
+				tempA.product_price,
+				tempA.modify_date
+		FROM (
+				SELECT	prdinfo.product_seq,
+						prdinfo.store_seq,
+						(SELECT store_name FROM storeinfo WHERE store_seq = prdinfo.store_seq) AS store_name,
+						prdinfo.product_name,
+						prdinfo.product_price,
+						prdinfo.modify_date
+				FROM productinfo prdinfo
+				WHERE del_yn = 'N'
+				) AS tempA , (SELECT @ROWNUM :=0) AS R
+		WHERE 1=1 
 		<choose>
 			<when test="authority != 'ROLE_ADMIN'">
-				AND mbinfo.store_seq = #{storeSeq}
+				AND tempA.store_seq = #{storeSeq}
 			</when>
 			<otherwise></otherwise>
 		</choose>
-		AND mbinfo.del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
 			AND 
-			(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	mbinfo.birth LIKE CONCAT('%',#{searchWord},'%')
-				OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
-				OR 	mbinfo.email LIKE CONCAT('%',#{searchWord},'%')
+			(		tempA.product_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.product_price LIKE CONCAT('%',#{searchWord},'%')
+				OR 	tempA.store_name LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
-	    ORDER BY mbinfo.join_date DESC, row_num DESC
+	    ORDER BY tempA.modify_date DESC
+	</select>
+	
+	<!-- 회원 목록 , 엑셀 다운로드 시 쓰인다.  -->
+	<select id="memberExcelDown" parameterType="memberVO" resultType="memberVO">
+  		/* memberMapper.memberExcelDown */
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+				tempA.member_seq, 
+				tempA.name, 
+				tempA.my_membership, 
+				tempA.sex, 
+				tempA.phone, 
+				tempA.email, 
+				tempA.birth, 
+				tempA.join_date, 
+				tempA.memo, 
+				tempA.store_seq,
+				tempA.store_name,
+				tempA.register_date, 
+				tempA.adjournment_state 	
+		FROM (
+				SELECT	mbinfo.member_seq,
+						mbinfo.name,
+						mbinfo.my_membership,
+			            mbinfo.sex,
+			            mbinfo.phone,
+			            mbinfo.email,
+			            mbinfo.birth,
+			            mbinfo.join_date,
+			            mbinfo.memo,
+			            mbinfo.store_seq,
+			            ( SELECT store_name FROM storeinfo WHERE store_seq = mbinfo.store_seq) AS store_name,
+			            mbinfo.register_date,
+			            mbinfo.adjournment_state
+				FROM memberinfo mbinfo 
+				WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND mbinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
+				AND mbinfo.del_yn = 'N'
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.birth LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.email LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+			    ORDER BY mbinfo.join_date ASC
+			    <include refid="commomPaging"/>
+			    ) AS tempA  , (SELECT @ROWNUM :=0) AS R
+	    ORDER BY row_num DESC
 	</select>
 	
 	<!-- 회원 휴회 상태 변경  -->
@@ -341,6 +425,18 @@
 				  </choose> 
 				  AND adjournment_state = 'N' 
 				  AND del_yn= 'N') AS adjournment_no
+		FROM memberinfo
 		GROUP by new_day_member,new_week_member,new_month_member,total_member,adjournment_yes,adjournment_no
 	</select>
+	
+	<!-- 회원번호 중복 체크  -->
+	<select id="myMembershipDupCheck" parameterType="memberVO" resultType="int">
+  		/* memberMapper."myMembershipDupCheck" */
+  		SELECT COUNT(1)
+  		FROM memberinfo
+  		WHERE del_yn= 'N'
+  		AND my_membership = #{myMembership}
+		AND store_seq = #{storeSeq}
+	</select>
+	
   </mapper>

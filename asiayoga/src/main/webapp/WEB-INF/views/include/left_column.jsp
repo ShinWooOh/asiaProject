@@ -20,7 +20,7 @@
 %>
 
 <!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+<aside class="main-sidebar sidebar-dark-primary elevation-4" style="height: 800px;">
     <!-- Brand Logo -->
 <%--     <a href="#" class="brand-link">
         <img src="/resources/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-1" style="opacity: .8">
@@ -54,7 +54,52 @@
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            	
+            	<!-- 통계  -->
+	            <c:choose>
+	                	<c:when test="${manageInfo.getAuthority() ne ''}">
+							<c:choose>
+								<c:when test="${nowPath eq 'statistics'}">
+									<li class="nav-item has-treeview menu-open">
+								</c:when>
+								<c:otherwise>
+									<li class="nav-item has-treeview" >
+								</c:otherwise>
+							</c:choose>
+			                    <a href="#" class="nav-link active">
+			                        <i class="nav-icon fas fa-tachometer-alt"></i>
+			                        <p>통계
+			                            <i class="right fas fa-angle-left"></i>
+			                        </p>
+			                    </a>
+			                    <ul class="nav nav-treeview">
+			                        <li class="nav-item">
+			                            <a href="/statistics/statisticsList" class="nav-link active">
+			                                <i class="far fa-circle nav-icon"></i>
+			                                <p>대시보드</p>
+			                            </a>
+			                        </li>
+			                        <li class="nav-item">
+			                            <a href="#" class="nav-link active">
+<!-- 			                            <a href="/statistics/statisticsMemberList" class="nav-link active"> -->
+			                                <i class="far fa-circle nav-icon"></i>
+			                                <p>회원 통계</p>
+			                            </a>
+			                        </li>
+			                        <li class="nav-item">
+			                            <a href="#" class="nav-link active">
+			                            <!-- <a href="/statistics/statisticsAttendanceList" class="nav-link active"> -->
+			                                <i class="far fa-circle nav-icon"></i>
+			                                <p>출석 통계</p>
+			                            </a>
+			                        </li>
+			                    </ul>
+			                </li>
+	                	</c:when>
+	            	<c:otherwise></c:otherwise>
+	            </c:choose>
             
+            	<!-- 회원  -->
                 <c:choose>
                 	<c:when test="${nowPath eq 'member'}">
 		                <li class="nav-item has-treeview menu-open">
@@ -85,6 +130,7 @@
                     </ul>
                 </li>
                 
+            	<!-- 출석  -->
                 <c:choose>
                 	<c:when test="${nowPath eq 'attendance'}">
 		                <li class="nav-item has-treeview menu-open">
@@ -117,6 +163,7 @@
                     </ul>
                 </li>
                 
+            	<!-- 결제내역  -->
 				<c:choose>
 					<c:when test="${nowPath eq 'order'}">
 						<li class="nav-item has-treeview menu-open">
@@ -127,7 +174,7 @@
 				</c:choose>
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>구매 관리
+                        <p>결제 내역
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
@@ -135,18 +182,19 @@
                         <li class="nav-item">
                             <a href="/order/orderList" class="nav-link active">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>구매 내역</p>
+                                <p>결제 내역</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="/order/orderRegister" class="nav-link active">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>구매 등록</p>
+                                <p>결제 등록</p>
                             </a>
                         </li>
                     </ul>
                 </li>
                 
+            	<!-- 판매상품  -->
                 <c:choose>
                 	<c:when test="${manageInfo.getAuthority() ne 'ROLE_STAFF'}">
 						<c:choose>
@@ -211,6 +259,7 @@
                 	<c:otherwise></c:otherwise>
                 </c:choose>
                 
+            	<!-- 매장  -->
                 <c:choose>
                 	<c:when test="${manageInfo.getAuthority() eq 'ROLE_ADMIN'}">
 						<c:choose>
@@ -246,37 +295,7 @@
                 	<c:otherwise></c:otherwise>
                 </c:choose>
                 
-				<c:choose>
-					<c:when test="${nowPath eq 'adjournment'}">
-						<li class="nav-item has-treeview menu-open">
-					</c:when>
-					<c:otherwise>
-						<li class="nav-item has-treeview" >
-					</c:otherwise>
-				</c:choose>
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>휴회
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="/adjournment/adjournmentList" class="nav-link active">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>휴회 목록</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/adjournment/adjournmentRegister" class="nav-link active">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>휴회 등록</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                
-                
+            	<!-- 직원 관리  -->
                 <c:choose>
                 	<c:when test="${manageInfo.getAuthority() ne 'ROLE_STAFF'}">
 						<c:choose>
@@ -323,15 +342,8 @@
                 	</c:when>
                 	<c:otherwise></c:otherwise>
                 </c:choose>
-              <%--  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-th"></i>
-                        <p>
-                            Simple Link
-                            <span class="right badge badge-danger">New</span>
-                        </p>
-                    </a>
-                </li>--%>
+                
+                
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

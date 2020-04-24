@@ -46,17 +46,18 @@
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <div class="content-header">
+        <div class="content-header" style="margin-bottom: -10px;">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">구매 상세</h1>
+                        <h1 class="m-0 text-dark">결제 상세</h1>
+                        <font style="color: red; font-weight: bold; font-size: 14px;" >*표시는 필수 입력입니다.</font>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item">구매 관리</li>
-                            <li class="breadcrumb-item active">구매 상세</li>
+                            <li class="breadcrumb-item">결제 내역</li>
+                            <li class="breadcrumb-item active">결제 상세</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -75,16 +76,31 @@
 	                        <table class="table table-bordered">
 	                            <tbody>
 		                            <tr>
-		                                <th>매장명</th>
-		                                <td id="storeInfo" colspan="3">
+		                                <th style="width: 15%;">이름</th>
+		                                <td style="width: 30%;">
+		                                	<c:out value="${customerOrderDetail.name}"/>
+		                                	<input type="hidden" id="memberSeq" name="memberSeq" value="${customerOrderDetail.memberSeq}">
+		                                </td>
+		                                <th style="width: 15%;">회원번호</th>
+		                                <td style="width: 30%;"><c:out value="${customerOrderDetail.myMembership}"/></td>
+		                            </tr>
+		                            <tr>
+		                                <th style="width: 15%;">연락처</th>
+		                                <td style="width: 30%;">
+		                                	<c:out value="${customerOrderDetail.phone}"/><input type="hidden" id="phone" name="phone" value="${customerOrderDetail.phone}">
+		                                </td>
+		                                <th style="width: 15%;">가입일</th>
+		                                <td style="width: 30%;"><fmt:formatDate value="${customerOrderDetail.joinDate}" pattern="yyyy-MM-dd"/></td>
+		                            </tr>
+		                            <tr>
+		                                <th style="width: 15%;">매장명</th>
+		                                <td id="storeInfo" style="width: 30%;">
 		                                	<c:out value="${customerOrderDetail.storeName}"/>
 				                            <input type="hidden" id="storeName" name="storeName" value="${customerOrderDetail.storeName}">
 				                            <input type="hidden" id="storeSeq" name="storeSeq" value="${customerOrderDetail.storeSeq}">
 				                            <input type="hidden" id="orderSeq" name="orderSeq" value="${customerOrderDetail.orderSeq}">
 		                                </td>
-		                            </tr>
-		                            <tr>
-		                                <th style="width: 15%;">상품<font style="color: red;">&nbsp;*</font></th>
+		                                <th style="width: 15%;">상품<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></th>
 		                                <td style="width: 30%;">
 		                                	<select id="productSeq" name="productSeq" onchange="goSearchProduct();">
 		                                		<option value="0">상품을 선택해주세요</option>
@@ -92,24 +108,6 @@
 			                                		<option value="${productList.productSeq}"  <c:if test="${productList.productSeq eq customerOrderDetail.productSeq}">selected</c:if> >${productList.productName}</option>
 		                                		</c:forEach>
 		                                	</select>
-		                                </td>
-		                                <th style="width: 15%;">품목명</th>
-		                                <td id= "itemImfo" style="width: 30%;">
-		                                	<c:out value="${customerOrderDetail.itemName}"/>               	
-		                                </td>
-		                            </tr>
-		                            <tr>
-		                                <th style="width: 15%;">이름<font style="color: red;">&nbsp;*</font></th>
-		                                <td style="width: 30%;">
-		                                	<c:out value="${customerOrderDetail.name}"/>
-		                                	<input type="hidden" id="memberSeq" name="memberSeq" value="${customerOrderDetail.memberSeq}">
-		                                </td>
-		                                <th style="width: 15%;">연락처<font style="color: red;">&nbsp;*</font></th>
-		                                <td style="width: 30%;">
-		                                	<input type="text" id="phone1" name="phone1" value="${customerOrderDetail.phone1}" style="margin-right: 5px; width: 15%;">&nbsp;-
-		                                	<input type="text" id="phone2" name="phone2" value="${customerOrderDetail.phone2}" style="margin-left: 5px; margin-right: 5px; width: 15%;">&nbsp;-
-		                                	<input type="text" id="phone3" name="phone3" value="${customerOrderDetail.phone3}" style="margin-left: 5px; width: 15%;">
-		                                	<input type="hidden" id="phone" name="phone" value="${customerOrderDetail.phone}">
 		                                </td>
 		                            </tr>
 		                            <tr>
@@ -122,37 +120,24 @@
 		                                	<input type="text" id="productPrice" name="productPrice" value="${customerOrderDetail.productPrice}" style="width: 20%;">
 		                                </td>
 		                            </tr>
-		                            <tr id="productCountInfo">
-		                                <th style="width: 15%;">횟수</th>
-		                                <td style="width: 30%;">
-		                                	<input type="text" id="productCount" name="productCount" value="${customerOrderDetail.productCount}" style="width: 20%;">
-		                                </td>
-		                            </tr>
-		                            <tr id ="lockerInfo">
-		                                <th style="width: 15%;">락커 번호</th>
-		                                <td  colspan="3">
-		                                	<input type="text" id="lockerSeq" name="lockerSeq" value="${customerOrderDetail.lockerSeq}" style="width: 15%;">
-		                                </td>
-		                            </tr>
 		                            <tr>
-		                                <th style="width: 15%;">시작일<font style="color: red;">&nbsp;*</font></th>
+		                                <th style="width: 15%;">시작일<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></th>
 		                                <td style="width: 30%;">
-		                                	<fmt:formatDate pattern="yyyy-MM-dd" value="${customerOrderDetail.startDay}" var="startDay" />
-		                                	<input type="text" id="startDay" name="startDay" value="${startDay}" readonly="readonly">
+		                                	<fmt:formatDate pattern="yyyy-MM-dd" value="${customerOrderDetail.startDay}" var="paramStartDay" />
+		                                	<input type="text" id="paramStartDay" name="paramStartDay" value="${paramStartDay}" readonly="readonly">
+		                                	<input type="hidden" id="startDay" name="startDay" value="${paramStartDay}" readonly="readonly">
 		                                </td>
-		                                <th style="width: 15%;">만료일<font style="color: red;">&nbsp;*</font></th>
+		                                <th style="width: 15%;">만료일<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></th>
 		                                <td style="width: 30%;">
-		                                	<fmt:formatDate pattern="yyyy-MM-dd" value="${customerOrderDetail.expirationDay}" var="expirationDay" />
-		                                	<input type="text" id="expirationDay" name="expirationDay" value="${expirationDay}" readonly="readonly">
+		                                	<fmt:formatDate pattern="yyyy-MM-dd" value="${customerOrderDetail.expirationDay}" var="paramExpirationDay" />
+		                                	<input type="text" id="paramExpirationDay" name="paramExpirationDay" value="${paramExpirationDay}" readonly="readonly">
+		                                	<input type="hidden" id="expirationDay" name="expirationDay" value="${paramExpirationDay}">
 		                                </td>
 		                            </tr>
 		                            <tr>
 		                                <th style="width: 15%;">메모</th>
-		                                <td colspan="3"><textarea id="memo" name="orderMemo" rows="3" cols="150">${customerOrderDetail.orderMemo}</textarea></td>
+		                                <td colspan="3"><textarea id="memo" name="orderMemo" rows="6" cols="150">${customerOrderDetail.orderMemo}</textarea></td>
 		                            </tr>
-		                            <tr>
-				                    	<th colspan="4"><font style="color: red;">* 는 필수 사항입니다.</font></th>
-				                    </tr>
 	                            </tbody>
 	                        </table>
                         </form:form>
@@ -236,9 +221,6 @@ $(document).ready(function() {
 		}
 	});
 	
-	$("#productCountInfo").show();
-	$("#lockerInfo").hide();
-	
 	$("#searchName").css({
 		"margin-left"		: "5px",
 		"background-color"	: "#00c0ef",
@@ -300,16 +282,6 @@ function goSearchProduct(){
 
 function adjustItemInfo(productVO){
 	
-	var paramItemInfo  = '';
-	
-	paramItemInfo = productVO.itemName;
-	paramItemInfo += '<input type="hidden" id="itemSeq" name="itemSeq" value="'+productVO.itemSeq+'">';
-	
-	$("#itemImfo").text("");
-	$("#itemImfo").append(paramItemInfo);
-	
-	$("#largeCategory").val(productVO.largeCategory);
-	
 	$("#productPrice").val(productVO.productPrice);
 	
 	if($("customerPrice").val() == 0){
@@ -320,14 +292,6 @@ function adjustItemInfo(productVO){
 		$("#customerPrice").val(productVO.productPrice);
 	}else{
 		
-	}
-	
-	if(productVO.largeCategory == '002'){
-		$("#lockerInfo").show();
-		$("#productCountInfo").hide();
-	}else{
-		$("#lockerInfo").hide();
-		$("#productCountInfo").show();
 	}
 	
 }
@@ -352,12 +316,12 @@ function goOrderUpdate(){
 		return false;
 	}
 	
-	if($("#startDay").val() == ''){
+	if($("#paramStartDay").val() == ''){
 		alert("시작일자를 선택해주세요.");
 		return false;
 	}
 	
-	if($("#expirationDay").val() == ''){
+	if($("#paramExpirationDay").val() == ''){
 		alert("만료일자를 선택해주세요.");
 		return false;
 	}
@@ -365,12 +329,6 @@ function goOrderUpdate(){
 	
 	var updateConfirm = confirm("수정 하시겠습니까?");
 	if(updateConfirm){
-		
-		if($("#largeCategory").val() == '002'){
-			$("#productCount").val(0);
-		}else{
-			$("#lockerSeq").val(0);
-		}
 		orderUpdate();
 	}
 	
@@ -379,8 +337,8 @@ function goOrderUpdate(){
 function orderUpdate(){
 	
 	
-	var startDay = $("#startDay").val();
-	var expirationDay = $("#expirationDay").val();
+	var startDay = $("#paramStartDay").val();
+	var expirationDay = $("#paramExpirationDay").val();
 	
 	var startDateSplit = startDay.split("-");
 	var expirationDateSplit = expirationDay.split("-");

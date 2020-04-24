@@ -45,7 +45,7 @@
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <div class="content-header">
+        <div class="content-header" style="margin-bottom: -10px;">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
@@ -67,89 +67,88 @@
         <section class="content container-fluid" style="background-color: #FFFFFF">
 
             <div class="col-lg-12">
-            <form:form action="/member/memberUpdate" id="memberUpdate" name="memberUpdate" modelAttribute="memberVO" method="POST">
-                <div>
-                    <div>
-                    	<c:set var="memberDetail" value="${memberDetail}" />
-                        <table class="table table-bordered">
-                            <tbody>
-                            <tr>
-                            	<td>회원번호</td>
-                            	<td>
-                            		<input type="hidden" id="memberSeq" name="memberSeq" value="${memberDetail.memberSeq}">
-									<c:out value="${memberDetail.memberSeq}"/>
-								</td>
-                            </tr>
-                            <tr>
-                            	<td>회원명</td>
-                            	<td>
-                            		<c:out value="${memberDetail.name}"/>
-									<input type="hidden" id="name" name="name" value="${memberDetail.name}">
-                            	</td>
-                            </tr>
-                            <tr>
-                            	<td>성별</td>
-                            	<td>
-	                            	<c:choose>
-	                            		<c:when test="${memberDetail.sex eq 'M'}">남</c:when>
-	                            		<c:when test="${memberDetail.sex eq 'W'}">여</c:when>
-	                            		<c:otherwise></c:otherwise>
-	                            	</c:choose>
-									<input type="hidden" id="sex" name="sex" value="${memberDetail.sex}">
-                            	</td>
-                            </tr>
-                            <tr>
-                            	<td>연락처</td>
-                            	<td>
-                            		<c:out value="${memberDetail.phone}"/>
-									<input type="hidden" id="phone" name="phone" value="${memberDetail.phone}">
-                            	</td>
-                            </tr>
-                            <tr>
-                            	<td>이메일</td>
-                            	<td>
-                            		<c:out value="${memberDetail.email}"/>
-									<input type="hidden" id="email" name="email" value="${memberDetail.email}">
-                            	</td>
-                            </tr>
-                            <tr>
-                            	<td>생년월일</td>
-                            	<td>
-                            		<c:out value="${memberDetail.birth}"/>
-									<input type="hidden" id="birth" name="birth" value="${memberDetail.birth}">
-                            	</td>
-                            </tr>
-                            <tr>
-                            	<td>등록매장</td>
-                            	<td>
-                            		<c:out value="${memberDetail.storeName}"/>
-                            		<input type="hidden" id="storeName" name="storeName" value="${memberDetail.storeName}">
-                            		<input type="hidden" id="storeSeq" name="storeSeq" value="${memberDetail.storeSeq}">
-                            	</td>
-                            </tr>
-                            <tr>
-                            	<td>가입일</td>
-                            	<td>
-                            		<fmt:formatDate value="${memberDetail.joinDate}" pattern="yyyy-MM-dd" var="joinDate"/>${joinDate}
-                            		<input type="hidden" id="joinDate" name="joinDate" value="${joinDate}">
-                            	</td>
-                            </tr>
-                            <tr>
-                            	<td>메모</td> 
-                            	<td>
-                            		<textarea rows="5" cols="100" readonly="readonly"><c:out value="${memberDetail.memo}"/></textarea>
-                            		<input type="hidden" id="memo" name="memo" value="${memberDetail.memo}">
-                            	</td>                           	
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div style="margin-top: 10px;">
-                		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goMemberList();" style="float: left; width:80px;">
-                		<input type="button" class="btn btn-block btn-success" value="수정" onclick="goUpdateMember();" style="float: right; width:80px;">
-                	</div>
-                </div>
-                </form:form>
+	            <form:form action="/member/memberUpdate" id="memberUpdate" name="memberUpdate" modelAttribute="memberVO" method="POST">
+	                <div>
+	                    <div>
+	                    	<c:set var="memberDetail" value="${memberDetail}" />
+	                        <table class="table table-bordered">
+	                            <tbody>
+	                            <tr>
+	                            	<td>회원명</td>
+	                            	<td colspan="3">
+	                            		<c:out value="${memberDetail.name}"/>
+										<input type="hidden" id="name" name="name" value="${memberDetail.name}">
+	                            	</td>
+	                            </tr>
+	                            <tr>
+	                            	<td>회원번호</td>
+	                            	<td colspan="3">
+	                            		<input type="hidden" id="memberSeq" name="memberSeq" value="${memberDetail.memberSeq}">
+	                            		<input type="hidden" id="myMembership" name="myMembership" value="${memberDetail.myMembership}">
+										<c:out value="${memberDetail.myMembership}"/>
+									</td>
+	                            </tr>
+	                            <tr>
+	                            	<td style="width: 8%;">생년월일</td>
+	                            	<td style="width: 25%;">
+	                            		<c:out value="${memberDetail.birth}"/>
+										<input type="hidden" id="birth" name="birth" value="${memberDetail.birth}">
+	                            	</td>
+	                            	<td style="width: 8%;">성별</td>
+	                            	<td style="width: 25%;">
+		                            	<c:choose>
+		                            		<c:when test="${memberDetail.sex eq 'M'}">남</c:when>
+		                            		<c:when test="${memberDetail.sex eq 'W'}">여</c:when>
+		                            		<c:otherwise></c:otherwise>
+		                            	</c:choose>
+										<input type="hidden" id="sex" name="sex" value="${memberDetail.sex}">
+	                            	</td>
+	                            </tr>
+	                            <tr>
+	                            	<td>연락처</td>
+	                            	<td colspan="3">
+	                            		<c:out value="${memberDetail.phone}"/>
+										<input type="hidden" id="phone" name="phone" value="${memberDetail.phone}">
+	                            	</td>
+	                            </tr>
+	                            <tr>
+	                            	<td>이메일</td>
+	                            	<td colspan="3">
+	                            		<c:out value="${memberDetail.email}"/>
+										<input type="hidden" id="email" name="email" value="${memberDetail.email}">
+	                            	</td>
+	                            </tr>
+	                            <tr>
+	                            	<td style="width: 8%;">등록매장</td>
+	                            	<td style="width: 25%;">
+	                            		<c:out value="${memberDetail.storeName}"/>
+	                            		<input type="hidden" id="storeName" name="storeName" value="${memberDetail.storeName}">
+	                            		<input type="hidden" id="storeSeq" name="storeSeq" value="${memberDetail.storeSeq}">
+	                            	</td>
+	                            	<td style="width: 8%;">가입일</td>
+	                            	<td style="width: 25%;">
+	                            		<fmt:formatDate value="${memberDetail.joinDate}" pattern="yyyy-MM-dd" var="joinDate"/>${joinDate}
+	                            		<input type="hidden" id="joinDate" name="joinDate" value="${joinDate}">
+	                            	</td>
+	                            </tr>
+	                            <tr>
+	                            </tr>
+	                            <tr>
+	                            	<td>메모</td> 
+	                            	<td colspan="5">
+	                            		<textarea rows="6" cols="150" readonly="readonly"><c:out value="${memberDetail.memo}"/></textarea>
+	                            		<input type="hidden" id="memo" name="memo" value="${memberDetail.memo}">
+	                            	</td>                           	
+	                            </tr>
+	                            </tbody>
+	                        </table>
+	                    </div>
+	                    <div style="margin-top: 10px;">
+	                		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goMemberList();" style="float: left; width:80px;">
+	                		<input type="button" class="btn btn-block btn-success" value="수정" onclick="goUpdateMember();" style="float: right; width:80px;">
+	                	</div>
+	                </div>
+	            </form:form>
             </div>
 
         </section>
@@ -179,9 +178,21 @@
 <!-- Bootstrap 4 -->
 <script src="${pageContext.request.contextPath}/resources/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
-<script src="${pageContext.request.contextPath}/resources/dist/js/adminlte.min.js"></script>11
+<script src="${pageContext.request.contextPath}/resources/dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
 
+function defaultCss() {
+	$("#checkMyMembership").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
+}
 function goUpdateMember(){
 	
 	var insertConfirm = confirm("확인 버튼 클릭 시 수정화면으로 이동합니다.");

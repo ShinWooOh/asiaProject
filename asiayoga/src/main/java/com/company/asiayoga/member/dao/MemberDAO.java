@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.company.asiayoga.adjournment.domain.AdjournmentVO;
 import com.company.asiayoga.member.domain.MemberVO;
+import com.company.asiayoga.product.domain.ProductVO;
 import com.company.asiayoga.store.domain.StoreVO;
 
 @Repository
@@ -65,6 +66,11 @@ public class MemberDAO {
 		return sqlSession.selectList(STORE_NAMESPACE+".storeSearchList", storeVO);
 	}
 	
+	// 팝업에서의 상품 목록
+	public List<ProductVO> searchProductList(ProductVO productVO){
+		return sqlSession.selectList(MEMBER_NAMESPACE+".searchProductList", productVO);
+	}
+	
 	// 회원 휴회 상태 변경
 	public int updateAdjournmentState(MemberVO memberVO) {
 		return sqlSession.update(MEMBER_NAMESPACE+".updateAdjournmentState", memberVO);
@@ -73,5 +79,10 @@ public class MemberDAO {
 	// 회원 통계 
 	public MemberVO memberStatistics(MemberVO memberVO) {
 		return sqlSession.selectOne(MEMBER_NAMESPACE+".memberStatistics", memberVO);
+	}
+	
+	// 회원번호 중복 체크
+	public int myMembershipDupCheck(MemberVO memberVO) throws Exception{
+		return sqlSession.selectOne(MEMBER_NAMESPACE+".myMembershipDupCheck", memberVO);
 	}
 }

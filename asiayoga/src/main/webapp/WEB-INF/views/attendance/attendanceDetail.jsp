@@ -45,7 +45,7 @@
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <div class="content-header">
+        <div class="content-header" style="margin-bottom: -10px;">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
@@ -81,7 +81,7 @@
 	                            </tr>
                             	<c:set var="memberDetail" value="${memberDetail}" />
 	                            <tr>
-	                            	<td align="center"><c:out value="${memberDetail.memberSeq}"/></td>
+	                            	<td align="center"><c:out value="${memberDetail.myMembership}"/></td>
 	                            	<td><c:out value="${memberDetail.name}"/></td>
 	                            	<td><c:out value="${memberDetail.phone}"/></td>
 	                            	<td><c:out value="${memberDetail.email}"/></td>

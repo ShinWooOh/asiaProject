@@ -14,16 +14,24 @@ import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.company.asiayoga.member.dao.MemberDAO;
 import com.company.asiayoga.member.domain.MemberVO;
+import com.company.asiayoga.order.dao.OrderDAO;
+import com.company.asiayoga.order.domain.OrderVO;
+import com.company.asiayoga.product.domain.ProductVO;
 import com.company.asiayoga.store.domain.StoreVO;
 
 @Service
+@Transactional
 public class MemberServiceImpl implements MemberService {
 	
 	@Inject
 	private MemberDAO memberDAO;
+	
+	@Inject
+	private OrderDAO orderDAO;
 
 	@Override
 	public List<MemberVO> memberList(MemberVO memberVO) throws Exception {
@@ -41,15 +49,41 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public int memberInsert(MemberVO memberVO) throws Exception {
-		return memberDAO.memberInsert(memberVO);
+	public int memberInsert(MemberVO memberVO){
+		
+		int memberSeq = 0;
+		int result = 0;
+		OrderVO orderVO = new OrderVO();
+
+		// 회원 등록
+		memberSeq = memberDAO.memberInsert(memberVO);
+		
+		// 신규 회원 등록 시 회원 등록 후 상품 등록 
+		if(memberSeq != 0) {
+			orderVO.setStoreSeq(memberVO.getStoreSeq());
+			orderVO.setProductSeq(memberVO.getProductSeq());
+			orderVO.setMemberSeq(memberVO.getMemberSeq());
+			orderVO.setStartDay(memberVO.getStartDay());
+			orderVO.setExpirationDay(memberVO.getExpirationDay());
+			orderVO.setProductCount(0);
+			orderVO.setProductPrice(memberVO.getProductPrice());
+			orderVO.setCustomerPrice(memberVO.getCustomerPrice());
+			orderVO.setOrderMemo(memberVO.getMemo());
+			orderVO.setLockerSeq(0);
+			orderVO.setRegisterId(memberVO.getRegisterId());
+			result = orderDAO.insertOrder(orderVO);
+		}
+		
+		return result;
 	}
 
+	@Transactional
 	@Override
 	public int memberDel(MemberVO memberVO) throws Exception {
 		return memberDAO.memberDel(memberVO);
 	}
 
+	@Transactional
 	@Override
 	public int memberEdit(MemberVO memberVO) throws Exception {
 		return memberDAO.memberEdit(memberVO);
@@ -74,7 +108,7 @@ public class MemberServiceImpl implements MemberService {
 		list = memberDAO.memberExcelDown(memberVO);
 		
 		row = sheet.createRow(0);
-		String[] headerKey = {"No","회원명","생년웡일","연락처","이메일","성별","휴회여부","가입일"};
+		String[] headerKey = {"No","회원번호","매장명","회원명","생년웡일","연락처","이메일","성별","휴회여부","가입일"};
 
 		
 		for(int i = 0; i < headerKey.length; i++) {
@@ -91,18 +125,24 @@ public class MemberServiceImpl implements MemberService {
 			cell.setCellValue(vo.getRowNum());
 			
 			cell = row.createCell(1);
-			cell.setCellValue(vo.getName());
+			cell.setCellValue(vo.getMyMembership());
 			
 			cell = row.createCell(2);
-			cell.setCellValue(vo.getBirth());
+			cell.setCellValue(vo.getStoreName());
 			
 			cell = row.createCell(3);
-			cell.setCellValue(vo.getPhone());
+			cell.setCellValue(vo.getName());
 			
 			cell = row.createCell(4);
-			cell.setCellValue(vo.getEmail());
+			cell.setCellValue(vo.getBirth());
 			
 			cell = row.createCell(5);
+			cell.setCellValue(vo.getPhone());
+			
+			cell = row.createCell(6);
+			cell.setCellValue(vo.getEmail());
+			
+			cell = row.createCell(7);
 			if(vo.getSex().equals("M")) {
 				cell.setCellValue("남");
 			} else if(vo.getSex().equals("W")) {
@@ -111,7 +151,7 @@ public class MemberServiceImpl implements MemberService {
 				cell.setCellValue("");
 			}
 			
-			cell = row.createCell(6);
+			cell = row.createCell(8);
 			if(vo.getAdjournmentState().equals("N")) {
 				cell.setCellValue("미휴회");
 			} else if(vo.getAdjournmentState().equals("Y")) {
@@ -120,7 +160,7 @@ public class MemberServiceImpl implements MemberService {
 				cell.setCellValue("");
 			}
 
-			cell = row.createCell(7);
+			cell = row.createCell(9);
 			Date date = vo.getJoinDate();
 			Timestamp ts = new Timestamp(date.getTime());
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -136,6 +176,12 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	public List<ProductVO> searchProductList(ProductVO productVO) throws Exception {
+		return memberDAO.searchProductList(productVO);
+	}
+	
+	@Transactional
+	@Override
 	public int updateAdjournmentState(MemberVO memberVO) throws Exception {
 		return memberDAO.updateAdjournmentState(memberVO);
 	}
@@ -144,6 +190,14 @@ public class MemberServiceImpl implements MemberService {
 	public MemberVO memberStatistics(MemberVO memberVO) throws Exception {
 		return memberDAO.memberStatistics(memberVO);
 	}
+
+	@Override
+	public int myMembershipDupCheck(MemberVO memberVO) throws Exception {
+		return memberDAO.myMembershipDupCheck(memberVO);
+	}
+
+	
+	
 	
 
 }

@@ -15,10 +15,11 @@
 		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
 				temp.attendance_seq,
 	            temp.member_seq,
+	            temp.my_membership,
 				temp.product_seq,
-				case when temp.product_name is null then "일반출석"
-					 else temp.product_name
-				 end as product_name,  
+				CASE WHEN temp.product_seq = "5" THEN "일반출석"
+					 ELSE temp.product_name
+				 END AS product_name,  
 				temp.name,
 	            temp.phone,
 	            temp.sex,
@@ -34,6 +35,7 @@
 						atdinfo.product_seq,
 						( SELECT product_name FROM productinfo WHERE product_seq = atdinfo.product_seq ) AS product_name,
 						( SELECT name FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS name,
+						( SELECT my_membership FROM memberinfo WHERE member_seq = atdinfo.member_seq ) AS my_membership,
 						( SELECT phone FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS phone,
 						( SELECT sex FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS sex,
 						atdinfo.attendance_date,
@@ -59,6 +61,7 @@
 		AND 
 				(		temp.name LIKE CONCAT('%',#{searchWord},'%')
 					OR 	temp.phone LIKE CONCAT('%',#{searchWord},'%')
+					OR 	temp.my_membership LIKE CONCAT('%',#{searchWord},'%')
 					OR 	product_name LIKE CONCAT('%',#{searchWord},'%')
 					OR 	DATE_FORMAT(temp.attendance_date, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
 				)
@@ -76,6 +79,7 @@
 						atdinfo.product_seq,
 						( SELECT product_name FROM productinfo WHERE product_seq = atdinfo.product_seq ) AS product_name,
 						( SELECT name FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS name,
+						( SELECT my_membership FROM memberinfo WHERE member_seq = atdinfo.member_seq ) AS my_membership,
 						( SELECT phone FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS phone,
 						( SELECT sex FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS sex,
 						atdinfo.attendance_date,
@@ -101,6 +105,7 @@
 		AND 
 				(		temp.name LIKE CONCAT('%',#{searchWord},'%')
 					OR 	temp.phone LIKE CONCAT('%',#{searchWord},'%')
+					OR 	temp.my_membership LIKE CONCAT('%',#{searchWord},'%')
 					OR 	temp.product_name LIKE CONCAT('%',#{searchWord},'%')
 					OR 	DATE_FORMAT(temp.attendance_date, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
 				)
@@ -190,7 +195,10 @@
 		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
 				temp.attendance_seq,
 	            temp.member_seq,
-				temp.product_name,
+	            temp.my_membership,
+				CASE WHEN temp.product_seq = "5" THEN "일반출석"
+					 ELSE temp.product_name
+				 END AS product_name,  
 				temp.name,
 	            temp.phone,
 	            temp.sex,
@@ -201,6 +209,7 @@
 						atdinfo.product_seq,
 						( SELECT product_name FROM productinfo WHERE product_seq = atdinfo.product_seq ) AS product_name,
 						( SELECT name FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS name,
+						( SELECT my_membership FROM memberinfo WHERE member_seq = atdinfo.member_seq ) AS my_membership,
 						( SELECT phone FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS phone,
 						( SELECT sex FROM memberinfo WHERE member_seq = atdinfo.member_seq) AS sex,
 						atdinfo.attendance_date,
@@ -221,6 +230,7 @@
 		AND 
 				(		temp.name LIKE CONCAT('%',#{searchWord},'%')
 					OR 	temp.phone LIKE CONCAT('%',#{searchWord},'%')
+					OR 	temp.my_membership LIKE CONCAT('%',#{searchWord},'%')
 					OR 	temp.product_name LIKE CONCAT('%',#{searchWord},'%')
 					OR 	DATE_FORMAT(temp.attendance_date, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
 				)

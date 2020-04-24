@@ -46,7 +46,7 @@
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <div class="content-header">
+        <div class="content-header" style="margin-bottom: -10px;">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
@@ -79,16 +79,6 @@
 	                                	&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="authority" name="authority" value="ROLE_STAFF">&nbsp;직원
 	                                </td>
 	                            </tr>
-	                            <tr>
-	                                <th style="width: 10%">직급명</th>
-	                                <td>
-	                                	<input type="text" id="groupName" name="groupName">
-	                                	<input type="hidden" id="paramName" name="paramName" value="">
-	                                	<input type="hidden" id="dupCheckYn" name="dupCheckYn" value="N">
-	                                	<input type="button" id="dupCheck" name="dupCheck" onclick="goDupCheck();" value="중복체크">
-	                                	&nbsp;<font id="idMent" style="color:red; display: none;"></font>
-	                                </td>
-	                            </tr>
 	                            <tr id="storeInfo">
 	                                <th style="width: 10%">매장명</th>
 	                                <td>
@@ -101,6 +91,16 @@
 			                                	<%= manageInfo.getStoreName() %>
 	                                		</c:otherwise>
 	                                	</c:choose>
+	                                </td>
+	                            </tr>
+	                            <tr>
+	                                <th style="width: 10%">직급명</th>
+	                                <td>
+	                                	<input type="text" id="groupName" name="groupName">
+	                                	<input type="hidden" id="paramName" name="paramName" value="">
+	                                	<input type="hidden" id="dupCheckYn" name="dupCheckYn" value="N">
+	                                	<input type="button" id="dupCheck" name="dupCheck" onclick="goDupCheck();" value="중복체크">
+	                                	&nbsp;<font id="idMent" style="color:red; display: none;"></font>
 	                                </td>
 	                            </tr>
                             </tbody>
@@ -189,19 +189,16 @@ function goManageGroupRegister(){
 		$("#dupCheckYn").val('Y'); 
 	}else{
 		$("#dupCheckYn").val('N'); 
-		
 	}
 	
 	if($("#dupCheckYn").val() == 'N'){
 		alert("직급명 중복체크를 해주세요.");
 		return false;
 	}
-	if($("#checkAuthority").val()== '1'){
-		if($("#storeInfo option:selected").val()== '000'){
-			alert("매장선택을 해주세요.");
-			return false;
-		} 
-	}
+	if($("#paramStoreName").val()== ''){
+		alert("매장선택을 해주세요.");
+		return false;
+	} 
 	
 	var insertConfirm = confirm("직급을 등록 하시겠습니까?");
 	if(insertConfirm){
@@ -214,9 +211,6 @@ function manageGroupRegister(){
 	
 	$("#manageGroupInfo #authority").val($("input[name='authority']:checked").val());
 	$("#manageGroupInfo #groupName").val($("#groupName").val());
-	if($("#checkAuthority").val()== '1'){
-		$("#manageGroupInfo #storeSeq").val($("#storeInfo option:selected").val());
-	}
 	
 	$.ajax({
 		type: 'POST',

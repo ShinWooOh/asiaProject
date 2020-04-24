@@ -24,13 +24,14 @@
  		/* mobileMapper.mobileMeberInfo */
 		SELECT	member_seq,
 				name,
+				my_membership,
 	            sex,
 	            phone,
 	            store_seq,
 	            adjournment_state,
 	            register_date
 		FROM memberinfo
-	    WHERE phone = #{phone}
+	    WHERE my_membership = #{myMembership}
 	    AND store_seq = #{storeSeq}
 	</select>
 	
@@ -39,6 +40,7 @@
 		/* mobileMapper.mobileInsertAttendance */
 		INSERT INTO attendanceinfo
 				( 	member_seq,
+					product_seq,
 				  	attendance_date,
 				  	register_date,
 				  	register_id,
@@ -48,6 +50,7 @@
 				)
 		VALUES
 				( 	#{memberSeq},
+					#{productSeq},
 				  	now(),
 				  	now(),
 				  	'admin',

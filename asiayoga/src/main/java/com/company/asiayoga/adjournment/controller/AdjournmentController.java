@@ -136,7 +136,6 @@ public class AdjournmentController {
  			
  		}
  		
- 		
  		// 경로 체크
  		String currentPath = (String)request.getSession().getAttribute("nowPath");
  		if(!currentPath.equals(menuFirstRoot)) {

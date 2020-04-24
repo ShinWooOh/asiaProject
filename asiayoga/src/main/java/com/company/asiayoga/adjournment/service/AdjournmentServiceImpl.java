@@ -46,6 +46,7 @@ public class AdjournmentServiceImpl implements AdjournmentService{
 		return adjournmentDAO.adjournmentTotalCount(adjournmentVO);
 	}
 	
+	@Transactional
 	@Override
 	public int insertAdjournment(AdjournmentVO adjournmentVO) throws Exception {
 		
@@ -78,7 +79,7 @@ public class AdjournmentServiceImpl implements AdjournmentService{
 		return paramResult;
 	}
 	
-	@Transactional(rollbackFor =Exception.class)
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public int updateAdjournmentState(AdjournmentVO adjournmentVO) throws Exception {
 		

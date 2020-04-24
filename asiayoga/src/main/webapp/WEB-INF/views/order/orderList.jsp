@@ -48,17 +48,17 @@
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <div class="content-header">
+        <div class="content-header" style="margin-bottom: -10px;">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">구매 내역</h1>
+                        <h1 class="m-0 text-dark">결제 내역</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item">구매</li>
-                            <li class="breadcrumb-item active">구매 내역</li>
+                            <li class="breadcrumb-item">결제 내역</li>
+                            <li class="breadcrumb-item active">결제 내역</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -89,12 +89,17 @@
 								<input type="search" id="searchWord" name="searchWord" class="form-control input-sm"  oninput="goChangeOrderList();">
 							</label>
 						</div>
-						<div class="dataTables_filter" id="excelBox">
-							<label>
-								<a class="far fa-file-excel fa-2x" style="cursor: pointer; margin-right: -20px;"></a>
-								<input type="button" class="excelBtn" id="excelDown" name="excelDown" onclick="orderExcelDown(${orderVO.storeSeq});" value="엑셀 다운로드" >
-							</label>
-						</div> 
+						<c:choose>
+							<c:when test="${manageInfo.getAuthority() ne 'ROLE_STAFF'}">
+								<div class="dataTables_filter" id="excelBox">
+									<label>
+										<a class="far fa-file-excel fa-2x" style="cursor: pointer; margin-right: -20px;"></a>
+										<input type="button" class="excelBtn" id="excelDown" name="excelDown" onclick="orderExcelDown(${orderVO.storeSeq});" value="엑셀 다운로드" >
+									</label>
+								</div> 
+							</c:when>
+							<c:otherwise></c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 				<div class="row" style="width: 100%; padding: 5px;">
@@ -106,13 +111,14 @@
 			                            <tr>
 			                                <th style="width: 7%;">No</th>
 			                                <th style="width: 14%;">매장</th>
-			                                <th style="width: 12%;">품목구분</th>
-			                                <th style="width: 18%;">상품</th>
+			                                <th style="width: 7%;">회원번호</th>
 			                                <th style="width: 8%;">이름</th>
+			                                <th style="width: 15%;">상품</th>
+			                                <th style="width: 9%;">고객 구매 가격</th>
 			                                <th style="width: 10%;">연락처</th>
 			                                <th style="width: 8%;">시작일</th>
 			                                <th style="width: 8%;">만료일</th>
-			                                <th style="width: 8%;">만료여부</th>
+			                                <th style="width: 7%;">만료여부</th>
 			                                <th style="width: 7%"></th>
 			                            </tr>
 			                            <c:choose>
@@ -121,9 +127,12 @@
 						                            <tr>
 						                            	<td>${orderList.rowNum}</td>
 						                            	<td>${orderList.storeName}</td>
-						                            	<td>${orderList.itemName}</td>
-						                            	<td><a href="#" onclick="orderDetail(${orderList.memberSeq},${orderList.orderSeq},${orderList.storeSeq});">${orderList.productName}</a></td>
+						                            	<td>${orderList.myMembership}</td>
 						                            	<td><a href="#" onclick="orderDetail(${orderList.memberSeq},${orderList.orderSeq},${orderList.storeSeq});">${orderList.name}</a></td>
+						                            	<td><a href="#" onclick="orderDetail(${orderList.memberSeq},${orderList.orderSeq},${orderList.storeSeq});">${orderList.productName}</a></td>
+						                            	<td>
+						                            		${orderList.customerPrice}
+						                            	</td>
 						                            	<td>${orderList.phone}</td>
 						                            	<td><fmt:formatDate value="${orderList.startDay}" pattern="yyyy-MM-dd"/></td>
 						                            	<td><fmt:formatDate value="${orderList.expirationDay}" pattern="yyyy-MM-dd"/></td>
@@ -133,7 +142,7 @@
 					                            </c:forEach>
 			                            	</c:when>
 			                            	<c:otherwise>
-	                            				<tr><th colspan="10" style="text-align: center;">결과가 없습니다.</th></tr>
+	                            				<tr><th colspan="11" style="text-align: center;">결과가 없습니다.</th></tr>
 		                            		</c:otherwise>
 			                            </c:choose>
 		                            </tbody>
@@ -144,13 +153,13 @@
 				</div>
 				<div class="row" style="width: 100%; padding: 5px; margin-top: -25px;">
 					<div class="col-sm-5">
-						<div class="dataTables_info" role="status" aria-live="polite">
+<!-- 						<div class="dataTables_info" role="status" aria-live="polite">
 						<ul class="pagination">
 							<li class="paginate_button active">
 								총 100개 중 1번 부터10번까지의 게시물
 							</li>
 						</ul>
-						</div>
+						</div> -->
 					</div>
 					<div class="col-sm-7">
 						<div class="dataTables_paginate paging_simple_numbers"  style="text-align: right;">
@@ -348,16 +357,18 @@ function goChangeOrderList() {
 
 function goRefreshOrderList(orderList) {
 	var paramOrderList = '';
+	
 	paramOrderList += '<tr>';
-	paramOrderList += '<th style="width: 5%;">No</th>';
+	paramOrderList += '<th style="width: 7%;">No</th>';
 	paramOrderList += '<th style="width: 14%;">매장</th>';
-	paramOrderList += '<th style="width: 12%;">품목구분</th>';
-	paramOrderList += '<th style="width: 18%;">상품</th>';
+	paramOrderList += '<th style="width: 7%;">회원번호</th>';
 	paramOrderList += '<th style="width: 8%;">이름</th>';
+	paramOrderList += '<th style="width: 15%;">상품</th>';
+	paramOrderList += '<th style="width: 9%;">고객 구매 가격</th>';
 	paramOrderList += '<th style="width: 10%;">연락처</th>';
 	paramOrderList += '<th style="width: 8%;">시작일</th>';
 	paramOrderList += '<th style="width: 8%;">만료일</th>';
-	paramOrderList += '<th style="width: 8%;">만료여부</th>';
+	paramOrderList += '<th style="width: 7%;">만료여부</th>';
 	paramOrderList += '<th style="width: 7%"></th>';
 	paramOrderList += '</tr>';
 	
@@ -367,6 +378,8 @@ function goRefreshOrderList(orderList) {
 		var paramStoreSeq = 0;
 		var paramProductSeq = 0;
 		var paramMemberSeq = 0;
+		var paramMyMembership = 0;
+		var paramCustomerPrice = 0;
 		var paramName ='';
 		var paramPhone = '';
 		var paramStartDay = '';
@@ -374,13 +387,14 @@ function goRefreshOrderList(orderList) {
 		var paramExpirationYn = '';
 		var paramStoreName = '';
 		var paramProductName = '';
-		var paramItemName = '';
 		
 		paramRowNum = orderList[i].rowNum;
 		paramOrderSeq = orderList[i].orderSeq;
 		paramStoreSeq = orderList[i].storeSeq;
 		paramProductSeq = orderList[i].productSeq;
 		paramMemberSeq = orderList[i].memberSeq;
+		paramMyMembership = orderList[i].myMembership;
+		paramCustomerPrice = orderList[i].customerPrice;
 		paramName = orderList[i].name;
 		paramPhone = orderList[i].phone;
 		paramStartDay = orderList[i].startDay;
@@ -388,14 +402,14 @@ function goRefreshOrderList(orderList) {
 		paramExpirationYn = orderList[i].expirationYn;
 		paramStoreName = orderList[i].storeName;
 		paramProductName = orderList[i].productName;
-		paramItemName = orderList[i].itemName;
 		
 		paramOrderList += '<tr>';
 		paramOrderList += '<td>'+paramRowNum+'</td>';
 		paramOrderList += '<td>'+paramStoreName+'</td>';
-		paramOrderList += '<td>'+paramItemName+'</td>';
-		paramOrderList += '<td><a href="javascript:void(0);" onclick="orderDetail('+paramMemberSeq+','+paramOrderSeq+','+paramStoreSeq+')">'+paramProductName+'</a></td>';
+		paramOrderList += '<td>'+paramMyMembership+'</td>';
 		paramOrderList += '<td><a href="javascript:void(0);" onclick="orderDetail('+paramMemberSeq+','+paramOrderSeq+','+paramStoreSeq+')">'+paramName+'</a></td>';
+		paramOrderList += '<td><a href="javascript:void(0);" onclick="orderDetail('+paramMemberSeq+','+paramOrderSeq+','+paramStoreSeq+')">'+paramProductName+'</a></td>';
+		paramOrderList += '<td>'+paramCustomerPrice+'</td>';
 		paramOrderList += '<td>'+paramPhone+'</td>';
 		
 		var startDate = new Date(paramStartDay);
@@ -487,17 +501,19 @@ function goRefreshPage(orderVO) {
 function goRefreshOrderNoCount() {
 	var paramOrderList = '';
 	paramOrderList += '<tr>';
-	paramOrderList += '<th style="width: 10%;">No</th>';
-	paramOrderList += '<th style="width: 15%;">회원명</th>';
-	paramOrderList += '<th style="width: 10%;">생년월일</th>';
-	paramOrderList += '<th style="width: 16%;">연락처</th>';
-	paramOrderList += '<th style="width: 20%;">이메일</th>';
-	paramOrderList += '<th style="width: 5%;">성별</th>';
-	paramOrderList += '<th style="width: 7%;">휴회여부</th>';
-	paramOrderList += '<th style="width: 10%;">가입일</th>';
-	paramOrderList += '<th style="width: 7%;"></th>';
+	paramOrderList += '<th style="width: 7%;">No</th>';
+	paramOrderList += '<th style="width: 14%;">매장</th>';
+	paramOrderList += '<th style="width: 7%;">회원번호</th>';
+	paramOrderList += '<th style="width: 8%;">이름</th>';
+	paramOrderList += '<th style="width: 15%;">상품</th>';
+	paramOrderList += '<th style="width: 9%;">고객 구매 가격</th>';
+	paramOrderList += '<th style="width: 10%;">연락처</th>';
+	paramOrderList += '<th style="width: 8%;">시작일</th>';
+	paramOrderList += '<th style="width: 8%;">만료일</th>';
+	paramOrderList += '<th style="width: 7%;">만료여부</th>';
+	paramOrderList += '<th style="width: 7%"></th>';
 	paramOrderList += '</tr>';
-	paramOrderList += '<tr><th colspan="9" style="text-align: center;">결과가 없습니다.</th></tr>';
+	paramOrderList += '<tr><th colspan="11" style="text-align: center;">결과가 없습니다.</th></tr>';
 	
 	$("#orderHeader").text("");
 	$("#orderHeader").append(paramOrderList);

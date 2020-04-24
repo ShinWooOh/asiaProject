@@ -6,7 +6,7 @@
 <mapper namespace="com.company.asiayoga.mapper.orderMapper">
  
  	<sql id="commomPaging">
-		LIMIT #{totalRow} OFFSET #{paramPage};
+		LIMIT #{totalRow} OFFSET #{paramPage}
   	</sql>
  
  	<!-- 해당 매장의 주문 전체 정보  -->
@@ -16,7 +16,9 @@
 			 	tempA.order_seq,
 			 	tempA.store_seq,
 				tempA.product_seq,
+				tempA.customer_price,
 				tempA.member_seq,
+				tempA.my_membership,
 				tempA.start_day,
 				tempA.expiration_day,
                 tempA.expiration_yn,
@@ -24,31 +26,34 @@
 				tempA.del_yn,
                 tempA.store_name,
                 tempA.product_name,
-                tempA.item_name,
                 tempA.name,
-                tempA.phone
+                tempA.phone,
+                tempA.register_date
 		FROM (	
 				SELECT	ordinfo.order_seq,
-						ordinfo.store_seq,
-						ordinfo.product_seq,
-						ordinfo.member_seq,
-						ordinfo.start_day,
-						ordinfo.expiration_day,
-		                ordinfo.expiration_yn,
-						ordinfo.locker_seq,
-						ordinfo.del_yn,
-		                ( SELECT store_name FROM storeinfo WHERE store_seq = stinfo.store_seq) AS store_name,
-                		prdinfo.product_name,
-                		( SELECT item_name FROM productitem WHERE item_seq = prdinfo.item_seq) As item_name,
-		                mbrinfo.name,
-		                mbrinfo.phone
+						ordinfo.store_seq, 
+						ordinfo.product_seq, 
+						ordinfo.customer_price, 
+						ordinfo.member_seq, 
+						mbinfo.my_membership,
+						ordinfo.start_day, 
+						ordinfo.expiration_day, 
+						ordinfo.expiration_yn, 
+						ordinfo.locker_seq, 
+						ordinfo.del_yn, 
+						stinfo.store_name, 
+						prdinfo.product_name, 
+						mbinfo.name, 
+						mbinfo.phone, 
+						ordinfo.register_date 
 				FROM orderinfo ordinfo
-		        INNER JOIN memberinfo mbrinfo
-		        ON ordinfo.member_seq = mbrinfo.member_seq
+		        INNER JOIN memberinfo mbinfo
+		        ON ordinfo.member_seq = mbinfo.member_seq
 		        INNER JOIN productinfo prdinfo
 		        ON ordinfo.product_seq = prdinfo.product_Seq
 		        INNER JOIN storeinfo stinfo
 		        ON ordinfo.store_seq = stinfo.store_seq
+		        INNER JOIN (SELECT @ROWNUM :=0) AS R 
 				WHERE 1=1
 				<choose>
 					<when test="authority != 'ROLE_ADMIN'">
@@ -57,20 +62,20 @@
 					<otherwise></otherwise>
 				</choose>
 				AND ordinfo.del_yn = 'N'
-		        ORDER By ordinfo.order_seq DESC) AS tempA
-        , (SELECT @ROWNUM :=0) AS R 
-        WHERE 1=1
-        <if test="searchWord != null and searchWord != ''">
-			AND 
-			(		tempA.store_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	tempA.item_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	tempA.product_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	tempA.name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	tempA.phone LIKE CONCAT('%',#{searchWord},'%')
-				OR 	DATE_FORMAT(tempA.start_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
-				OR 	DATE_FORMAT(tempA.expiration_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
-			)
-		</if>
+		        <if test="searchWord != null and searchWord != ''">
+					AND 
+					(		stinfo.store_name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	ordinfo.customer_price LIKE CONCAT('%',#{searchWord},'%')
+						OR 	prdinfo.product_name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+						OR 	DATE_FORMAT(ordinfo.start_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+						OR 	DATE_FORMAT(ordinfo.expiration_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+		        ORDER BY ordinfo.modify_date ASC
+			) AS tempA
         ORDER BY row_num DESC
         <include refid="commomPaging"/>
 	</select>
@@ -78,27 +83,29 @@
  	<!-- 해당 매장의 주문 전체 갯수  -->
  	<select id="orderTotalCount" parameterType="orderVO" resultType="int">
  		/* orderMapper.orderTotalCount */
-		SELECT 	COUNT(*)
+		SELECT COUNT(*)
 		FROM (	
 				SELECT	ordinfo.order_seq,
-						ordinfo.store_seq,
-						ordinfo.product_seq,
-						ordinfo.member_seq,
-						ordinfo.start_day,
-						ordinfo.expiration_day,
-		                ordinfo.expiration_yn,
-						ordinfo.locker_seq,
-						ordinfo.del_yn,
-		                ( SELECT store_name FROM storeinfo WHERE store_Seq = stinfo.store_seq) AS store_name,
-                		prdinfo.product_name,
-                		( SELECT item_name FROM productitem WHERE item_seq = prdinfo.item_seq) As item_name,
-		                mbrinfo.name,
-		                mbrinfo.phone
+						ordinfo.store_seq, 
+						ordinfo.product_seq, 
+						ordinfo.customer_price, 
+						ordinfo.member_seq, 
+						mbinfo.my_membership,
+						ordinfo.start_day, 
+						ordinfo.expiration_day, 
+						ordinfo.expiration_yn, 
+						ordinfo.locker_seq, 
+						ordinfo.del_yn, 
+						stinfo.store_name, 
+						prdinfo.product_name, 
+						mbinfo.name, 
+						mbinfo.phone, 
+						ordinfo.register_date 
 				FROM orderinfo ordinfo
-		        INNER JOIN memberinfo mbrinfo
-		        ON ordinfo.member_seq = mbrinfo.member_seq
+		        INNER JOIN memberinfo mbinfo
+		        ON ordinfo.member_seq = mbinfo.member_seq
 		        INNER JOIN productinfo prdinfo
-		        ON ordinfo.product_seq = prdinfo.product_Seq
+		        ON ordinfo.product_seq = prdinfo.product_seq
 		        INNER JOIN storeinfo stinfo
 		        ON ordinfo.store_seq = stinfo.store_seq
 				WHERE 1=1
@@ -109,25 +116,19 @@
 					<otherwise></otherwise>
 				</choose>
 				AND ordinfo.del_yn = 'N'
-		        ORDER By ordinfo.order_seq DESC) AS tempA
-       	WHERE 1=1
-		<choose>
-			<when test="authority != 'ROLE_ADMIN'">
-				AND tempA.store_seq = #{storeSeq}
-			</when>
-			<otherwise></otherwise>
-		</choose>
-		<if test="searchWord != null and searchWord != ''">
-			AND 
-			(		tempA.store_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	tempA.item_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	tempA.product_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	tempA.name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	tempA.phone LIKE CONCAT('%',#{searchWord},'%')
-				OR 	DATE_FORMAT(tempA.start_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
-				OR 	DATE_FORMAT(tempA.expiration_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
-			)
-		</if>
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		stinfo.store_name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	ordinfo.customer_price LIKE CONCAT('%',#{searchWord},'%')
+						OR 	prdinfo.product_name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+						OR 	DATE_FORMAT(ordinfo.start_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+						OR 	DATE_FORMAT(ordinfo.expiration_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+		        ) AS tempA
 	</select>
 	
 	<!-- 고객 1명의 구매 목록  -->
@@ -137,6 +138,7 @@
 				ordinfo.store_seq,
 				ordinfo.product_seq,
 				ordinfo.member_seq,
+				( SELECT my_membership FROM memberinfo WHERE member_seq = ordinfo.member_seq) AS my_membership,
 				ordinfo.start_day,
 				ordinfo.expiration_day,
 				ordinfo.product_count,
@@ -146,8 +148,6 @@
 				ordinfo.modify_date,
 				prdinfo.product_name,
 				( SELECT store_name FROM storeinfo WHERE store_seq = #{storeSeq} ) AS store_name,
-				( SELECT item_seq FROM productitem WHERE item_seq = prdinfo.item_seq ) AS item_seq,
-				( SELECT item_name FROM productitem WHERE item_seq = prdinfo.item_seq ) AS item_name
 		FROM orderinfo ordinfo
 		INNER JOIN productinfo prdinfo
 		ON ordinfo.product_seq = prdinfo.product_seq
@@ -164,6 +164,7 @@
 				ordinfo.store_seq,
 				ordinfo.product_seq,
 				ordinfo.member_seq,
+				( SELECT my_membership FROM memberinfo WHERE member_seq = ordinfo.member_seq) AS my_membership,
 				ordinfo.start_day,
 				ordinfo.expiration_day,
 				ordinfo.product_price,
@@ -174,11 +175,10 @@
 				ordinfo.order_memo,
 				ordinfo.del_yn,
 				prdinfo.product_name,
-                prdinfo.item_seq,
-                ( SELECT item_name FROM productitem WHERE item_seq = prdinfo.item_seq ) AS item_name,
                 ( SELECT store_name FROM storeinfo WHERE store_seq = prdinfo.store_seq ) AS store_name,
                 ( SELECT name FROM memberinfo WHERE member_seq = ordinfo.member_seq ) AS name,
-                ( SELECT phone FROM memberinfo WHERE member_seq = ordinfo.member_seq ) AS phone
+                ( SELECT phone FROM memberinfo WHERE member_seq = ordinfo.member_seq ) AS phone,
+                ( SELECT join_date FROM memberinfo WHERE member_seq = ordinfo.member_seq ) AS join_date
 		FROM orderinfo ordinfo
 		INNER JOIN productinfo prdinfo
 		ON ordinfo.product_seq = prdinfo.product_seq
@@ -243,9 +243,9 @@
 					#{lockerSeq},
 					'N',
 					now(),
-					'admin',
+					#{registerId},
 					now(),
-					'admin'
+					#{registerId}
 				)
 	</insert>
 	
@@ -289,35 +289,45 @@
 			 	tempA.order_seq,
 			 	tempA.store_seq,
 				tempA.product_seq,
+				tempA.customer_price,
 				tempA.member_seq,
+				tempA.my_membership,
 				tempA.start_day,
 				tempA.expiration_day,
                 tempA.expiration_yn,
+				tempA.locker_seq,
+				tempA.del_yn,
                 tempA.store_name,
                 tempA.product_name,
-                tempA.item_name,
                 tempA.name,
-                tempA.phone
+                tempA.phone,
+                tempA.register_date
 		FROM (	
 				SELECT	ordinfo.order_seq,
-						ordinfo.store_seq,
-						ordinfo.product_seq,
-						ordinfo.member_seq,
-						ordinfo.start_day,
-						ordinfo.expiration_day,
-		                ordinfo.expiration_yn,
-						ordinfo.del_yn,
-		                ( SELECT store_name FROM storeinfo WHERE store_Seq = ordinfo.store_seq) AS store_name,
-                		prdinfo.product_name,
-                		( SELECT item_name FROM productitem WHERE item_seq = prdinfo.item_seq) As item_name,
-		                mbrinfo.name,
-		                mbrinfo.phone
+						ordinfo.store_seq, 
+						ordinfo.product_seq, 
+						ordinfo.customer_price, 
+						ordinfo.member_seq, 
+						mbinfo.my_membership,
+						ordinfo.start_day, 
+						ordinfo.expiration_day, 
+						ordinfo.expiration_yn, 
+						ordinfo.locker_seq, 
+						ordinfo.del_yn, 
+						stinfo.store_name, 
+						prdinfo.product_name, 
+						mbinfo.name, 
+						mbinfo.phone, 
+						ordinfo.register_date 
 				FROM orderinfo ordinfo
-		        INNER JOIN memberinfo mbrinfo
-		        ON ordinfo.member_seq = mbrinfo.member_seq
+		        INNER JOIN memberinfo mbinfo
+		        ON ordinfo.member_seq = mbinfo.member_seq
 		        INNER JOIN productinfo prdinfo
 		        ON ordinfo.product_seq = prdinfo.product_Seq
-		        WHERE 1=1
+		        INNER JOIN storeinfo stinfo
+		        ON ordinfo.store_seq = stinfo.store_seq
+		        INNER JOIN (SELECT @ROWNUM :=0) AS R 
+				WHERE 1=1
 				<choose>
 					<when test="authority != 'ROLE_ADMIN'">
 						AND ordinfo.store_seq = #{storeSeq}
@@ -325,20 +335,20 @@
 					<otherwise></otherwise>
 				</choose>
 				AND ordinfo.del_yn = 'N'
-		        ORDER By ordinfo.order_seq DESC) AS tempA
-        , (SELECT @ROWNUM :=0) AS R 
-        WHERE 1=1
-        <if test="searchWord != null and searchWord != ''">
-			AND 
-			(		tempA.store_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	tempA.item_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	tempA.product_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	tempA.name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	tempA.phone LIKE CONCAT('%',#{searchWord},'%')
-				OR 	DATE_FORMAT(tempA.start_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
-				OR 	DATE_FORMAT(tempA.expiration_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
-			)
-		</if>
+		        <if test="searchWord != null and searchWord != ''">
+					AND 
+					(		stinfo.store_name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	ordinfo.customer_price LIKE CONCAT('%',#{searchWord},'%')
+						OR 	prdinfo.product_name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+						OR 	DATE_FORMAT(ordinfo.start_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+						OR 	DATE_FORMAT(ordinfo.expiration_day, '%Y-%m-%d %H:%i') LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+		        ORDER BY ordinfo.modify_date ASC
+			) AS tempA
         ORDER BY row_num DESC
 	</select>
     

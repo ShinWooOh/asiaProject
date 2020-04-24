@@ -124,4 +124,5 @@ public class ManageDAO {
 		return sqlSession.selectList(MANAGE_GROUP_NAMESPACE+".manageGroupListAll", manageGroupVO);
 	}
 	
+	
 }

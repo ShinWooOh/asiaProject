@@ -46,7 +46,7 @@
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <div class="content-header">
+        <div class="content-header" style="margin-bottom: -10px;">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
@@ -105,17 +105,6 @@
 									    -<input type="number" id="phone3" name="phone3" style="width: 70px; margin-left: 5px;">
 	                                </td>
 	                            </tr>
-	                            <tr id="manageGroupInfo">
-	                                <th style="width: 10%">직급</th>
-	                                <td>
-	                                	<select id="manageGroupSeq" name="manageGroupSeq" style="width: 250px;">
-	                                		<option value="000">직급을 선택하세요</option>
-	                                		<c:forEach var="manageGroupList" items="${manageGroupList}">
-		                                		<option value="${manageGroupList.manageGroupSeq}">${manageGroupList.groupName}</option>
-	                                		</c:forEach>
-	                                	</select>
-	                                </td>
-	                            </tr>
 	                            <tr id="storeInfo">
 	                                <th style="width: 10%">매장명</th>
 	                                <td>
@@ -128,6 +117,17 @@
 			                                	<%= manageInfo.getStoreName() %>
 	                                		</c:otherwise>
 	                                	</c:choose>
+	                                </td>
+	                            </tr>
+	                            <tr id="manageGroupInfo">
+	                                <th style="width: 10%">직급</th>
+	                                <td>
+	                                	<select id="manageGroupSeq" name="manageGroupSeq" style="width: 250px;">
+	                                		<option value="000">직급을 선택하세요</option>
+	                                		<c:forEach var="manageGroupList" items="${manageGroupList}">
+		                                		<option value="${manageGroupList.manageGroupSeq}">${manageGroupList.groupName}</option>
+	                                		</c:forEach>
+	                                	</select>
 	                                </td>
 	                            </tr>
                            		<tr>
@@ -226,6 +226,12 @@ function goManageRegister(){
 	if($("#dupCheckYn").val() == 'N'){
 		alert("아이디 중복체크를 해주세요.");
 		return false;
+	}
+	var manageGroupSeq = $("#manageGroupSeq option:selected").val();
+	if(manageGroupSeq == '000'){
+		alert("직급을 선택 해주세요.");
+		return false;
+		
 	}
 	
 	var insertConfirm = confirm("직원 등록 하시겠습니까?");

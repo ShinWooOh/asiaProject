@@ -24,9 +24,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.company.asiayoga.manage.domain.ManageGroupVO;
 import com.company.asiayoga.manage.domain.ManageVO;
 import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.member.service.MemberService;
+import com.company.asiayoga.product.domain.ProductVO;
 import com.company.asiayoga.store.domain.StoreVO;
 import com.company.asiayoga.store.service.StoreService;
 
@@ -171,6 +173,7 @@ public class MemberController {
 		memberVO.setStoreSeq(manageVO.getStoreSeq());
 		memberVO.setStoreName(manageVO.getStoreName());
 		memberVO.setJoinDate(new Date());
+		memberVO.setStartDay(new Date());
 		
 		model.addAttribute("memberInfo", memberVO);
 		
@@ -185,7 +188,7 @@ public class MemberController {
 	}
 	
 	// 회원 정보 저장
-	@RequestMapping(value = "memberInsert", method = RequestMethod.POST)
+	@RequestMapping(value = "memberInsert")
 	@ResponseBody
 	public String memberInsert(HttpServletRequest request,Model model,@ModelAttribute("memberVO") MemberVO memberVO) throws Exception{
 		
@@ -194,6 +197,9 @@ public class MemberController {
 		
 		int resultParam = 0;
 		memberVO.setRegisterId(manageVO.getId());
+		if(!manageVO.getAuthority().equals("ROLE_ADMIN")) {
+			memberVO.setStoreSeq(manageVO.getStoreSeq());
+		}
 		resultParam = memberService.memberInsert(memberVO);
 		
 		String result = "fail";
@@ -271,6 +277,9 @@ public class MemberController {
 		memberVO.setModifyId(manageVO.getId());
 		
 		int resultParam = 0;
+		if(!manageVO.getAuthority().equals("ROLE_ADMIN")) {
+			memberVO.setStoreSeq(manageVO.getStoreSeq());
+		}
 		resultParam = memberService.memberEdit(memberVO);
 		String result = "fail";
 		
@@ -347,6 +356,50 @@ public class MemberController {
 		
 		return hashMap;
 	}
+	
+	// 팝업에서 상품 목록(HashMap 구조)
+	@RequestMapping(value = "searchProduct", method = RequestMethod.GET)
+	@ResponseBody
+	public  HashMap<String, Object> searchProduct(HttpServletRequest request,Model model,ProductVO productVO) throws Exception{
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
+		productVO.setSearchWord(productVO.getProductName());
+		productVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
+		List<ProductVO> productList = memberService.searchProductList(productVO);
+		if(productList.size() >= 1){
+			hashMap.put("result", "success");
+			hashMap.put("popProductList", productList);
+		} else if(productList.size() == 0) {
+			hashMap.put("result", "noCount");
+			hashMap.put("popProductList", "");
+		} else{
+		} 
+		
+		return hashMap;
+	}
+	
+	// 회원정보 수정 화면에서의 회원번호 중복체크
+	@RequestMapping(value = "myMembershipDupCheck", method = RequestMethod.GET)
+	@ResponseBody
+	public String myMembershipDupCheck(HttpServletRequest request,Model model,MemberVO memberVO) throws Exception {
+		
+		int resultParam = 0;
+		String result = "fail";
+		
+		int storeSeqParam = memberVO.getStoreSeq();
+		memberVO.setStoreSeq(storeSeqParam);
+		
+		resultParam = memberService.myMembershipDupCheck(memberVO);
+		if(resultParam > 0) {
+			result = "dupName";
+		}else if(resultParam == 0) {
+			result = "success";
+		}
+		return result;
+	}
 
 	// 마지막 페이지 점검 
 	public int endPage(MemberVO memberVO) {
@@ -389,11 +442,6 @@ public class MemberController {
 		return resultParam;
 	}
 	
-	// 매장별 통계 정보
-	public MemberVO storeMemberStat(MemberVO memberVO) {
-		
-		
-		return memberVO;
-	}
+	
 
 }

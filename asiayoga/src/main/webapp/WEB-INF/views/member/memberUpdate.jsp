@@ -46,11 +46,12 @@
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <div class="content-header">
+        <div class="content-header" style="margin-bottom: -10px;">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
                         <h1 class="m-0 text-dark">회원 정보 수정</h1>
+                        <font style="color: red; font-weight: bold; font-size: 14px;">*표시는 필수 입력입니다.</font>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -66,64 +67,34 @@
 
         <!-- Main content -->
         <section class="content container-fluid" style="background-color: #FFFFFF">
-
-            <div class="col-lg-12">
+			<div class="row" style="width: 100%;">
+            <div class="col-lg-12 col-xs-6">
                 <div>
                 	<div>
                 		<form:form id="memberEdit" name="memberEdit" modelAttribute="memberVO" method="post">
 	                		<table class="table table-bordered">
 	                			<tbody>
 	                				<tr>
-	                					<td>회원명<font style="color: red;">*</font></td>
-	                					<td>
+	                					<td>회원명<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></td>
+	                					<td colspan="3">
 	                						<input type="text" id="name" name="name" value="${memberInfo.name}">
 	                						<input type="hidden" id="memberSeq" name="memberSeq" value="${memberInfo.memberSeq}">
 	                					</td>
 	                				</tr>
 	                				<tr>
-	                					<td>성별<font style="color: red;">*</font></td>
-	                					<td>
-	                						<c:choose>
-	                							<c:when test="${memberInfo.sex eq 'M'}">
-							                		<input type="radio" name="sex" value="M" checked="checked">남
-							                		<input type="radio" name="sex" value="W" style="margin-left: 5px;">여
-	                							</c:when>
-	                							<c:when test="${memberInfo.sex eq 'W'}">
-							                		<input type="radio" name="sex" value="M">남
-							                		<input type="radio" name="sex" value="W" style="margin-left: 5px;" checked="checked">여
-	                							</c:when>
-	                							<c:otherwise>
-							                		<input type="radio" name="sex" value="M">남
-							                		<input type="radio" name="sex" value="W" style="margin-left: 5px;">여
-	                							</c:otherwise>
-	                						</c:choose>
+	                					<td>회원번호<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></td>
+	                					<td colspan="3">
+				                           		<input type="text" id="myMembership" name="myMembership" value="${memberInfo.myMembership}">
+		                                	<input type="hidden" id="paramMyMembership" name="paramMyMembership" value="${memberInfo.myMembership}">
+		                                	<input type="hidden" id="tempMyMembership" name="tempMyMembership" value="${memberInfo.myMembership}">
+		                                	<input type="hidden" id="dupCheckYn" name="dupCheckYn" value="N">
+		                                	<input type="button" id="dupCheck" name="dupCheck" onclick="goDupCheck();" value="중복체크">
+		                                	&nbsp;<font id="idMent" style="color:red; display: none;"></font>
 	                					</td>
 	                				</tr>
 	                				<tr>
-	                					<td>연락처<font style="color: red;">*</font></td>
-									    <td>
-									    	<select id="phone1" name="phone1" style="margin-right: 3px;">
-	                							<option value="010" <c:if test="${memberInfo.phone1 eq '010'}">selected</c:if> >010</option>
-	                							<option value="011" <c:if test="${memberInfo.phone1 eq '011'}">selected</c:if> >011</option>
-	                							<option value="016" <c:if test="${memberInfo.phone1 eq '016'}">selected</c:if> >016</option>
-	                							<option value="017" <c:if test="${memberInfo.phone1 eq '017'}">selected</c:if> >017</option>
-	                							<option value="018" <c:if test="${memberInfo.phone1 eq '018'}">selected</c:if> >018</option>
-	                							<option value="019" <c:if test="${memberInfo.phone1 eq '019'}">selected</c:if> >019</option>
-	                						</select>
-										    -<input type="number" id="phone2" name="phone2" style="width: 70px; margin-left: 5px;" value="${memberInfo.phone2}">
-										    -<input type="number" id="phone3" name="phone3" style="width: 70px; margin-left: 5px;" value="${memberInfo.phone3}">
-										    <input type="hidden" id="phone" name="phone" value="${memberInfo.phone}">
-									    </td>         				
-	                				</tr>
-	                				<tr>
-	                					<td>이메일</td>
-										<td>
-											<input type="email" id="email" name="email" value="${memberInfo.email}">
-										</td>                				
-	                				</tr>
-	                				<tr>
-	                					<td>생년월일<font style="color: red;">*</font></td>
-	                					<td>
+	                					<td style="width: 8%;">생년월일<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></td>
+	                					<td style="width: 25%;">
 					                		<input type="text" id="memberBirth1" name="memberBirth1" maxlength="4" size="5" value="${memberInfo.year}">년
 					                		<select id="memberBirth2" name="memberBirth2" style="margin-left: 5px;">
 					                			<c:forEach var="i" begin="1" end="12">
@@ -141,40 +112,76 @@
 					                		</select>일
 					                		<input type="hidden" id="birth" name="birth" value="${memberInfo.birth}">
 	                					</td>
+	                					<td style="width: 8%;">성별<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></td>
+	                					<td style="width: 25%;">
+	                						<c:choose>
+	                							<c:when test="${memberInfo.sex eq 'M'}">
+							                		<input type="radio" name="sex" value="M" style="margin-top: 10px;" checked="checked">남
+							                		<input type="radio" name="sex" value="W" style="margin-top: 10px; margin-left: 5px;">여
+	                							</c:when>
+	                							<c:when test="${memberInfo.sex eq 'W'}">
+							                		<input type="radio" name="sex" value="M" style="margin-top: 10px;">남
+							                		<input type="radio" name="sex" value="W" style="margin-top: 10px; margin-left: 5px;" checked="checked">여
+	                							</c:when>
+	                							<c:otherwise>
+							                		<input type="radio" name="sex" value="M" style="margin-top: 10px;">남
+							                		<input type="radio" name="sex" value="W" style="margin-top: 10px; margin-left: 5px;">여
+	                							</c:otherwise>
+	                						</c:choose>
+	                					</td>
+	                				</tr>
+	                				<tr>
+	                					<td>연락처<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></td>
+									    <td colspan="3">
+									    	<select id="phone1" name="phone1" style="margin-right: 3px;">
+	                							<option value="010" <c:if test="${memberInfo.phone1 eq '010'}">selected</c:if> >010</option>
+	                							<option value="011" <c:if test="${memberInfo.phone1 eq '011'}">selected</c:if> >011</option>
+	                							<option value="016" <c:if test="${memberInfo.phone1 eq '016'}">selected</c:if> >016</option>
+	                							<option value="017" <c:if test="${memberInfo.phone1 eq '017'}">selected</c:if> >017</option>
+	                							<option value="018" <c:if test="${memberInfo.phone1 eq '018'}">selected</c:if> >018</option>
+	                							<option value="019" <c:if test="${memberInfo.phone1 eq '019'}">selected</c:if> >019</option>
+	                						</select>
+										    -<input type="number" id="phone2" name="phone2" style="width: 70px; margin-left: 5px;" value="${memberInfo.phone2}">
+										    -<input type="number" id="phone3" name="phone3" style="width: 70px; margin-left: 5px;" value="${memberInfo.phone3}">
+										    <input type="hidden" id="phone" name="phone" value="${memberInfo.phone}">
+									    </td>         				
+	                				</tr>
+	                				<tr>
+	                					<td>이메일</td>
+										<td colspan="3">
+											<input type="email" id="email" name="email" value="${memberInfo.email}">
+										</td>                				
 	                				</tr>
                 				    <tr>
-			                           	<td>등록매장</td>
-			                           	<td>
+			                           	<td style="width: 8%;">등록매장</td>
+			                           	<td style="width: 25%;">
 			                           		<c:out value="${memberInfo.storeName}"/>
 			                           		<input type="hidden" id="storeName" name="storeName" value="${memberInfo.storeName}">
 			                           		<input type="hidden" id="storeSeq" name="storeSeq" value="${memberInfo.storeSeq}">
 			                           	</td>
-		                            </tr>
-		                            <tr>
-		                            	<td>가입일</td>
-		                            	<td>
+		                            	<td style="width: 8%;">가입일<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></td>
+		                            	<td style="width: 25%;">
                             				<fmt:formatDate pattern="yyyy-MM-dd" value="${memberInfo.joinDate}" var="joinDate" />
 		                                	<input type="text" id="paramJoinDate" name="paramJoinDate" value="${joinDate}" readonly="readonly">
 		                                	<input type="hidden" id="joinDate" name="joinDate" value="${joinDate}" readonly="readonly">
                             			</td>
-                            		</tr>
+		                            </tr>
 	                				<tr>
 	                					<td>메모</td>
-	                					<td><textarea id="memo" name="memo" rows="3" cols="150"><c:out value="${memberInfo.memo}"/></textarea>
+	                					<td colspan="3"><textarea id="memo" name="memo" rows="6" cols="150"><c:out value="${memberInfo.memo}"/></textarea>
 	                					</td>
 	                				</tr>
 	                			</tbody>
 	                		</table>
                 		</form:form>
                 	</div>
-                	<div><font style="color: red;">*표시는 필수 입력입니다.</font></div>
                 </div>
                 	<div style="margin-top: 10px;">
                 		<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goMemberList();" style="float: left; width:80px;">
                 		<input type="button" class="btn btn-block btn-success" value="저장" onclick="goEditMember();" style="float: right; width:80px;">
                 	</div>
             </div>
-
+			</div>
         </section>
         <!-- /.content -->
     </div>
@@ -223,6 +230,16 @@ $(document).ready(function() {
 		buttonImage: "/resources/image/calendar_btn.png" //버튼에 띄워줄 이미지 경로
 	});
 	
+	$("#dupCheck").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "80px",
+		"fontSize"			: "15px"
+	});
 });
 
 function goEditMember(){
@@ -231,6 +248,23 @@ function goEditMember(){
 		alert("회원 이름을 입력해주세요");
 		$("#name").focus();
 		return false;
+	}
+	
+	var myMembership = $("#myMembership").val();
+	if($("#paramMyMembership").val() == myMembership){
+		$("#dupCheckYn").val('Y'); 
+	}
+	
+	if($("#dupCheckYn").val() == 'N'){
+		alert("회원번호 중복체크를 해주세요.");
+		return false;
+	} else {
+		if($("#tempMyMembership").val() != myMembership){
+			if($("#paramMyMembership").val() != myMembership){
+				alert("회원번호 중복체크를 해주세요.");
+				return false;
+			}
+		}
 	}
 	
 	if($("#phone2").val()==''){
@@ -311,6 +345,49 @@ function editMember(){
 
 function goMemberList(){
 	location.href="/member/memberList";
+}
+
+/* 중복 체크  */
+function goDupCheck() {
+
+	var myMembership = $("#myMembership").val();
+	var storeSeq = $("#storeSeq").val();
+	if($("#myMembership").val() == ''){
+		$("#idMent").text("*회원번호를 입력해 주세요.");
+        $("#idMent").show();
+		return false;
+	}
+	
+	if($("#paramMyMembership").val() == myMembership){
+		$("#idMent").text("*현재 사용하고 있는 회원번호 입니다.");
+        $("#idMent").show();
+        return false;
+	}
+	
+	$.ajax({
+		type: 'get',
+        url : "/member/myMembershipDupCheck",
+        data: {	myMembership	:	myMembership,
+        		storeSeq		:	storeSeq
+        	  },
+        success : function(data){
+            if(data == 'success') {
+              $("#idMent").text("*사용가능한 회원번호 입니다.");
+              $("#idMent").show();
+              $("#dupCheckYn").val('Y');
+              $("#tempMyMembership").val(myMembership);
+            } else if(data == 'dupName'){
+              $("#idMent").text("*중복된 회원번호명 입니다. 다시 입력해주세요.");
+              $("#idMent").show();
+              $("#dupCheckYn").val('N');
+            } else {
+            	
+            }
+        },
+        error:function(request,status,error){
+            alert("저장에 실패하였습니다. 관리자에게 문의하세요");
+        }
+    });
 }
 </script>
 </body>

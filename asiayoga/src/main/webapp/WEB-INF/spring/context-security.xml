@@ -17,6 +17,7 @@
             <security:intercept-url pattern="/item/**" access="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')" />
             <security:intercept-url pattern="/product/**" access="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')" />
             <security:intercept-url pattern="/store/**" access="hasAnyRole('ROLE_ADMIN')" />
+            <security:intercept-url pattern="/statistics/**" access="permitAll" />
             <security:intercept-url pattern="/mobile/**" access="permitAll" />
             <security:intercept-url pattern="/**" access="permitAll" />
             
@@ -31,7 +32,7 @@
             />
             
             <security:access-denied-handler
-            	error-page="/error/accessDeniedPage"
+            	error-page="/accessDeniedPage"
             />
             
             <security:logout
@@ -57,7 +58,7 @@
         </bean>
         <bean id="loginSuccessHandler" class="com.company.asiayoga.handler.LoginSuccessHandler">
         	<property name="loginIdName" value="id"/>
-        	<property name="defaultUrl" value="/attendance/info"/>
+        	<property name="defaultUrl" value="/statistics/statisticsList"/>
         </bean>
     
 </beans>

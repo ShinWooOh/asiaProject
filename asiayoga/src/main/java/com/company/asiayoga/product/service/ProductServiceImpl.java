@@ -1,9 +1,6 @@
 package com.company.asiayoga.product.service;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -13,9 +10,9 @@ import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.company.asiayoga.item.domain.ItemVO;
-import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.product.dao.ProductDAO;
 import com.company.asiayoga.product.domain.ProductVO;
 import com.company.asiayoga.store.domain.StoreVO;
@@ -36,11 +33,13 @@ public class ProductServiceImpl implements ProductService {
 		return productDAO.productTotalCount(productVO);
 	}
 	
+	@Transactional
 	@Override
 	public int insertProduct(ProductVO productVO) throws Exception {
 		return productDAO.insertProduct(productVO);
 	}
 
+	@Transactional
 	@Override
 	public int productDelete(ProductVO productVO) throws Exception {
 		return productDAO.productDelete(productVO);
@@ -51,6 +50,7 @@ public class ProductServiceImpl implements ProductService {
 		return productDAO.productDetail(productVO);
 	}
 
+	@Transactional
 	@Override
 	public int updateProduct(ProductVO productVO) throws Exception {
 		return productDAO.updateProduct(productVO);

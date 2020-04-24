@@ -13,6 +13,7 @@ import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.company.asiayoga.item.dao.ItemDAO;
 import com.company.asiayoga.item.domain.ItemVO;
@@ -35,11 +36,13 @@ public class ItemServiceImpl implements ItemService {
 		return itemDAO.itemTotalCount(itemVO);
 	}
 	
+	@Transactional
 	@Override
 	public int insertItem(ItemVO itemVO) throws Exception {
 		return itemDAO.insertItem(itemVO);
 	}
 
+	@Transactional
 	@Override
 	public int itemDelete(ItemVO itemVO) throws Exception {
 		return itemDAO.itemDelete(itemVO);
@@ -50,6 +53,7 @@ public class ItemServiceImpl implements ItemService {
 		return itemDAO.itemDetail(itemVO);
 	}
 
+	@Transactional
 	@Override
 	public int updateItem(ItemVO itemVO) throws Exception {
 		return itemDAO.updateItem(itemVO);

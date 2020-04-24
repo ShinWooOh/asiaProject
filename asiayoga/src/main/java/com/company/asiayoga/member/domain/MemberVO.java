@@ -10,6 +10,7 @@ public class MemberVO extends StoreVO {
     private int attendanceSeq;
     private int memberSeq;                          // 회원 번호
     private String name;							// 회원 이름
+    private String myMembership;					// 회원 등록 번호(출석 시 쓰는 번호)
     private String birth;							// 생년월일
     private String year;							// 년
     private String month;							// 월
@@ -50,6 +51,10 @@ public class MemberVO extends StoreVO {
     private int newWeekAdjournment;					// 금주 휴회 회원
     private int newMonthAdjournment;				// 금월 휴회 회원
     private int thisMonth;							// 이번달
+    private Date startDay;							// 시작일
+    private Date expirationDay;						// 만료일
+    private int productPrice;						// 상품 가격
+    private int customerPrice;						// 고객 구매 가격
     
 	
     public int getRowNum() {
@@ -75,6 +80,12 @@ public class MemberVO extends StoreVO {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getMyMembership() {
+		return myMembership;
+	}
+	public void setMyMembership(String myMembership) {
+		this.myMembership = myMembership;
 	}
 	public String getBirth() {
 		return birth;
@@ -309,6 +320,30 @@ public class MemberVO extends StoreVO {
 	}
 	public void setThisMonth(int thisMonth) {
 		this.thisMonth = thisMonth;
+	}
+	public Date getStartDay() {
+		return startDay;
+	}
+	public void setStartDay(Date startDay) {
+		this.startDay = startDay;
+	}
+	public Date getExpirationDay() {
+		return expirationDay;
+	}
+	public void setExpirationDay(Date expirationDay) {
+		this.expirationDay = expirationDay;
+	}
+	public int getProductPrice() {
+		return productPrice;
+	}
+	public void setProductPrice(int productPrice) {
+		this.productPrice = productPrice;
+	}
+	public int getCustomerPrice() {
+		return customerPrice;
+	}
+	public void setCustomerPrice(int customerPrice) {
+		this.customerPrice = customerPrice;
 	}
 	
 }

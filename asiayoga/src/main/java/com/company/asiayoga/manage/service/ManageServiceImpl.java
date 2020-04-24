@@ -13,6 +13,7 @@ import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.company.asiayoga.manage.dao.ManageDAO;
 import com.company.asiayoga.manage.domain.ManageGroupVO;
@@ -41,11 +42,13 @@ public class ManageServiceImpl implements ManageService {
 		return manageDAO.manageTotalCount(manageVO);
 	}
 	
+	@Transactional
 	@Override
 	public int updateEnableState(ManageVO manageVO) throws Exception {
 		return manageDAO.updateEnableState(manageVO);
 	}
 
+	@Transactional
 	@Override
 	public int insertManage(ManageVO manageVO) throws Exception {
 		return manageDAO.insertManage(manageVO);
@@ -140,6 +143,7 @@ public class ManageServiceImpl implements ManageService {
 		return sxssfWorkbook;
 	}
 
+	@Transactional
 	@Override
 	public int updateManage(ManageVO manageVO) throws Exception {
 		return manageDAO.updateManage(manageVO);
@@ -163,11 +167,13 @@ public class ManageServiceImpl implements ManageService {
 		return manageDAO.manageGroupTotalCount(manageGroupVO);
 	}
 
+	@Transactional
 	@Override
 	public int updateGroupUseYnState(ManageGroupVO manageGroupVO) throws Exception {
 		return manageDAO.updateGroupUseYnState(manageGroupVO);
 	}
 
+	@Transactional
 	@Override
 	public int manageGroupDupCheck(ManageGroupVO manageGroupVO) throws Exception {
 		
@@ -182,6 +188,7 @@ public class ManageServiceImpl implements ManageService {
 		return resultParam;
 	}
 
+	@Transactional
 	@Override
 	public int insertManageGroup(ManageGroupVO manageGroupVO) throws Exception {
 		return manageDAO.insertManageGroup(manageGroupVO);
@@ -192,6 +199,7 @@ public class ManageServiceImpl implements ManageService {
 		return manageDAO.manageGroupDetail(manageGroupVO);
 	}
 
+	@Transactional
 	@Override
 	public int updateManageGroup(ManageGroupVO manageGroupVO) throws Exception {
 		return manageDAO.updateManageGroup(manageGroupVO);

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.company.asiayoga.mapper.statisticsMapper">
+
+	<sql id="commomPaging">
+		LIMIT #{totalRow} OFFSET #{paramPage};
+  	</sql>
+ 
+	<!-- 회원 통계  -->
+	<select id="memberStatistics" parameterType="statisticsVO" resultType="statisticsVO">
+  		/* statisticsMapper.memberStatistics */
+		SELECT 
+				#{storeSeq} AS store_seq,
+				#{authority} AS authority,
+				( SELECT MONTH(CURDATE())
+				) AS this_month,
+				(	SELECT YEAR(CURDATE())
+				) AS this_year,
+				( SELECT COUNT(1) 
+				  FROM memberinfo 
+				  WHERE 1=1
+				  <choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				  </choose>
+				  AND join_date BETWEEN CURDATE() and NOW()) AS new_day_member,
+				( SELECT COUNT(1) 
+				  FROM memberinfo 
+				  WHERE 1=1
+				  <choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				  </choose>
+				  AND join_date BETWEEN DATE_SUB(CURDATE(),INTERVAL(DAYOFWEEK(CURDATE())-1) DAY) AND DATE_ADD(CURDATE(),INTERVAL(7-DAYOFWEEK(CURDATE())) DAY)) AS new_week_member,
+				( SELECT COUNT(1) 
+				  FROM memberinfo 
+				  WHERE 1=1
+				  <choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				  </choose> 
+				  AND join_date BETWEEN DATE_SUB(CURDATE(),INTERVAL(DAYOFMONTH(CURDATE())-1) DAY) AND LAST_DAY(CURDATE())) AS new_month_member,
+				( SELECT COUNT(1) 
+				  FROM memberinfo 
+				  WHERE 1=1
+				  <choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				  </choose> 
+				  AND join_date BETWEEN DATE_FORMAT(CURDATE(), '%Y-01-01') AND DATE_FORMAT(CURDATE(), '%Y-12-31')) AS new_year_member,
+				( SELECT COUNT(1) 
+				  FROM memberinfo 
+				  WHERE 1=1
+				  <choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				  </choose> 
+				  AND del_yn= 'N') AS total_member,
+				( SELECT COUNT(1) 
+				  FROM memberinfo 
+				  WHERE 1=1
+				  <choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				  </choose> 
+				  AND adjournment_state = 'Y' 
+				  AND del_yn= 'N') AS adjournment_yes,
+				( SELECT COUNT(1) 
+				  FROM memberinfo 
+				  WHERE 1=1
+				  <choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				  </choose> 
+				  AND adjournment_state = 'N' 
+				  AND del_yn= 'N') AS adjournment_no
+		FROM memberinfo
+		GROUP by new_day_member,new_week_member,new_month_member,new_year_member,total_member,adjournment_yes,adjournment_no
+	</select>
+    
+	<!-- 금일 출석 인원  -->
+	<select id="attendanceYesCount" parameterType="statisticsVO" resultType="int">
+  		/* statisticsMapper.attendanceYesCount */
+  		SELECT COUNT(1) 
+  		FROM (	
+	  			SELECT member_seq
+				FROM  memberinfo mbinfo 
+				WHERE 
+				EXISTS ( SELECT atdinfo.member_seq 
+							FROM attendanceinfo atdinfo
+							WHERE mbinfo.member_seq = atdinfo.member_seq 
+							AND atdinfo.attendance_date BETWEEN CURDATE() and NOW()
+							AND atdinfo.del_yn = 'N'
+						 ) 
+				AND mbinfo.del_yn ='N'
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND mbinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose> 
+				GROUP BY mbinfo.member_seq
+			) AS tempA
+  		
+	</select>
+	
+	<!-- 금일 미출석 인원  -->
+	<select id="attendanceNoCount" parameterType="statisticsVO" resultType="int">
+  		/* statisticsMapper.attendanceNoCount */
+  		SELECT COUNT(1) 
+  		FROM (	
+	  			SELECT member_seq
+				FROM  memberinfo mbinfo 
+				WHERE 
+				NOT EXISTS ( SELECT atdinfo.member_seq  
+							FROM attendanceinfo atdinfo
+							WHERE mbinfo.member_seq = atdinfo.member_seq 
+							AND atdinfo.attendance_date BETWEEN CURDATE() and NOW()
+							AND atdinfo.del_yn = 'N'
+						 ) 
+				AND mbinfo.del_yn ='N'
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND mbinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose> 
+				GROUP BY mbinfo.member_seq
+			) AS tempA
+	</select>
+</mapper>
