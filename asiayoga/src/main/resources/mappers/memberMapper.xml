@@ -59,9 +59,9 @@
 					)
 				</if>
 			    ORDER BY mbinfo.join_date ASC
-			    <include refid="commomPaging"/>
 			    ) AS tempA, (SELECT @ROWNUM :=0) AS R
 	    ORDER BY row_num DESC
+	    <include refid="commomPaging"/>
 	</select>
 	
 	<!-- 회원 목록 갯수  -->
@@ -341,7 +341,6 @@
 					)
 				</if>
 			    ORDER BY mbinfo.join_date ASC
-			    <include refid="commomPaging"/>
 			    ) AS tempA  , (SELECT @ROWNUM :=0) AS R
 	    ORDER BY row_num DESC
 	</select>
