@@ -1,8 +1,8 @@
 package com.company.asiayoga.statistics.domain;
 
-import com.company.asiayoga.common.domain.PagingVO;
+import com.company.asiayoga.member.domain.MemberVO;
 
-public class StatisticsVO extends PagingVO {
+public class StatisticsVO extends MemberVO {
 	
 	private int rowNum;
 	private int storeSeq;							// 매장번호
@@ -21,6 +21,12 @@ public class StatisticsVO extends PagingVO {
     private int thisYear;							// 올해
     private int attendanceYesCount;					// 당일 출석 수
     private int attendanceNoCount;					// 당일 미출석 수
+    private String attendanceFlag;					// 출석, 미출석 플래그
+    private int todaySales;							// 금일 매출
+    private int weekSales;							// 금주 매출
+    private int monthSales;							// 이번달 매출
+    private int yearSales;							// 올해 매출
+    
     
 	public int getRowNum() {
 		return rowNum;
@@ -124,4 +130,36 @@ public class StatisticsVO extends PagingVO {
 	public void setAttendanceNoCount(int attendanceNoCount) {
 		this.attendanceNoCount = attendanceNoCount;
 	}
+	public String getAttendanceFlag() {
+		return attendanceFlag;
+	}
+	public void setAttendanceFlag(String attendanceFlag) {
+		this.attendanceFlag = attendanceFlag;
+	}
+	public int getTodaySales() {
+		return todaySales;
+	}
+	public void setTodaySales(int todaySales) {
+		this.todaySales = todaySales;
+	}
+	public int getWeekSales() {
+		return weekSales;
+	}
+	public void setWeekSales(int weekSales) {
+		this.weekSales = weekSales;
+	}
+	public int getMonthSales() {
+		return monthSales;
+	}
+	public void setMonthSales(int monthSales) {
+		this.monthSales = monthSales;
+	}
+	public int getYearSales() {
+		return yearSales;
+	}
+	public void setYearSales(int yearSales) {
+		this.yearSales = yearSales;
+	}
+	
+	
 }

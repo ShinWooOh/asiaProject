@@ -8,6 +8,7 @@ public class AttendanceVO extends MemberVO {
 
 	private int rowNum;								// 인덱스 번호
     private int attendanceSeq;
+    private int attendanceHstSeq;
     private int memberSeq;                          // 회원 번호
     private String name;							// 회원 이름
     private String phone;							// 연락처
@@ -33,6 +34,12 @@ public class AttendanceVO extends MemberVO {
 	}
 	public void setAttendanceSeq(int attendanceSeq) {
 		this.attendanceSeq = attendanceSeq;
+	}
+	public int getAttendanceHstSeq() {
+		return attendanceHstSeq;
+	}
+	public void setAttendanceHstSeq(int attendanceHstSeq) {
+		this.attendanceHstSeq = attendanceHstSeq;
 	}
 	public int getMemberSeq() {
 		return memberSeq;

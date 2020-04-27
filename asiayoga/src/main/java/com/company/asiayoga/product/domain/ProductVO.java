@@ -11,7 +11,8 @@ public class ProductVO extends ItemVO {
 	private int storeSeq;							// 매장 번호
 	private String productName;						// 제품명
 	private String productMemo;						// 상품 설명
-	private int productPrice;						// 상품 가격		
+	private int productPrice;						// 상품 가격
+	private int productPeriod;						// 상품 기간(일 기준)
 	private int productCount;						// 상품 개수(횟수제인 경우 해당)
 	private int lockerSeq;							// 락커 갯수
 	private String delYn;							// 삭제 여부
@@ -56,6 +57,12 @@ public class ProductVO extends ItemVO {
 	}
 	public void setProductPrice(int productPrice) {
 		this.productPrice = productPrice;
+	}
+	public int getProductPeriod() {
+		return productPeriod;
+	}
+	public void setProductPeriod(int productPeriod) {
+		this.productPeriod = productPeriod;
 	}
 	public int getProductCount() {
 		return productCount;

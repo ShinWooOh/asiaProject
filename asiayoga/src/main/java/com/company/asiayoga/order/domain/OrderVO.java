@@ -15,6 +15,7 @@ public class OrderVO extends MemberVO {
 	private String itemName;						// 품목명
 	private Date startDay;							// 시작일
 	private Date expirationDay;						// 만료일
+	private int customerPeriod;						// 회원 등록 기간
 	private int productCount;						// 상품 횟수
 	private int remainingCount;						// 횟수제 상품일 경우 남은 횟수
 	private int productPrice;						// 상품 가격
@@ -28,6 +29,8 @@ public class OrderVO extends MemberVO {
     private String registerId;                      // 등록자 아이디
     private Date modifyDate;                        // 수정 일자
     private String modifyId;                        // 수정자 아이디
+
+    private int productPeriod;						// 기간
 	
     public int getOrderSeq() {
 		return orderSeq;
@@ -82,6 +85,12 @@ public class OrderVO extends MemberVO {
 	}
 	public void setExpirationDay(Date expirationDay) {
 		this.expirationDay = expirationDay;
+	}
+	public int getCustomerPeriod() {
+		return customerPeriod;
+	}
+	public void setCustomerPeriod(int customerPeriod) {
+		this.customerPeriod = customerPeriod;
 	}
 	public int getProductCount() {
 		return productCount;
@@ -160,6 +169,12 @@ public class OrderVO extends MemberVO {
 	}
 	public void setModifyId(String modifyId) {
 		this.modifyId = modifyId;
+	}
+	public int getProductPeriod() {
+		return productPeriod;
+	}
+	public void setProductPeriod(int productPeriod) {
+		this.productPeriod = productPeriod;
 	}
 	
 }

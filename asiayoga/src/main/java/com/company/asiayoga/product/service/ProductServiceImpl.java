@@ -69,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
 		list = productDAO.productExcelDown(productVO);
 		
 		row = sheet.createRow(0);
-		String[] headerKey = {"No","매장명","품목구분","상품명","상품가격"};
+		String[] headerKey = {"No","매장명","상품명","상품가격","상품기간"};
 
 		
 		for(int i = 0; i < headerKey.length; i++) {
@@ -89,13 +89,13 @@ public class ProductServiceImpl implements ProductService {
 			cell.setCellValue(vo.getStoreName());
 			
 			cell = row.createCell(2);
-			cell.setCellValue(vo.getItemName());
-			
-			cell = row.createCell(3);
 			cell.setCellValue(vo.getProductName());
 			
-			cell = row.createCell(4);
+			cell = row.createCell(3);
 			cell.setCellValue(vo.getProductPrice());
+			
+			cell = row.createCell(4);
+			cell.setCellValue(vo.getProductPeriod()+"일");
 			
 		}
 		

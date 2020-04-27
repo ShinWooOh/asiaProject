@@ -94,12 +94,14 @@
 		                            </tr>
 		                            <tr>
 		                                <th style="width: 15%;">매장명</th>
-		                                <td id="storeInfo" style="width: 30%;">
+		                                <td colspan="3">
 		                                	<c:out value="${customerOrderDetail.storeName}"/>
 				                            <input type="hidden" id="storeName" name="storeName" value="${customerOrderDetail.storeName}">
 				                            <input type="hidden" id="storeSeq" name="storeSeq" value="${customerOrderDetail.storeSeq}">
 				                            <input type="hidden" id="orderSeq" name="orderSeq" value="${customerOrderDetail.orderSeq}">
 		                                </td>
+		                            </tr>
+		                            <tr>
 		                                <th style="width: 15%;">상품<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></th>
 		                                <td style="width: 30%;">
 		                                	<select id="productSeq" name="productSeq" onchange="goSearchProduct();">
@@ -109,15 +111,19 @@
 		                                		</c:forEach>
 		                                	</select>
 		                                </td>
+		                                <th style="width: 15%;">기간<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></th>
+		                                <td style="width: 30%;">
+		                                	<input type="number" id="customerPeriod" name="customerPeriod" value="${customerOrderDetail.customerPeriod}" style="width: 20%;" oninput="changeProductPeriod();">일
+		                                </td>
 		                            </tr>
 		                            <tr>
 		                                <th style="width: 15%;">고객 구매 가격</th>
 		                                <td style="width: 30%;">
-		                                	<input type="text" id="customerPrice" name="customerPrice" value="${customerOrderDetail.customerPrice}" style="width: 20%;">
+		                                	<input type="number" id="customerPrice" name="customerPrice" value="${customerOrderDetail.customerPrice}" style="width: 20%;">
 		                                </td>
 		                                <th id ="productCountInfo1" style="width: 15%;">상품 가격</th>
 		                                <td id ="productCountInfo2" style="width: 30%;">
-		                                	<input type="text" id="productPrice" name="productPrice" value="${customerOrderDetail.productPrice}" style="width: 20%;">
+		                                	<input type="number" id="productPrice" name="productPrice" value="${customerOrderDetail.productPrice}" style="width: 20%;">
 		                                </td>
 		                            </tr>
 		                            <tr>
@@ -184,7 +190,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	
-	$('#startDay').datepicker({
+	$('#paramStartDay').datepicker({
 		dateFormat: 'yy-mm-dd', 
 		showOtherMonths: true, 
 		showMonthAfterYear:true,
@@ -199,7 +205,7 @@ $(document).ready(function() {
 		buttonImage: "/resources/image/calendar_btn.png" //버튼에 띄워줄 이미지 경로
 	});
 	
-	$('#expirationDay').datepicker({
+	$('#paramExpirationDay').datepicker({
 		dateFormat: 'yy-mm-dd', 
 		showOtherMonths: true, 
 		showMonthAfterYear:true,
@@ -260,7 +266,7 @@ function goSearchProduct(){
 	}
 	
 	$.ajax({
-		type: 'POST',
+		type: 'get',
         url : "/order/searchProduct",
         data: {	productSeq 	: 	paramProductSeq,
         		storeSeq	:	paramStoreSeq
@@ -280,6 +286,7 @@ function goSearchProduct(){
 	
 }
 
+/* 상품 선택 시 품목명 및 데이터 세팅 */
 function adjustItemInfo(productVO){
 	
 	$("#productPrice").val(productVO.productPrice);
@@ -294,8 +301,63 @@ function adjustItemInfo(productVO){
 		
 	}
 	
+	$("#customerPeriod").val(productVO.productPeriod);
+	
+	var paramStartDate = new Date($("#paramStartDay").val());
+	var startYear = paramStartDate.getFullYear();
+	var startMonth = paramStartDate.getMonth()+1;
+	var startDate = paramStartDate.getDate();
+	var paramProductPeriod = 0;
+	paramProductPeriod = parseInt(productVO.productPeriod);
+	
+	var startDay = "";
+	if(startMonth < 10){
+		startMonth = '0'+startMonth;
+	}
+	if(startDate < 10){
+		startDate = '0'+startDate;
+	}
+	
+	var paramExpirationDate = new Date();
+	paramExpirationDate.setDate(paramExpirationDate.getDate()+paramProductPeriod);
+	var expirationYear = paramExpirationDate.getFullYear();
+	var expirationMonth = paramExpirationDate.getMonth()+1;
+	var expirationDay = paramExpirationDate.getDate();
+	var expirationDate = "";
+	if(expirationMonth < 10){
+		expirationMonth = '0'+expirationMonth;
+	}
+	if(expirationDay < 10){
+		expirationDay = '0'+expirationDay;
+	}
+	expirationDate = expirationYear+"-"+expirationMonth+"-"+expirationDay;
+	$("#paramExpirationDay").val(expirationDate);
+	
 }
-/* 상품 선택 시 품목명 및 데이터 세팅 */
+
+/* 기본 기간 변경 시 만료일 변경 */
+function changeProductPeriod(){
+	
+	var paramProductPeriod = 0;
+	paramProductPeriod = parseInt($("#customerPeriod").val());
+	
+	var paramExpirationDate = new Date();
+	paramExpirationDate.setDate(paramExpirationDate.getDate()+paramProductPeriod);
+	
+	var expirationYear = paramExpirationDate.getFullYear();
+	var expirationMonth = paramExpirationDate.getMonth()+1;
+	var expirationDay = paramExpirationDate.getDate();
+	
+ 	var expirationDate = "";
+	if(expirationMonth < 10){
+		expirationMonth = '0'+expirationMonth;
+	}
+	if(expirationDay < 10){
+		expirationDay = '0'+expirationDay;
+	}
+	expirationDate = expirationYear+"-"+expirationMonth+"-"+expirationDay;
+	$("#paramExpirationDay").val(expirationDate);
+}
 
 
 /* 구매 등록 */

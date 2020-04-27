@@ -157,33 +157,20 @@ public class ProductController {
 		return "/product/productRegister";
 	}
 	
-	// 상품 등록 시 품목 체크(
-	@RequestMapping(value = "checkItem")
-	@ResponseBody
-	public HashMap<String, Object> checkItem(Model model,@ModelAttribute("itemVO") ItemVO itemVO) throws Exception {
-		
-		HashMap<String, Object> hashMap = new HashMap<String, Object>();
-		String paramResult = "fail";
-		
-		ItemVO vo = new ItemVO();
-		vo = itemService.itemDetail(itemVO);
-		if(vo != null) {
-			paramResult = "success";
-			hashMap.put("resultItem", vo);
-		}
-		hashMap.put("result", paramResult);
-		
-		return hashMap;
-	}
-	
 	// 상품 저장 
 	@RequestMapping(value = "insertProduct")
 	@ResponseBody
-	public String insertProduct(Model model,@ModelAttribute("productVO") ProductVO productVO) throws Exception {
+	public String insertProduct(HttpServletRequest request,Model model,@ModelAttribute("productVO") ProductVO productVO) throws Exception {
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		String result = "fail";
 		
 		int paramResult = 0;
+		
+		productVO.setRegisterId(manageVO.getId());
+		productVO.setModifyId(manageVO.getId());
 		
 		paramResult = productService.insertProduct(productVO);
 		 
@@ -197,11 +184,15 @@ public class ProductController {
 	// 상품 삭제
 	@RequestMapping(value = "productDelete")
 	@ResponseBody
-	public String productDel(Model model,ProductVO productVO) throws Exception {
+	public String productDel(HttpServletRequest request,Model model,ProductVO productVO) throws Exception {
+
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
 		String result = "fail";
 		
 		int paramResult = 0;
-		
+		productVO.setModifyId(manageVO.getId());
 		paramResult = productService.productDelete(productVO);
 		
 		if(paramResult > 0) {
@@ -238,12 +229,15 @@ public class ProductController {
 	// 상품 업데이트
 	@RequestMapping(value = "updateProduct")
 	@ResponseBody
-	public String updateProduct(Model model,ProductVO productVO) throws Exception {
+	public String updateProduct(HttpServletRequest request,Model model,ProductVO productVO) throws Exception {
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		String result = "fail";
 		
 		int paramResult = 0;
-		
+		productVO.setModifyId(manageVO.getId());
 		paramResult = productService.updateProduct(productVO);
 		
 		if(paramResult > 0) {
@@ -269,27 +263,6 @@ public class ProductController {
 		} else if(storeList.size() == 0) {
 			hashMap.put("result", "noCount");
 			hashMap.put("popStoreList", "");
-		} else {
-			
-		}
-		
-		return hashMap;
-	}
-	
-	// 품목 찾기(관리자 전용, 매장 선택 후 로직)
-	@RequestMapping(value = "searchItemList")
-	@ResponseBody
-	public HashMap<String, Object> searchItemList(Model model,ItemVO itemVO) throws Exception {
-		
-		HashMap<String, Object> hashMap = new HashMap<String, Object>();
-		
-		List<ItemVO> itemList  = productService.searchItemList(itemVO);
-		
-		if(itemList.size() >= 1){
-			hashMap.put("result", "success");
-			hashMap.put("itemList", itemList);
-		} else if(itemList.size() == 0) {
-			hashMap.put("result", "noCount");
 		} else {
 			
 		}

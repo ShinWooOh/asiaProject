@@ -48,11 +48,10 @@ public class LoginFailureHandler implements AuthenticationFailureHandler{
 		} else if(exception instanceof UsernameNotFoundException) {
 			errormsg = MessageUtils.getMessage("error.BadCredentials");
 		}
-		
+		System.out.println("errormsg : "+errormsg);
 		request.setAttribute(loginIdName, userName);
 		request.setAttribute(loginPasswdName, passwd);
 		request.setAttribute(errorMsgName, errormsg);
-		
 		request.getRequestDispatcher(defaultFailureUrl).forward(request, response);
 	}
 

@@ -20,7 +20,7 @@
 %>
 
 <!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-dark-primary elevation-4" style="height: 800px;">
+<aside class="main-sidebar sidebar-dark-primary elevation-4" style="height: 900px;">
     <!-- Brand Logo -->
 <%--     <a href="#" class="brand-link">
         <img src="/resources/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-1" style="opacity: .8">
@@ -79,20 +79,20 @@
 			                                <p>대시보드</p>
 			                            </a>
 			                        </li>
-			                        <li class="nav-item">
+			                       <!--  <li class="nav-item">
 			                            <a href="#" class="nav-link active">
-<!-- 			                            <a href="/statistics/statisticsMemberList" class="nav-link active"> -->
+			                            <a href="/statistics/statisticsMemberList" class="nav-link active">
 			                                <i class="far fa-circle nav-icon"></i>
 			                                <p>회원 통계</p>
 			                            </a>
 			                        </li>
 			                        <li class="nav-item">
 			                            <a href="#" class="nav-link active">
-			                            <!-- <a href="/statistics/statisticsAttendanceList" class="nav-link active"> -->
+			                            <a href="/statistics/statisticsAttendanceList" class="nav-link active">
 			                                <i class="far fa-circle nav-icon"></i>
 			                                <p>출석 통계</p>
 			                            </a>
-			                        </li>
+			                        </li> -->
 			                    </ul>
 			                </li>
 	                	</c:when>
@@ -207,7 +207,7 @@
 						</c:choose>
 		                    <a href="#" class="nav-link active">
 		                        <i class="nav-icon fas fa-tachometer-alt"></i>
-		                        <p>판매 상품
+		                        <p>상품
 		                            <i class="right fas fa-angle-left"></i>
 		                        </p>
 		                    </a>
@@ -222,35 +222,6 @@
 		                            <a href="/product/productRegister" class="nav-link active">
 		                                <i class="far fa-circle nav-icon"></i>
 		                                <p>상품 등록</p>
-		                            </a>
-		                        </li>
-		                    </ul>
-		                </li>
-						<c:choose>
-							<c:when test="${nowPath eq 'item'}">
-								<li class="nav-item has-treeview menu-open">
-							</c:when>
-							<c:otherwise>
-								<li class="nav-item has-treeview" >
-							</c:otherwise>
-						</c:choose>
-		                    <a href="#" class="nav-link active">
-		                        <i class="nav-icon fas fa-tachometer-alt"></i>
-		                        <p>상품 품목
-		                            <i class="right fas fa-angle-left"></i>
-		                        </p>
-		                    </a>
-		                    <ul class="nav nav-treeview">
-		                        <li class="nav-item">
-		                            <a href="/item/itemList" class="nav-link active">
-		                                <i class="far fa-circle nav-icon"></i>
-		                                <p>품목 관리</p>
-		                            </a>
-		                        </li>
-		                        <li class="nav-item">
-		                            <a href="/item/itemRegister" class="nav-link active">
-		                                <i class="far fa-circle nav-icon"></i>
-		                                <p>품목 등록</p>
 		                            </a>
 		                        </li>
 		                    </ul>
@@ -342,6 +313,31 @@
                 	</c:when>
                 	<c:otherwise></c:otherwise>
                 </c:choose>
+                
+            	<!-- 홍보 마당  -->
+				<c:choose>
+					<c:when test="${nowPath eq 'promotion'}">
+						<li class="nav-item has-treeview menu-open">
+					</c:when>
+					<c:otherwise>
+						<li class="nav-item has-treeview" >
+					</c:otherwise>
+				</c:choose>
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>홍보 마당
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/promotion/promotionList" class="nav-link active">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>홍보 마당</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 
                 
             </ul>

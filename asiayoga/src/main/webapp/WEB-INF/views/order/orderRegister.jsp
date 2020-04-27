@@ -113,7 +113,7 @@
 		                            </tr>
 		                            <tr id="productInfo">
 		                                <th style="width: 15%;">상품<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></th>
-		                                <td colspan="3">
+		                                <td style="width: 30%;">
 		                                	<select id="productSeq" name="productSeq" onchange="goSearchProduct();">
 		                                		<option value="0">상품을 선택해주세요</option>
 		                                		<c:forEach var="productList" items="${productList}">
@@ -121,15 +121,19 @@
 		                                		</c:forEach>
 		                                	</select>
 		                                </td>
+		                                <th style="width: 15%;">기간</th>
+		                                <td style="width: 30%;">
+		                                	<input type="number" id="productPeriod" name="productPeriod" value="0" style="width: 20%;" oninput="changeProductPeriod();">일
+		                                </td>
 		                            </tr>
 		                            <tr>
 		                                <th style="width: 15%;">고객 구매 가격</th>
 		                                <td style="width: 30%;">
-		                                	<input type="text" id="customerPrice" name="customerPrice" value="0" style="width: 20%;">
+		                                	<input type="number" id="customerPrice" name="customerPrice" value="0" style="width: 20%;">
 		                                </td>
 		                                <th id ="productCountInfo1" style="width: 15%;">상품 가격</th>
 		                                <td id ="productCountInfo2" style="width: 30%;">
-		                                	<input type="text" id="productPrice" name="productPrice" value="0" style="width: 20%;">
+		                                	<input type="number" id="productPrice" name="productPrice" value="0" style="width: 20%;">
 		                                </td>
 		                            </tr>
 		                            <tr>
@@ -205,7 +209,7 @@ $(document).ready(function() {
 		monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
 		dayNamesMin: ['일','월','화','수','목','금','토'],
 		dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'],
-		buttonImage: "/resources/image/calendar_btn.png" //버튼에 띄워줄 이미지 경로
+		buttonImage: "/resources/image/calendar_btn.png"
 	});
 	
 	$('#paramExpirationDay').datepicker({
@@ -267,7 +271,7 @@ function goSearchProduct(){
         		},
         success : function(data){
             if(data.result == 'success'){
-            	adjustItemInfo(data.productVO);
+            	adjustProductInfo(data.productVO);
             }else if(data.result == 'noCount'){
             	alert("검색 결과가 존재하지 않습니다.");
             	return false;
@@ -280,17 +284,9 @@ function goSearchProduct(){
 	
 }
 
-function adjustItemInfo(productVO){
+function adjustProductInfo(productVO){
 	
 	var paramItemInfo  = '';
-	
-	paramItemInfo = productVO.itemName;
-	paramItemInfo += '<input type="hidden" id="itemSeq" name="itemSeq" value="'+productVO.itemSeq+'">';
-	
-	$("#itemImfo").text("");
-	$("#itemImfo").append(paramItemInfo);
-	
-	$("#largeCategory").val(productVO.largeCategory);
 	
 	$("#productPrice").val(productVO.productPrice);
 	
@@ -303,17 +299,96 @@ function adjustItemInfo(productVO){
 	}else{
 		
 	}
+
+	$("#productPeriod").val(productVO.productPeriod);
 	
-	if(productVO.largeCategory == '002'){
-		$("#lockerInfo").show();
-		$("#productCountInfo").hide();
-	}else{
-		$("#lockerInfo").hide();
-		$("#productCountInfo").show();
+	var paramStartDate = new Date();
+	var startYear = paramStartDate.getFullYear();
+	var startMonth = paramStartDate.getMonth()+1;
+	var startDate = paramStartDate.getDate();
+	var paramProductPeriod = 0;
+	paramProductPeriod = parseInt(productVO.productPeriod);
+	
+	var startDay = "";
+	if(startMonth < 10){
+		startMonth = '0'+startMonth;
 	}
+	if(startDate < 10){
+		startDate = '0'+startDate;
+	}
+	startDay = startYear+"-"+startMonth+"-"+startDate;
+	
+	var paramExpirationDate = new Date();
+	paramExpirationDate.setDate(paramExpirationDate.getDate()+paramProductPeriod);
+	var expirationYear = paramExpirationDate.getFullYear();
+	var expirationMonth = paramExpirationDate.getMonth()+1;
+	var expirationDay = paramExpirationDate.getDate();
+	var expirationDate = "";
+	if(expirationMonth < 10){
+		expirationMonth = '0'+expirationMonth;
+	}
+	if(expirationDay < 10){
+		expirationDay = '0'+expirationDay;
+	}
+	expirationDate = expirationYear+"-"+expirationMonth+"-"+expirationDay;
+	$("#paramStartDay").val(startDay);
+	$("#paramExpirationDay").val(expirationDate);
 	
 }
 /* 상품 선택 시 품목명 및 데이터 세팅 */
+
+/* 시작일 변경 시 만료일 변경 */
+function changeStartDay(){
+	
+	if($("#productSeq").val() == 0){
+		alert("상품을 먼저 시작하시고 설정하세요.");
+		return false;
+	}
+	
+	var paramProductPeriod = 0;
+	paramProductPeriod = parseInt($("#productPeriod").val());
+	
+	var paramExpirationDate = new Date();
+	paramExpirationDate.setDate(paramExpirationDate.getDate()+paramProductPeriod);
+	
+	var expirationYear = paramExpirationDate.getFullYear();
+	var expirationMonth = paramExpirationDate.getMonth()+1;
+	var expirationDay = paramExpirationDate.getDate();
+	
+ 	var expirationDate = "";
+	if(expirationMonth < 10){
+		expirationMonth = '0'+expirationMonth;
+	}
+	if(expirationDay < 10){
+		expirationDay = '0'+expirationDay;
+	}
+	expirationDate = expirationYear+"-"+expirationMonth+"-"+expirationDay;
+	$("#paramExpirationDay").val(expirationDate);
+}
+
+/* 기본 기간 변경 시 만료일 변경 */
+function changeProductPeriod(){
+	
+	var paramProductPeriod = 0;
+	paramProductPeriod = parseInt($("#productPeriod").val());
+	
+	var paramExpirationDate = new Date();
+	paramExpirationDate.setDate(paramExpirationDate.getDate()+paramProductPeriod);
+	
+	var expirationYear = paramExpirationDate.getFullYear();
+	var expirationMonth = paramExpirationDate.getMonth()+1;
+	var expirationDay = paramExpirationDate.getDate();
+	
+ 	var expirationDate = "";
+	if(expirationMonth < 10){
+		expirationMonth = '0'+expirationMonth;
+	}
+	if(expirationDay < 10){
+		expirationDay = '0'+expirationDay;
+	}
+	expirationDate = expirationYear+"-"+expirationMonth+"-"+expirationDay;
+	$("#paramExpirationDay").val(expirationDate);
+}
 
 
 /* 구매 등록 */

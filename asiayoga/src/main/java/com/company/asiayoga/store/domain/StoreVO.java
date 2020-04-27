@@ -25,6 +25,12 @@ public class StoreVO extends PagingVO {
     private Date modifyDate;                        // 수정 일자
     private String modifyId;                        // 수정자 아이디
     
+    private String postCode;						// 우편번호
+    private String roadAddress;						// 도로명 주소
+    private String jibunAddress;					// 지번주소
+    private String detailAddress;					// 상세주소
+    private String extraAddress;					// 참고항목
+    
     public int getRowNum() {
 		return rowNum;
 	}
@@ -133,21 +139,35 @@ public class StoreVO extends PagingVO {
 	public void setModifyId(String modifyId) {
 		this.modifyId = modifyId;
 	}
-	@Override
-	public String toString() {
-		return "StoreVO [rowNum=" + rowNum + ", storeSeq=" + storeSeq + ", storeName=" + storeName + ", storeTel="
-				+ storeTel + ", storeTel1=" + storeTel1 + ", storeTel2=" + storeTel2 + ", storeTel3=" + storeTel3
-				+ ", storePhone=" + storePhone + ", storePhone1=" + storePhone1 + ", storePhone2=" + storePhone2
-				+ ", storePhone3=" + storePhone3 + ", storeAddress=" + storeAddress + ", storeMemo=" + storeMemo
-				+ ", delYn=" + delYn + ", registerDate=" + registerDate + ", registerId=" + registerId + ", modifyDate="
-				+ modifyDate + ", modifyId=" + modifyId + ", getRowNum()=" + getRowNum() + ", getStoreSeq()="
-				+ getStoreSeq() + ", getStoreName()=" + getStoreName() + ", getStoreTel()=" + getStoreTel()
-				+ ", getStoreTel1()=" + getStoreTel1() + ", getStoreTel2()=" + getStoreTel2() + ", getStoreTel3()="
-				+ getStoreTel3() + ", getStorePhone()=" + getStorePhone() + ", getStorePhone1()=" + getStorePhone1()
-				+ ", getStorePhone2()=" + getStorePhone2() + ", getStorePhone3()=" + getStorePhone3()
-				+ ", getStoreAddress()=" + getStoreAddress() + ", getStoreMemo()=" + getStoreMemo() + ", getDelYn()="
-				+ getDelYn() + ", getRegisterDate()=" + getRegisterDate() + ", getRegisterId()=" + getRegisterId()
-				+ ", getModifyDate()=" + getModifyDate() + ", getModifyId()=" + getModifyId() + ", getClass()="
-				+ getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
+	public String getPostCode() {
+		return postCode;
 	}
+	public void setPostCode(String postCode) {
+		this.postCode = postCode;
+	}
+	public String getRoadAddress() {
+		return roadAddress;
+	}
+	public void setRoadAddress(String roadAddress) {
+		this.roadAddress = roadAddress;
+	}
+	public String getJibunAddress() {
+		return jibunAddress;
+	}
+	public void setJibunAddress(String jibunAddress) {
+		this.jibunAddress = jibunAddress;
+	}
+	public String getDetailAddress() {
+		return detailAddress;
+	}
+	public void setDetailAddress(String detailAddress) {
+		this.detailAddress = detailAddress;
+	}
+	public String getExtraAddress() {
+		return extraAddress;
+	}
+	public void setExtraAddress(String extraAddress) {
+		this.extraAddress = extraAddress;
+	}
+
 }

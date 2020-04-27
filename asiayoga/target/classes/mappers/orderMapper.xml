@@ -139,15 +139,13 @@
 				ordinfo.product_seq,
 				ordinfo.member_seq,
 				( SELECT my_membership FROM memberinfo WHERE member_seq = ordinfo.member_seq) AS my_membership,
+				ordinfo.customer_period,
 				ordinfo.start_day,
 				ordinfo.expiration_day,
-				ordinfo.product_count,
-				ordinfo.remaining_count,
-				ordinfo.locker_seq,
 				ordinfo.del_yn,
 				ordinfo.modify_date,
 				prdinfo.product_name,
-				( SELECT store_name FROM storeinfo WHERE store_seq = #{storeSeq} ) AS store_name,
+				( SELECT store_name FROM storeinfo WHERE store_seq = #{storeSeq} ) AS store_name
 		FROM orderinfo ordinfo
 		INNER JOIN productinfo prdinfo
 		ON ordinfo.product_seq = prdinfo.product_seq
@@ -165,6 +163,7 @@
 				ordinfo.product_seq,
 				ordinfo.member_seq,
 				( SELECT my_membership FROM memberinfo WHERE member_seq = ordinfo.member_seq) AS my_membership,
+				ordinfo.customer_period,
 				ordinfo.start_day,
 				ordinfo.expiration_day,
 				ordinfo.product_price,
@@ -199,7 +198,9 @@
 	<update id="orderDelete" parameterType="orderVO">
  		/* orderMapper.orderDelete */
 		UPDATE orderinfo
-		SET del_yn = 'Y'
+		SET del_yn = 'Y',
+			modify_date = now(),
+			modify_id= #{modifyId}
 		WHERE order_seq = #{orderSeq}
 		AND store_seq = #{storeSeq}
 		AND del_yn = 'N'
@@ -214,13 +215,11 @@
 					member_seq,
 					start_day,
 					expiration_day,
-					product_count,
-					remaining_count,
+					customer_period,
 					expiration_yn,
 					product_price,
 					customer_price,
 					order_memo,
-					locker_seq,
 					del_yn,
 					register_date,
 					register_id,
@@ -234,13 +233,11 @@
 					#{memberSeq},
 					#{startDay},
 					#{expirationDay},
-					#{productCount},
-					#{productCount},
+					#{customerPeriod},
 					'N',
 					#{productPrice},
 					#{customerPrice},
 					#{orderMemo},
-					#{lockerSeq},
 					'N',
 					now(),
 					#{registerId},
@@ -257,14 +254,12 @@
  			product_seq = ${productSeq},
  			start_day = #{startDay},
  			expiration_day = #{expirationDay},
+ 			customer_period = #{customerPeriod},
  			product_price = #{productPrice},
  			customer_price = #{customerPrice},
- 			product_count = #{productCount},
- 			remaining_count = #{remainingCount},
  			order_memo = #{orderMemo},
- 			locker_seq = #{lockerSeq},
  			modify_date = now(),
- 			modify_id = 'admin'
+ 			modify_id = #{modifyId}
  		</set>
  		WHERE order_seq = #{orderSeq}
 		AND del_yn = 'N'
@@ -295,7 +290,6 @@
 				tempA.start_day,
 				tempA.expiration_day,
                 tempA.expiration_yn,
-				tempA.locker_seq,
 				tempA.del_yn,
                 tempA.store_name,
                 tempA.product_name,
@@ -312,7 +306,6 @@
 						ordinfo.start_day, 
 						ordinfo.expiration_day, 
 						ordinfo.expiration_yn, 
-						ordinfo.locker_seq, 
 						ordinfo.del_yn, 
 						stinfo.store_name, 
 						prdinfo.product_name, 

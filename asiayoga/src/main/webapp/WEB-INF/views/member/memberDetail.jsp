@@ -111,6 +111,19 @@
 										<input type="hidden" id="phone" name="phone" value="${memberDetail.phone}">
 	                            	</td>
 	                            </tr>
+                				<tr>
+                					<td>주소</td>
+                					<td colspan="3">우편번호 : ${memberDetail.postCode}<br>
+                									지번주소 :  ${memberDetail.jibunAddress} ${memberDetail.detailAddress}<br>
+                									(${memberDetail.roadAddress} , ${memberDetail.extraAddress})
+                									
+            							<input type="hidden" id="postCode" name="postCode"  style="margin-bottom: 5px;" value="${memberDetail.postCode}">
+										<input type="hidden" id="roadAddress" name="roadAddress" style="margin-top:5px; margin-bottom:5px; width:300px;" value="${memberDetail.roadAddress}"><br>
+										<input type="hidden" id="jibunAddress" name="jibunAddress"  style="width: 300px;" value="${memberDetail.jibunAddress}">
+										<input type="hidden" id="detailAddress" name="detailAddress" style="width: 300px;" value="${memberDetail.detailAddress}">
+										<input type="hidden" id="extraAddress" name="extraAddress" style="width: 100px;" value="${memberDetail.extraAddress}">
+                					</td>
+                				</tr>
 	                            <tr>
 	                            	<td>이메일</td>
 	                            	<td colspan="3">

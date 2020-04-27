@@ -131,6 +131,18 @@
 											<input type="email" id="email" name="email">
 										</td>                				
 	                				</tr>
+	                				<tr>
+	                					<td>주소</td>
+	                					<td colspan="4">
+	                						<input type="text" id="sample4_postcode" name="postCode" placeholder="우편번호" style="margin-bottom: 5px;">
+											<input id ="findAddress" type="button" onclick="execDaumPostcode()" value="우편번호 찾기" style="margin-bottom: 5px;"><br>
+											<input type="text" id="sample4_roadAddress" name="roadAddress" placeholder="도로명주소" style="margin-top:5px; margin-bottom:5px; width:300px;"><br>
+											<span id="guide" style="color:#999;display:none"></span>
+											<input type="text" id="sample4_jibunAddress" name="jibunAddress" placeholder="지번주소" style="width: 300px;">
+											<input type="text" id="sample4_detailAddress" name="detailAddress" placeholder="상세주소" style="width: 300px;">
+											<input type="text" id="sample4_extraAddress" name="extraAddress" placeholder="참고항목" style="width: 100px;">
+	                					</td>
+	                				</tr>
 	                				<tr id="storeInfo">
 	                					<td style="width: 8%;">상품<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></td>
 		                                <td style="width: 25%;">
@@ -162,6 +174,18 @@
 		                                </td>
 	                				</tr>
 	                				<tr>
+                  						<td style="width: 8%;">기간<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></td>
+		                                <td style="width: 25%;">
+                            				<input type="number" id="productPeriod" name="productPeriod" value="0" style="width: 20%;" oninput="changeProductPeriod();">일
+		                                </td>
+		                            	<td  style="width: 8%;">가입일<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></td>
+		                            	<td style="width: 25%;">
+                            				<fmt:formatDate pattern="yyyy-MM-dd" value="${memberInfo.joinDate}" var="joinDate" />
+		                                	<input type="text" id="paramJoinDate" name="paramJoinDate" value="${joinDate}" readonly="readonly">
+		                                	<input type="hidden" id="joinDate" name="joinDate" value="${joinDate}">
+                            			</td>
+                            		</tr>
+	                				<tr>
                   						<td style="width: 8%;">시작일<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></td>
 		                                <td style="width: 25%;">
                             				<fmt:formatDate pattern="yyyy-MM-dd" value="${memberInfo.startDay}" var="startDay" />
@@ -174,14 +198,6 @@
 		                                	<input type="hidden" id="expirationDay" name="expirationDay">
 		                                </td>
 	                				</tr>
-	                				<tr>
-		                            	<td>가입일<font style="color: red; font-weight: bold; font-size: 20px;" >*</font></td>
-		                            	<td colspan="5">
-                            				<fmt:formatDate pattern="yyyy-MM-dd" value="${memberInfo.joinDate}" var="joinDate" />
-		                                	<input type="text" id="paramJoinDate" name="paramJoinDate" value="${joinDate}" readonly="readonly">
-		                                	<input type="hidden" id="joinDate" name="joinDate" value="${joinDate}">
-                            			</td>
-                            		</tr>
 	                				<tr>
 	                					<td>메모</td>
 	                					<td colspan="5"><textarea id="memo" name="memo" rows="6" cols="150"></textarea></td>
@@ -226,6 +242,10 @@
 <script src="${pageContext.request.contextPath}/resources/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="${pageContext.request.contextPath}/resources/dist/js/adminlte.min.js"></script>
+
+<!-- daum address api -->
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
 <script type="text/javascript">
 
 $(document).ready(function() {
@@ -345,6 +365,22 @@ function goInsertMember(){
 	if($("#phone3").val()==''){
 		alert("연락처를 입력해주세요");
 		$("#phone3").focus();
+		return false;
+	}
+	
+	if($("#sample4_postcode").val()== ''){
+		alert("우편번호 찾기 버튼을 통하여 주소를 입력해 주세요.");
+		return false;
+	}
+	if($("#sample4_jibunAddress").val()== ''){
+		alert("지번주소를 입력해 주세요");
+		$("#sample4_jibunAddress").focus();
+		return false;
+	}
+	
+	if($("#sample4_extraAddress").val()== ''){
+		alert("참고항목란에 '동' 또는  '읍','면' 의 주소를  입력해 주세요.");
+		$("#sample4_extraAddress").focus();
 		return false;
 	}
 	
@@ -616,6 +652,7 @@ function popProductList(popProductList){
 	paramList += '<th>매장</th>';
 	paramList += '<th>상품</th>';
 	paramList += '<th>상품 가격</th>';
+	paramList += '<th>상품 기간</th>';
 	paramList += '</tr>';
 
 	
@@ -624,23 +661,26 @@ function popProductList(popProductList){
 		var paramStoreName = '';
 		var paramProductName = '';
 		var paramProductPrice = '';
+		var paramProductPeriod = '';
 		
 		paramStoreName = popProductList[i].storeName;
 		paramProductSeq = popProductList[i].productSeq;
 		paramProductName = popProductList[i].productName;
 		paramProductPrice = popProductList[i].productPrice;
+		paramProductPeriod = popProductList[i].productPeriod;
 		
 		paramList += '<tr>';
 		paramList += '<td>'+popProductList[i].rowNum+'</td>';
 		paramList += '<td>';
-		paramList += '<a href="#" onclick="popProductSelect('+paramProductSeq+', \''+paramProductName+'\','+paramProductPrice+');">'; 
+		paramList += '<a href="#" onclick="popProductSelect('+paramProductSeq+', \''+paramProductName+'\','+paramProductPrice+',,'+paramProductPeriod+');">'; 
 		paramList +=  paramStoreName+'</a>';
 		paramList += '</td>';
 		paramList += '<td>';
-		paramList += '<a href="#" onclick="popProductSelect('+paramProductSeq+', \''+paramProductName+'\','+paramProductPrice+');">'; 
+		paramList += '<a href="#" onclick="popProductSelect('+paramProductSeq+', \''+paramProductName+'\','+paramProductPrice+','+paramProductPeriod+');">'; 
 		paramList +=  paramProductName+'</a>';
 		paramList += '</td>';
 		paramList += '<td>'+paramProductPrice+'</td>';
+		paramList += '<td>'+paramProductPeriod+'일</td>';
 		paramList += '</tr>';
 	}
 	
@@ -648,17 +688,74 @@ function popProductList(popProductList){
 	$("#productList").append(paramList);
 }
 
-function popProductSelect(productSeq,productName,productPrice) {
+function popProductSelect(productSeq,productName,productPrice,productPeriod) {
 	
 	$("#paramProductName").val(productName);
 	$("#memberInsert #productSeq").val(productSeq);
 	$("#memberInsert #productPrice").val(productPrice);
 	$("#memberInsert #customerPrice").val(productPrice);
+	$("#memberInsert #productPeriod").val(productPeriod);
+	
+	var paramStartDate = new Date();
+	var startYear = paramStartDate.getFullYear();
+	var startMonth = paramStartDate.getMonth()+1;
+	var startDate = paramStartDate.getDate();
+	var paramProductPeriod = 0;
+	paramProductPeriod = parseInt(productPeriod);
+	
+	var startDay = "";
+	if(startMonth < 10){
+		startMonth = '0'+startMonth;
+	}
+	if(startDate < 10){
+		startDate = '0'+startDate;
+	}
+	startDay = startYear+"-"+startMonth+"-"+startDate;
+	
+	var paramExpirationDate = new Date();
+	paramExpirationDate.setDate(paramExpirationDate.getDate()+paramProductPeriod);
+	var expirationYear = paramExpirationDate.getFullYear();
+	var expirationMonth = paramExpirationDate.getMonth()+1;
+	var expirationDay = paramExpirationDate.getDate();
+	var expirationDate = "";
+	if(expirationMonth < 10){
+		expirationMonth = '0'+expirationMonth;
+	}
+	if(expirationDay < 10){
+		expirationDay = '0'+expirationDay;
+	}
+	expirationDate = expirationYear+"-"+expirationMonth+"-"+expirationDay;
+	$("#paramStartDay").val(startDay);
+	$("#paramExpirationDay").val(expirationDate);
 	
 	defaultCss();
 	popProductClose();
 	
 	$("#findProduct").modal('toggle');
+}
+
+/* 기본 기간 변경 시 만료일 변경 */
+function changeProductPeriod(){
+	
+	var paramProductPeriod = 0;
+	paramProductPeriod = parseInt($("#productPeriod").val());
+	
+	var paramExpirationDate = new Date();
+	paramExpirationDate.setDate(paramExpirationDate.getDate()+paramProductPeriod);
+	
+	var expirationYear = paramExpirationDate.getFullYear();
+	var expirationMonth = paramExpirationDate.getMonth()+1;
+	var expirationDay = paramExpirationDate.getDate();
+	
+ 	var expirationDate = "";
+	if(expirationMonth < 10){
+		expirationMonth = '0'+expirationMonth;
+	}
+	if(expirationDay < 10){
+		expirationDay = '0'+expirationDay;
+	}
+	expirationDate = expirationYear+"-"+expirationMonth+"-"+expirationDay;
+	$("#paramExpirationDay").val(expirationDate);
 }
 
 function popProductClose(){
@@ -671,9 +768,10 @@ function popProductClose(){
 	paramDefaultList += '<th>매장</th>';
 	paramDefaultList += '<th>상품</th>';
 	paramDefaultList += '<th>상품 가격</th>';
+	paramDefaultList += '<th>상품 기간</th>';
 	paramDefaultList += '</tr>';
 	paramDefaultList += '<tr>';
-	paramDefaultList += '<th colspan="4" style="text-align: center;">결과가 없습니다.</th>';
+	paramDefaultList += '<th colspan="5" style="text-align: center;">결과가 없습니다.</th>';
 	paramDefaultList += '</tr>';
 	
 	$("#productList").text("");
@@ -681,8 +779,76 @@ function popProductClose(){
 }
 
 
+/* 다음 주소 api  */
+function execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var roadAddr = data.roadAddress; // 도로명 주소 변수
+                var extraRoadAddr = ''; // 참고 항목 변수
+
+                // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                    extraRoadAddr += data.bname;
+                }
+                // 건물명이 있고, 공동주택일 경우 추가한다.
+         /*        if(data.buildingName !== '' && data.apartment === 'Y'){
+                   extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                }
+                // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                if(extraRoadAddr !== ''){
+                    extraRoadAddr = ' ' + extraRoadAddr + '';
+                } */
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('sample4_postcode').value = data.zonecode;
+                document.getElementById("sample4_roadAddress").value = roadAddr;
+                document.getElementById("sample4_jibunAddress").value = data.jibunAddress;
+                
+                // 참고항목 문자열이 있을 경우 해당 필드에 넣는다.
+                if(roadAddr !== ''){
+                    document.getElementById("sample4_extraAddress").value = extraRoadAddr;
+                } else {
+                    document.getElementById("sample4_extraAddress").value = '';
+                }
+
+                var guideTextBox = document.getElementById("guide");
+                // 사용자가 '선택 안함'을 클릭한 경우, 예상 주소라는 표시를 해준다.
+                if(data.autoRoadAddress) {
+                    var expRoadAddr = data.autoRoadAddress + extraRoadAddr;
+                    guideTextBox.innerHTML = '(예상 도로명 주소 : ' + expRoadAddr + ')';
+                    guideTextBox.style.display = 'block';
+
+                } else if(data.autoJibunAddress) {
+                    var expJibunAddr = data.autoJibunAddress;
+                    guideTextBox.innerHTML = '(예상 지번 주소 : ' + expJibunAddr + ')';
+                    guideTextBox.style.display = 'block';
+                } else {
+                    guideTextBox.innerHTML = '';
+                    guideTextBox.style.display = 'none';
+                }
+            }
+        }).open();
+}
+
+
 /* 팝업 파트 종료  */
 function defaultCss() {
+	
+	$("#findAddress").css({
+		"margin-left"		: "5px",
+		"background-color"	: "#00c0ef",
+		"border-color"		: "#00c0ef",
+		"border-radius"		: "3px",
+		"color"				: "white",
+		"border"			: "1px solid",
+		"width"				: "120px",
+		"fontSize"			: "15px"
+	});
 	
 	$("#findProductName").css({
 		"margin-left"		: "5px",

@@ -30,7 +30,7 @@
 				temp.modify_id,      
 	            temp.del_yn,
 	            temp.store_seq
-     	FROM  ( SELECT 	atdinfo.attendance_seq, 
+     	FROM  ( SELECT 	atdinfo.attendance_seq,
 						atdinfo.member_seq,
 						atdinfo.product_seq,
 						( SELECT product_name FROM productinfo WHERE product_seq = atdinfo.product_seq ) AS product_name,
@@ -74,7 +74,7 @@
 	<select id="attendanceTotalCount" parameterType="memberVO" resultType="int">
 		/* attendanceMapper.attendanceTotalCount */
 		SELECT 	COUNT(*)
-     	FROM  ( SELECT 	atdinfo.attendance_seq, 
+     	FROM  ( SELECT 	atdinfo.attendance_seq,
 						atdinfo.member_seq,
 						atdinfo.product_seq,
 						( SELECT product_name FROM productinfo WHERE product_seq = atdinfo.product_seq ) AS product_name,
@@ -152,7 +152,7 @@
 	</select>
 	
 	<!-- 출석 정보 등록 -->
-	<insert id="insertAttendance" parameterType="attendanceVO">
+	<insert id="insertAttendance" parameterType="attendanceVO" useGeneratedKeys="true" keyProperty="attendanceSeq">
 		/* attendanceMapper.insertAttendance */
 		INSERT INTO attendanceinfo
 				( 	member_seq,
@@ -177,6 +177,7 @@
 				  	#{storeSeq}
 				)
 	</insert>
+	
 	
 	<!-- 출석 정보 삭제 -->
 	<update id="attendanceDelete" parameterType="attendanceVO">

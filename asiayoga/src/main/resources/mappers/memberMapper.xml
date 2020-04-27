@@ -24,6 +24,11 @@
 				tempA.memo, 
 				tempA.store_seq,
 				tempA.store_name,
+	            tempA.post_code,
+	            tempA.road_address,
+	            tempA.jibun_address,
+	            tempA.detail_address,
+	            tempA.extra_address,
 				tempA.register_date, 
 				tempA.adjournment_state 	
 		FROM (
@@ -38,6 +43,11 @@
 			            mbinfo.memo,
 			            mbinfo.store_seq,
 			            ( SELECT store_name FROM storeinfo WHERE store_seq = mbinfo.store_seq) AS store_name,
+			            mbinfo.post_code,
+			            mbinfo.road_address,
+			            mbinfo.jibun_address,
+			            mbinfo.detail_address,
+			            mbinfo.extra_address,
 			            mbinfo.register_date,
 			            mbinfo.adjournment_state
 				FROM memberinfo mbinfo 
@@ -55,6 +65,11 @@
 						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
 						OR 	mbinfo.birth LIKE CONCAT('%',#{searchWord},'%')
 						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.post_code LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.road_address LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.jibun_address LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.detail_address LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.extra_address LIKE CONCAT('%',#{searchWord},'%')
 						OR 	mbinfo.email LIKE CONCAT('%',#{searchWord},'%')
 					)
 				</if>
@@ -101,6 +116,10 @@
 	            memo,
 	            store_seq,
 	            join_date,
+	            post_code,
+	            road_address,
+	            jibun_address,
+	            extra_address,
 	            register_date,
 	            ( SELECt store_name FROM storeinfo WHERE store_seq = #{storeSeq} ) AS store_name
 		FROM memberinfo
@@ -122,6 +141,11 @@
 					memo,
 					store_seq,
 					join_date,
+					post_code,
+					road_address,
+					jibun_address,
+					detail_address,
+					extra_address,
 					register_id,
 					modify_id
 				)
@@ -136,6 +160,11 @@
 					#{memo},
 					#{storeSeq},
 					#{joinDate},
+					#{postCode},
+					#{roadAddress},
+					#{jibunAddress},
+					#{detailAddress},
+					#{extraAddress},
 					#{registerId},
 					#{registerId}
 				)
@@ -167,6 +196,11 @@
   			<if test="memo != null and memo != ''">memo = #{memo},</if>
   			join_date = #{joinDate},
   			modify_date= now(),
+  			post_code=#{postCode},
+  			road_address= #{roadAddress},
+  			jibun_address = #{jibunAddress},
+  			detail_address=#{detailAddress},
+  			extra_address = #{extraAddress},
   			modify_id = #{modifyId}
   		</set> 
   		WHERE member_seq = #{memberSeq}
@@ -190,6 +224,11 @@
 	            mbinfo.memo,
 	            mbinfo.store_seq,
 	            ( SELECT store_name FROM storeinfo WHERE store_seq= mbinfo.store_seq ) AS store_name,
+	            mbinfo.post_code,
+	            mbinfo.road_address,
+	            mbinfo.jibun_address,
+	            mbinfo.detail_address,
+	            mbinfo.extra_address,
 	            mbinfo.register_date,
 	            ordinfo.order_seq,
             	ordinfo.product_count,
@@ -216,6 +255,11 @@
 				OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
 				OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
 				OR 	mbinfo.email LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.post_code LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.road_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.jibun_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.detail_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	mbinfo.extra_address LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
 		AND mbinfo.del_yn = 'N'
@@ -238,6 +282,11 @@
 	            join_date,
 	            memo,
 	            store_seq,
+	            post_code,
+	            road_address,
+	            jibun_address,
+	            detail_address,
+	            extra_address,
 	            register_date
 		FROM memberinfo , (SELECT @ROWNUM :=0) AS R
 		WHERE store_seq = #{storeSeq}
@@ -248,6 +297,11 @@
 				OR 	birth LIKE CONCAT('%',#{searchWord},'%')
 				OR 	phone LIKE CONCAT('%',#{searchWord},'%')
 				OR 	email LIKE CONCAT('%',#{searchWord},'%')
+				OR 	post_code LIKE CONCAT('%',#{searchWord},'%')
+				OR 	road_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	jibun_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	detail_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	extra_address LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
 		AND del_yn = 'N'
@@ -263,6 +317,7 @@
 				tempA.store_name,
 				tempA.product_name,
 				tempA.product_price,
+				tempA.product_period,
 				tempA.modify_date
 		FROM (
 				SELECT	prdinfo.product_seq,
@@ -270,6 +325,7 @@
 						(SELECT store_name FROM storeinfo WHERE store_seq = prdinfo.store_seq) AS store_name,
 						prdinfo.product_name,
 						prdinfo.product_price,
+						prdinfo.product_period,
 						prdinfo.modify_date
 				FROM productinfo prdinfo
 				WHERE del_yn = 'N'
@@ -306,6 +362,11 @@
 				tempA.memo, 
 				tempA.store_seq,
 				tempA.store_name,
+	            tempA.post_code,
+	            tempA.road_address,
+	            tempA.jibun_address,
+	            tempA.detail_address,
+	            tempA.extra_address,
 				tempA.register_date, 
 				tempA.adjournment_state 	
 		FROM (
@@ -320,6 +381,11 @@
 			            mbinfo.memo,
 			            mbinfo.store_seq,
 			            ( SELECT store_name FROM storeinfo WHERE store_seq = mbinfo.store_seq) AS store_name,
+			            mbinfo.post_code,
+			            mbinfo.road_address,
+			            mbinfo.jibun_address,
+			            mbinfo.detail_address,
+			            mbinfo.extra_address,
 			            mbinfo.register_date,
 			            mbinfo.adjournment_state
 				FROM memberinfo mbinfo 
@@ -337,6 +403,11 @@
 						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
 						OR 	mbinfo.birth LIKE CONCAT('%',#{searchWord},'%')
 						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.post_code LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.road_address LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.jibun_address LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.detail_address LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.extra_address LIKE CONCAT('%',#{searchWord},'%')
 						OR 	mbinfo.email LIKE CONCAT('%',#{searchWord},'%')
 					)
 				</if>

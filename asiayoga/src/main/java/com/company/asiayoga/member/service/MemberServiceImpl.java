@@ -65,6 +65,7 @@ public class MemberServiceImpl implements MemberService {
 			orderVO.setMemberSeq(memberVO.getMemberSeq());
 			orderVO.setStartDay(memberVO.getStartDay());
 			orderVO.setExpirationDay(memberVO.getExpirationDay());
+			orderVO.setCustomerPeriod(memberVO.getProductPeriod());
 			orderVO.setProductCount(0);
 			orderVO.setProductPrice(memberVO.getProductPrice());
 			orderVO.setCustomerPrice(memberVO.getCustomerPrice());

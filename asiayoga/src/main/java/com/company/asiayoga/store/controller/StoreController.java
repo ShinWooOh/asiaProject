@@ -118,11 +118,14 @@ public class StoreController {
 	// 매장 삭제
 	@RequestMapping(value = "storeDelete")
 	@ResponseBody
-	public String storeDelete(Model model,@ModelAttribute("storeVO") StoreVO storeVO) throws Exception {
+	public String storeDelete(HttpServletRequest request,Model model,@ModelAttribute("storeVO") StoreVO storeVO) throws Exception {
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		int resultParam = 0;
 		String result = "fail";
-		
+		storeVO.setModifyId(manageVO.getId());
 		resultParam = storeService.storeDelete(storeVO);
 		
 		if(resultParam >= 1) {
@@ -165,11 +168,14 @@ public class StoreController {
 	// 매장 등록
 	@RequestMapping(value = "insertStore")
 	@ResponseBody
-	public String insertStore(Model model,@ModelAttribute("storeVO") StoreVO storeVO) throws Exception {
+	public String insertStore(HttpServletRequest request,Model model,@ModelAttribute("storeVO") StoreVO storeVO) throws Exception {
 		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+
 		int resultParam = 0;
 		String result = "fail";
-		
+		storeVO.setRegisterId(manageVO.getId());
 		resultParam = storeService.insertStore(storeVO);
 		
 		if(resultParam > 0) {
@@ -182,11 +188,14 @@ public class StoreController {
 	// 매장 정보 업데이트
 	@RequestMapping(value = "updateStore")
 	@ResponseBody
-	public String updateStore(Model model,@ModelAttribute("storeVO") StoreVO storeVO) throws Exception {
+	public String updateStore(HttpServletRequest request,Model model,@ModelAttribute("storeVO") StoreVO storeVO) throws Exception {
+
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		int resultParam = 0;
 		String result = "fail";
-		
+		storeVO.setModifyId(manageVO.getId());
 		resultParam = storeService.updateStore(storeVO);
 		
 		if(resultParam > 0) {

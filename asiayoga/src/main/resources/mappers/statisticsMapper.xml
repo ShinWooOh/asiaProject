@@ -28,7 +28,7 @@
 					</when>
 					<otherwise></otherwise>
 				  </choose>
-				  AND join_date BETWEEN CURDATE() and NOW()) AS new_day_member,
+				  AND join_date BETWEEN CURDATE() and CURDATE()+1) AS new_day_member,
 				( SELECT COUNT(1) 
 				  FROM memberinfo 
 				  WHERE 1=1
@@ -95,7 +95,7 @@
 		GROUP by new_day_member,new_week_member,new_month_member,new_year_member,total_member,adjournment_yes,adjournment_no
 	</select>
     
-	<!-- 금일 출석 인원  -->
+	<!-- 금일 출석 인원  수-->
 	<select id="attendanceYesCount" parameterType="statisticsVO" resultType="int">
   		/* statisticsMapper.attendanceYesCount */
   		SELECT COUNT(1) 
@@ -106,7 +106,7 @@
 				EXISTS ( SELECT atdinfo.member_seq 
 							FROM attendanceinfo atdinfo
 							WHERE mbinfo.member_seq = atdinfo.member_seq 
-							AND atdinfo.attendance_date BETWEEN CURDATE() and NOW()
+							AND atdinfo.attendance_date BETWEEN CURDATE() and CURDATE()+1
 							AND atdinfo.del_yn = 'N'
 						 ) 
 				AND mbinfo.del_yn ='N'
@@ -115,13 +115,20 @@
 						AND mbinfo.store_seq = #{storeSeq}
 					</when>
 					<otherwise></otherwise>
-				</choose> 
+				</choose>
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if> 
 				GROUP BY mbinfo.member_seq
 			) AS tempA
   		
 	</select>
 	
-	<!-- 금일 미출석 인원  -->
+	<!-- 금일 미출석 인원  수-->
 	<select id="attendanceNoCount" parameterType="statisticsVO" resultType="int">
   		/* statisticsMapper.attendanceNoCount */
   		SELECT COUNT(1) 
@@ -132,7 +139,65 @@
 				NOT EXISTS ( SELECT atdinfo.member_seq  
 							FROM attendanceinfo atdinfo
 							WHERE mbinfo.member_seq = atdinfo.member_seq 
-							AND atdinfo.attendance_date BETWEEN CURDATE() and NOW()
+							AND atdinfo.attendance_date BETWEEN CURDATE() and CURDATE()+1
+							AND atdinfo.del_yn = 'N'
+						 ) 
+				AND mbinfo.del_yn ='N'
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND mbinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if> 
+				GROUP BY mbinfo.member_seq
+			) AS tempA
+	</select>
+	
+	<!-- 금일 출석 인원  list -->
+	<select id="attendanceYesList" parameterType="statisticsVO" resultType="statisticsVO">
+  		/* statisticsMapper.attendanceYesList */
+		SELECT  @ROWNUM:=@ROWNUM+1 AS row_num,
+				tempA.member_seq,
+			 	tempA.my_membership,
+			 	tempA.name,
+			 	tempA.sex,
+			 	tempA.phone,
+			 	tempA.store_seq,
+			 	tempA.store_name,
+			 	tempA.attendance_date
+		FROM (
+				SELECT 	 mbinfo.member_seq,
+						 mbinfo.my_membership,
+						 mbinfo.name,
+						 mbinfo.sex,
+						 mbinfo.phone,
+						 mbinfo.store_seq,
+						 stinfo.store_name,
+					 	 ( 	SELECT attendance_date 
+							FROM attendanceinfo 
+							WHERE mbinfo.member_seq = member_seq 
+							AND attendance_date BETWEEN CURDATE() AND CURDATE()+1 
+							AND del_yn = 'N' 
+							ORDER BY attendance_date DESC LIMIT 1
+						 ) AS attendance_date 
+				FROM memberinfo mbinfo 
+				INNER JOIN storeinfo stinfo 
+				ON mbinfo.store_seq = stinfo.store_seq 
+				INNER JOIN attendanceinfo atdinfoa
+				ON mbinfo.member_seq =  atdinfoa.member_seq
+				INNER JOIN (SELECT @ROWNUM :=0) AS R
+				WHERE 
+				EXISTS (	SELECT atdinfo.member_seq 
+							FROM attendanceinfo atdinfo
+							WHERE mbinfo.member_seq = atdinfo.member_seq 
+							AND atdinfo.attendance_date BETWEEN CURDATE() and CURDATE()+1
 							AND atdinfo.del_yn = 'N'
 						 ) 
 				AND mbinfo.del_yn ='N'
@@ -142,7 +207,290 @@
 					</when>
 					<otherwise></otherwise>
 				</choose> 
+				<if test="searchWord != null and searchWord != ''">
+							AND 
+							(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+								OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+								OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+							)
+				</if> 
+				GROUP BY mbinfo.member_seq
+				ORDER BY attendance_date ASC
+		 	) AS tempA ORDER BY row_num DESC
+  		<include refid="commomPaging"/>
+	</select>
+	
+	<!-- 금일 미출석 인원  list-->
+	<select id="attendanceNoList" parameterType="statisticsVO" resultType="statisticsVO">
+  		/* statisticsMapper.attendanceNoList */
+  		SELECT 	 @ROWNUM:=@ROWNUM+1 AS row_num,
+  				 mbinfo.member_seq,
+				 mbinfo.my_membership,
+				 mbinfo.name,
+				 mbinfo.sex,
+				 mbinfo.phone,
+				 mbinfo.store_seq,
+				 stinfo.store_name
+		FROM  memberinfo mbinfo
+		INNER JOIN storeinfo stinfo
+		ON mbinfo.store_seq =  stinfo.store_seq
+		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		WHERE 
+		NOT EXISTS ( 	SELECT atdinfo.member_seq 
+						FROM attendanceinfo atdinfo
+						WHERE mbinfo.member_seq = atdinfo.member_seq 
+						AND atdinfo.attendance_date BETWEEN CURDATE() and CURDATE()+1
+						AND atdinfo.del_yn = 'N'
+				 ) 
+		AND mbinfo.del_yn ='N'
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND mbinfo.store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose>
+		<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+					)
+		</if> 
+		GROUP BY mbinfo.member_seq
+		ORDER BY mbinfo.member_seq DESC , row_num DESC
+		<include refid="commomPaging"/>
+	</select>
+	
+	<!-- 엑셀 다운로드를 위한 금일 출석 인원  list -->
+	<select id="attendanceYesExcel" parameterType="statisticsVO" resultType="statisticsVO">
+  		/* statisticsMapper.attendanceYesExcel */
+		SELECT  @ROWNUM:=@ROWNUM+1 AS row_num,
+				tempA.member_seq,
+			 	tempA.my_membership,
+			 	tempA.name,
+			 	tempA.sex,
+			 	tempA.phone,
+			 	tempA.store_seq,
+			 	tempA.store_name,
+			 	tempA.attendance_date
+		FROM (
+				SELECT 	 mbinfo.member_seq,
+						 mbinfo.my_membership,
+						 mbinfo.name,
+						 mbinfo.sex,
+						 mbinfo.phone,
+						 mbinfo.store_seq,
+						 stinfo.store_name,
+					 	 ( 	SELECT attendance_date 
+							FROM attendanceinfo 
+							WHERE mbinfo.member_seq = member_seq 
+							AND attendance_date BETWEEN CURDATE() AND CURDATE()+1 
+							AND del_yn = 'N' 
+							ORDER BY attendance_date DESC LIMIT 1
+						 ) AS attendance_date 
+				FROM memberinfo mbinfo 
+				INNER JOIN storeinfo stinfo 
+				ON mbinfo.store_seq = stinfo.store_seq 
+				INNER JOIN attendanceinfo atdinfoa
+				ON mbinfo.member_seq =  atdinfoa.member_seq
+				INNER JOIN (SELECT @ROWNUM :=0) AS R
+				WHERE 
+				EXISTS (	SELECT atdinfo.member_seq 
+							FROM attendanceinfo atdinfo
+							WHERE mbinfo.member_seq = atdinfo.member_seq 
+							AND atdinfo.attendance_date BETWEEN CURDATE() and CURDATE()+1
+							AND atdinfo.del_yn = 'N'
+						 ) 
+				AND mbinfo.del_yn ='N'
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND mbinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose> 
+				<if test="searchWord != null and searchWord != ''">
+							AND 
+							(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+								OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+								OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+							)
+				</if> 
+				GROUP BY mbinfo.member_seq
+				ORDER BY attendance_date ASC
+		 	) AS tempA ORDER BY row_num DESC
+	</select>
+	
+	<!-- 엑셀 다온르드를 위한 금일 미출석 인원  list-->
+	<select id="attendanceNoExcel" parameterType="statisticsVO" resultType="statisticsVO">
+  		/* statisticsMapper.attendanceNoExcel */
+  		SELECT 	 @ROWNUM:=@ROWNUM+1 AS row_num,
+  				 mbinfo.member_seq,
+				 mbinfo.my_membership,
+				 mbinfo.name,
+				 mbinfo.sex,
+				 mbinfo.phone,
+				 mbinfo.store_seq,
+				 stinfo.store_name
+		FROM  memberinfo mbinfo
+		INNER JOIN storeinfo stinfo
+		ON mbinfo.store_seq =  stinfo.store_seq
+		INNER JOIN (SELECT @ROWNUM :=0) AS R
+		WHERE 
+		NOT EXISTS ( 	SELECT atdinfo.member_seq 
+						FROM attendanceinfo atdinfo
+						WHERE mbinfo.member_seq = atdinfo.member_seq 
+						AND atdinfo.attendance_date BETWEEN CURDATE() and CURDATE()+1
+						AND atdinfo.del_yn = 'N'
+				 ) 
+		AND mbinfo.del_yn ='N'
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND mbinfo.store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose>
+		<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+					)
+		</if> 
+		GROUP BY mbinfo.member_seq
+		ORDER BY mbinfo.member_seq DESC , row_num DESC
+	</select>
+	
+	<!-- 금주 출석 인원  수-->
+	<select id="newWeekAttendanceCount" parameterType="statisticsVO" resultType="int">
+  		/* statisticsMapper.newWeekAttendanceCount */
+  		SELECT COUNT(1) 
+  		FROM (	
+	  			SELECT member_seq
+				FROM  memberinfo mbinfo 
+				WHERE 
+				NOT EXISTS ( SELECT atdinfo.member_seq  
+							FROM attendanceinfo atdinfo
+							WHERE mbinfo.member_seq = atdinfo.member_seq 
+							AND atdinfo.attendance_date BETWEEN DATE_SUB(CURDATE(),INTERVAL(DAYOFWEEK(CURDATE())-1) DAY) 
+															AND DATE_ADD(CURDATE(),INTERVAL(7-DAYOFWEEK(CURDATE())) DAY)
+							AND atdinfo.del_yn = 'N'
+						 ) 
+				AND mbinfo.del_yn ='N'
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND mbinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
 				GROUP BY mbinfo.member_seq
 			) AS tempA
 	</select>
+	
+	<!-- 매출 정보 -->
+	<select id="salesInfo" parameterType="statisticsVO" resultType="statisticsVO">
+  		/* statisticsMapper.salesInfo */
+  		SELECT 
+				#{storeSeq} AS store_seq,
+				#{authority} AS authority,
+				( SELECT MONTH(CURDATE())
+				) AS this_month,
+				(	SELECT YEAR(CURDATE())
+				) AS this_year,
+  				(
+			  		SELECT SUM(customer_price) AS today_sales
+					FROM orderinfo 
+					WHERE 1=1
+					<choose>
+						<when test="authority != 'ROLE_ADMIN'">
+							AND store_seq = #{storeSeq}
+						</when>
+						<otherwise></otherwise>
+					</choose>
+					AND del_yn = 'N' 
+					AND register_date BETWEEN CURDATE() AND CURDATE()+1
+  				) as today_sales,
+  				(
+			  		SELECT SUM(customer_price) AS week_sales
+					FROM orderinfo 
+					WHERE 1=1
+					<choose>
+						<when test="authority != 'ROLE_ADMIN'">
+							AND store_seq = #{storeSeq}
+						</when>
+						<otherwise></otherwise>
+					</choose>
+					AND del_yn = 'N' 
+					AND register_date BETWEEN DATE_SUB(CURDATE(),INTERVAL(DAYOFWEEK(CURDATE())-1) DAY) AND DATE_ADD(CURDATE(),INTERVAL(7-DAYOFWEEK(CURDATE())) DAY)
+  				) as week_sales,
+  				(
+			  		SELECT SUM(customer_price) AS month_sales
+					FROM orderinfo 
+					WHERE 1=1
+					<choose>
+						<when test="authority != 'ROLE_ADMIN'">
+							AND store_seq = #{storeSeq}
+						</when>
+						<otherwise></otherwise>
+					</choose>
+					AND del_yn = 'N' 
+					AND register_date BETWEEN DATE_SUB(CURDATE(),INTERVAL(DAYOFMONTH(CURDATE())-1) DAY) AND LAST_DAY(CURDATE())
+  				) as month_sales,
+  				(
+			  		SELECT SUM(customer_price) AS year_sales
+					FROM orderinfo 
+					WHERE 1=1
+					<choose>
+						<when test="authority != 'ROLE_ADMIN'">
+							AND store_seq = #{storeSeq}
+						</when>
+						<otherwise></otherwise>
+					</choose>
+					AND del_yn = 'N' 
+					AND register_date BETWEEN DATE_FORMAT(CURDATE(), '%Y-01-01') AND DATE_FORMAT(CURDATE(), '%Y-12-31')
+  				) as year_sales
+  		FROM orderinfo
+  		GROUP BY today_sales, week_sales, month_sales, year_sales
+	</select>
+	
+	<!-- 금일 매출 -->
+	<select id="todaySales" parameterType="statisticsVO" resultType="int">
+  		/* statisticsMapper.todaySales */
+  		SELECT SUM(customer_price) AS today_sales
+		FROM orderinfo 
+		WHERE store_seq= #{store_seq}
+		AND del_yn = 'N' 
+		AND register_date BETWEEN CURDATE() AND CURDATE()+1
+	</select>
+	
+	<!-- 금주 매출 -->
+	<select id="weekSales" parameterType="statisticsVO" resultType="int">
+  		/* statisticsMapper.weekSales */
+  		SELECT SUM(customer_price) AS week_sales
+		FROM orderinfo 
+		WHERE store_seq= #{store_seq}
+		AND del_yn = 'N' 
+		AND register_date BETWEEN DATE_SUB(CURDATE(),INTERVAL(DAYOFWEEK(CURDATE())-1) DAY) AND DATE_ADD(CURDATE(),INTERVAL(7-DAYOFWEEK(CURDATE())) DAY)
+	</select>
+	
+	<!-- 이번달 매출 -->
+	<select id="monthSales" parameterType="statisticsVO" resultType="int">
+  		/* statisticsMapper.monthSales */
+  		SELECT SUM(customer_price) AS month_sales
+		FROM orderinfo 
+		WHERE store_seq= #{store_seq}
+		AND del_yn = 'N' 
+		AND register_date BETWEEN DATE_SUB(CURDATE(),INTERVAL(DAYOFMONTH(CURDATE())-1) DAY) AND LAST_DAY(CURDATE())
+	</select>
+	
+	<!-- 올해 매출 -->
+	<select id="yearSales" parameterType="statisticsVO" resultType="int">
+  		/* statisticsMapper.yearSales */
+  		SELECT SUM(customer_price) AS year_sales
+		FROM orderinfo 
+		WHERE store_seq= #{store_seq}
+		AND del_yn = 'N' 
+		AND register_date BETWEEN DATE_FORMAT(CURDATE(), '%Y-01-01') AND DATE_FORMAT(CURDATE(), '%Y-12-31')
+	</select>
+	
+	
 </mapper>

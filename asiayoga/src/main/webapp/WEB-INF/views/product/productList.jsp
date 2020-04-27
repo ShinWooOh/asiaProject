@@ -104,10 +104,10 @@
 		                            <tbody id="productHeader" style="vertical-align: middle;">
 			                            <tr>
 			                                <th style="width: 7%">No</th>
-			                                <th style="width: 20%">매장명</th>
-			                                <th style="width: 13%">품목구분</th>
-			                                <th style="width: 38%">상품명</th>
+			                                <th style="width: 25%">매장명</th>
+			                                <th style="width: 31%">상품명</th>
 			                                <th style="width: 15%">상품가격</th>
+			                                <th style="width: 15%">상품기간</th>
 			                                <th style="width: 7%"></th>
 			                            </tr>
 			                            <c:choose>
@@ -116,9 +116,9 @@
 						                           	<tr>
 														<td><c:out value="${productList.rowNum}"/></td>                            		
 														<td><c:out value="${productList.storeName}"/></td>
-														<td ><c:out value="${productList.itemName}"/></td>                            		
 														<td><a href="#" onclick="goProductDetail(${productList.productSeq},${productList.storeSeq});"><c:out value="${productList.productName}"/></a></td>
 														<td><fmt:formatNumber type="number" maxFractionDigits="3" value="${productList.productPrice}" /></td>
+														<td><c:out value="${productList.productPeriod}"/>일</td>
 														<td align="center">
 															<input type="button" class="btn btn-block btn-warning btn-sm" id="productDel" name="productDel" value="삭제" onclick="goProductDel(${productList.productSeq},${productList.storeSeq})">
 														</td>
@@ -126,7 +126,7 @@
 					                            </c:forEach>
 			                            	</c:when>
 			                            	<c:otherwise>
-			                            		<tr><th colspan="6" style="text-align: center;">결과가 없습니다.</th></tr>
+			                            		<tr><th colspan="5" style="text-align: center;">결과가 없습니다.</th></tr>
 			                            	</c:otherwise>
 			                            </c:choose>
 		                            </tbody>
@@ -137,13 +137,6 @@
 	            </div>
 	            <div class="row"  style="width: 100%; padding: 5px; margin-top: -25px;">
 					<div class="col-sm-5">
-						<div class="dataTables_info" role="status" aria-live="polite">
-						<ul class="pagination">
-							<li class="paginate_button active">
-								총 100개 중 1번 부터10번까지의 게시물
-							</li>
-						</ul>
-						</div>
 					</div>
 					<div class="col-sm-7">
 						<div class="dataTables_paginate paging_simple_numbers" style="text-align: right;">
@@ -341,11 +334,11 @@ function goRefreshProductList(productList) {
 
 	var paramProductList = '';
 	paramProductList += '<tr>';
-	paramProductList += '<th style="width: 5%">No</th>';
-	paramProductList += '<th style="width: 20%">매장명</th>';
-	paramProductList += '<th style="width: 13%">품목구분</th>';
-	paramProductList += '<th style="width: 40%">상품명</th>';
+	paramProductList += '<th style="width: 7%">No</th>';
+	paramProductList += '<th style="width: 25%">매장명</th>';
+	paramProductList += '<th style="width: 31%">상품명</th>';
 	paramProductList += '<th style="width: 15%">상품가격</th>';
+	paramProductList += '<th style="width: 15%">상품기간</th>';
 	paramProductList += '<th style="width: 7%"></th>';
 	paramProductList += '</tr>';
 	
@@ -354,7 +347,6 @@ function goRefreshProductList(productList) {
 		var paramProductSeq = 0;
 		var paramStoreSeq = 0;
 		var paramStoreName ='';
-		var paramitemName ='';
 		var paramProductName ='';
 		var paramProductPrice = 0;
 		
@@ -362,15 +354,20 @@ function goRefreshProductList(productList) {
 		paramProductSeq = productList[i].productSeq;
 		paramStoreSeq = productList[i].storeSeq;
 		paramStoreName = productList[i].storeName;
-		paramitemName = productList[i].itemName;
 		paramProductName = productList[i].productName;
-		paramProductPrice = productList[i].productPrice;
 		
+		paramProductPrice = productList[i].productPrice;
+		paramProductPrice = numberWithCommas(paramProductPrice);
+		
+		paramProductPeriod = productList[i].productPeriod;
+		
+		
+			
 		paramProductList += '<tr>';
 		paramProductList += '<td>'+paramRowNum+'</td>';
 		paramProductList += '<td>'+paramStoreName+'</td>';
-		paramProductList += '<td>'+paramitemName+'</td>';
 		paramProductList += '<td><a href="javascript:void(0);" onclick="goProductDetail('+paramProductSeq+','+paramStoreSeq+')">'+paramProductName+'</a></td>';
+ 		paramProductList += '<td>'+paramProductPeriod+'</td>'; 
  		paramProductList += '<td>'+paramProductPrice+'</td>'; 
 		
 		paramProductList += '<td><input type="button" class="btn btn-block btn-warning btn-sm" onclick="goProductDel('+paramProductSeq+','+paramStoreSeq+');" value="삭제"></td>';
@@ -428,11 +425,11 @@ function goRefreshPage(productVO) {
 function goRefreshProductNoCount() {
 	var paramProductList = '';
 	paramProductList += '<tr>';
-	paramProductList += '<th style="width: 5%">No</th>';
-	paramProductList += '<th style="width: 20%">매장명</th>';
-	paramProductList += '<th style="width: 13%">품목구분</th>';
-	paramProductList += '<th style="width: 40%">상품명</th>';
+	paramProductList += '<th style="width: 7%">No</th>';
+	paramProductList += '<th style="width: 25%">매장명</th>';
+	paramProductList += '<th style="width: 31%">상품명</th>';
 	paramProductList += '<th style="width: 15%">상품가격</th>';
+	paramProductList += '<th style="width: 15%">상품기간</th>';
 	paramProductList += '<th style="width: 7%"></th>';
 	paramProductList += '</tr>';
 	paramProductList += '<tr><th colspan="6" style="text-align: center;">결과가 없습니다.</th></tr>';
@@ -466,6 +463,11 @@ function goClickPage(pageNum) {
 }
 
 /* 검색 조건 ,페이징  */
+
+
+function numberWithCommas(price) {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 
 /* 엑셀 다운로드 기능  */

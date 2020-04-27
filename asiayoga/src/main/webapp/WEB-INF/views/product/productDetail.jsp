@@ -81,7 +81,7 @@
 		                                </td>
 		                            </tr>
 		                            <tr>
-		                                <th style="width: 150px">품목구분<font style=" color: red;">&nbsp;*</font></th>
+		                                <%-- <th style="width: 150px">품목구분<font style=" color: red;">&nbsp;*</font></th>
 		                                <td>
 		                                	<select id="itemSeq" name="itemSeq" onchange="goCheckItem();">
 		                                		<option value="0">선택하세요</option>
@@ -89,7 +89,7 @@
 			                                		<option value="${itemList.itemSeq}" <c:if test="${itemList.itemSeq eq productDetail.itemSeq}">selected</c:if> >${itemList.itemName}</option>
 		                                		</c:forEach>
 		                                	</select>
-		                                </td>
+		                                </td> --%>
 		                            </tr>
 		                            <tr>
 		                            	<th>상품명<font style=" color: red;">&nbsp;*</font></th>
@@ -98,31 +98,17 @@
 		                            		<input type="hidden" id="productSeq" name="productSeq" value="${productDetail.productSeq}">
 		                            	</td>
 		                            </tr>
-		                            <c:choose>
-		                            	<c:when test="${productDetail.largeCategory eq '002'}">
-				                            <tr id="lockerInfo">
-				                                <th style="width: 150px">락커 갯수</th>
-				                                <td>
-				                                	<input type="text" id="lockerSeq" name="lockerSeq" value="${productDetail.lockerSeq}" placeholder="숫자만 입력하세요" onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)'>
-				                                	<input type="hidden" id="largeCategory" name="largeCategory" value="${productDetail.largeCategory}">
-				                                </td>
-				                            </tr>
-		                            	</c:when>
-		                            	<c:otherwise>
-				                            <tr id="lockerInfo" style="display: none;">
-				                                <th style="width: 150px">락커 갯수</th>
-				                                <td>
-				                                	<input type="text" id="lockerSeq" name="lockerSeq" value="${productDetail.lockerSeq}" placeholder="숫자만 입력하세요" onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)'>
-				                                	<input type="hidden" id="largeCategory" name="largeCategory" value="${productDetail.largeCategory}">
-				                                </td>
-				                            </tr>
-		                            	</c:otherwise>
-		                            </c:choose>
 		                            <tr>
 		                                <th style="width: 150px">가격</th>
 		                                <td>
 		                                	<input type="text" id="productPrice" name="productPrice" value="${productDetail.productPrice}" placeholder="숫자만 입력하세요" onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)'>
 		                                	<font style="color: red;"> ! 가격 미입력 시 0원으로 저장 됩니다.</font>
+		                                </td>
+		                            </tr>
+		                            <tr>
+		                                <th style="width: 150px">기간</th>
+		                                <td>
+		                                	<input type="text" id="productPeriod" name="productPeriod" value="${productDetail.productPeriod}" placeholder="숫자만 입력하세요" onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)'>
 		                                </td>
 		                            </tr>
 		                            <tr>
@@ -264,7 +250,7 @@ function goProductDel(){
 }
 
 /* 품목 체크 */
-function goCheckItem(){
+/* function goCheckItem(){
 	
 	var paramItemSeq = $("#itemSeq option:selected").val();
 	var storeSeq = $("#storeSeq").val();
@@ -285,9 +271,9 @@ function goCheckItem(){
             alert("저장에 실패하였습니다. 관리자에게 문의하세요");
         }
     });
-}
+} */
 
-function ckItem(resultItem){
+/* function ckItem(resultItem){
 	
 	$("#largeCategory").val(resultItem.largeCategory+"");
 	
@@ -296,7 +282,7 @@ function ckItem(resultItem){
 	}else{
 		$("#lockerInfo").hide();
 	}
-}
+} */
 /* 품목 체크 */
 
 

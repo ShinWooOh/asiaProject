@@ -89,39 +89,21 @@
 		                                	<input type="hidden" id="storeSeq" name="storeSeq" value="${productVO.storeSeq}">
 		                            	</td>
 		                            </tr>
-		                            <tr id="itemInfo">
-		                                <th style="width: 150px">품목구분<font style=" color: red;">&nbsp;*</font></th>
-		                                <td>
-		                                	<c:choose>
-		                                		<c:when test="${fn:length(itemList) > 0}">
-				                                	<select id="itemSeq" name="itemSeq" onchange="goCheckItem();">
-				                                		<option value="0">선택하세요</option>
-				                                		<c:forEach var="itemList" items="${itemList}">
-					                                		<option value="${itemList.itemSeq}">${itemList.itemName}</option>
-				                                		</c:forEach>
-				                                	</select>
-		                                		</c:when>
-		                                		<c:otherwise>
-		                                			<font style="color: red;"> ! 상품품목 > 품목등록 에서 등록 절차를 거치 신 후 판매 상품 등록을 이용하실 수 있습니다.</font><br>
-		                                			<a href="/item/itemRegister">품목 등록 하러 가기</a>
-		                                		</c:otherwise>
-		                                	</c:choose>
-		                                	<input type="hidden" id="largeCategory" name="largeCategory">
-		                                </td>
-		                            </tr>
 		                            <tr>
 		                            	<th>상품명<font style=" color: red;">&nbsp;*</font></th>
 		                            	<td><input type="text" id="productName" name="productName" value="" style="width: 50%"></td>
-		                            </tr>
-		                            <tr id="lockerInfo" style="display: none;">
-		                                <th style="width: 150px">락커 갯수</th>
-		                                <td><input type="text" id="lockerSeq" name="lockerSeq" value="0" placeholder="숫자만 입력하세요" onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)'></td>
 		                            </tr>
 		                            <tr>
 		                                <th style="width: 150px">가격</th>
 		                                <td>
 		                                	<input type="text" id="productPrice" name="productPrice" value="" placeholder="숫자만 입력하세요" onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)'>
 		                                	<font style="color: red;">! 가격 미입력 시 0원으로 저장 됩니다.</font>
+		                                </td>
+		                            </tr>
+		                            <tr>
+		                                <th style="width: 150px">기간</th>
+		                                <td>
+		                                	<input type="text" id="productPeriod" name="productPeriod" value="" placeholder="숫자만 입력하세요" onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)'>
 		                                </td>
 		                            </tr>
 		                            <tr>
@@ -197,11 +179,6 @@ function goProductList(){
 
 function goProductRegister(){
 	
-	if($("#itemSeq").val() == 0 ){
-		alert("품목명을 선택해 주세요.");
-		return false;
-	}
-	
 	if($("#productName").val() == ''){
 		alert("상품명을 선택해 주세요.");
 		$("#productName").focus();
@@ -243,41 +220,6 @@ function productRegister(){
     });
 }
 
-/* 품목 체크 , 락커인 경우 해당 정보에 대한 컬럼 open*/
-function goCheckItem(){
-	
-	var paramItemSeq = $("#itemSeq option:selected").val();
-	var storeSeq = $("#storeSeq").val();
-	
-	$.ajax({
-		type: 'get',
-        url : "/product/checkItem",
-        data: 	{	itemSeq : paramItemSeq,
-        			storeSeq : storeSeq
-        		},
-        success : function(data){
-            if(data.result == 'success')
-            {
-              ckItem(data.resultItem);
-            }
-        },
-        error:function(request,status,error){
-            alert("저장에 실패하였습니다. 관리자에게 문의하세요");
-        }
-    });
-}
-
-function ckItem(resultItem){
-	
-	$("#largeCategory").val(resultItem.largeCategory+"");
-	
-	if(resultItem.largeCategory == '002'){
-		$("#lockerInfo").show();
-	}else{
-		$("#lockerInfo").hide();
-	}
-}
-/* 품목 체크 */
 
 
 
@@ -375,68 +317,12 @@ function searchStore(){
  	$("#productInfo #storeName").val(storeName);
  	
  	
- 	popStoreSelectAfter(storeSeq);
- }
-
- 
-/* 팝업에서 매장 선택 후 품목이 있는 경우 selectBox로 기능 구현 */
-function popStoreSelectAfter(storeSeq) {
-
-	$.ajax({
-		type: 'get',
-       	url : "/product/searchItemList",
-       	data: {		storeSeq : storeSeq
-       			},
-       	success : function(data){
-           if(data.result == 'success'){
-           		itemList(data.itemList);
-           }else if(data.result == 'noCount'){
-           		alert("등록되어 있는 품목이 없습니다.\n 상품품목 > 품목등록에서 등록 절차를 거친 다음 판매 상품 등록을 이용하실 수 있습니다.");
-           		return false;
-           }
-       	},
-       	error:function(request,status,error){
-			alert("저장에 실패하였습니다. 관리자에게 문의하세요");
-       	}
-   	});
-	
-}
-
-function itemList(itemList) {
-	
-	var paramItemList ='';
-	
-	var paramGroupSeq =  0;
-	var paramGroupName = '';
-	paramItemList+= '<th style="width: 150px">품목구분<font style=" color: red;">&nbsp;*</font></th>';
-	
-	paramItemList+= '<td>';
-	paramItemList+= '<select id="itemSeq" name="itemSeq" onchange="goCheckItem();">';
-	paramItemList+= '<option value="0">선택하세요</option>';
-	
-	for(var i = 0 ; i < itemList.length;i++){
-		paramItemList+= '<option value="'+itemList[i].itemSeq+'">'+itemList[i].itemName+'</option>';
-	}
-	
-	paramItemList+= '</select>';
-	paramItemList+= '</td>';
-	
-	$("#itemInfo").text("");
-	$("#itemInfo").append(paramItemList);
-	
-	/* 하단 등록 버튼 영역  */
-	var productFooter = '';
-	productFooter += '<input type="button" class="btn btn-block btn-primary" value="목록" onclick="goProductList();" style="float: left; width:80px;">';
-	productFooter += '<input type="button" class="btn btn-block btn-success" value="등록" onclick="goProductRegister();" style="float: right; width:80px;">';
-	$("#productFooter").text("");
-	$("#productFooter").append(productFooter);
-
  	defaultCss();
  	popClose();
  	
  	$("#findStore").modal('toggle');
-
-}
+ }
+ 
 
 function popClose(){
 	$("#popStoreName").val("");

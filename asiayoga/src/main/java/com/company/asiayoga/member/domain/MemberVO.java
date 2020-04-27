@@ -55,7 +55,14 @@ public class MemberVO extends StoreVO {
     private Date expirationDay;						// 만료일
     private int productPrice;						// 상품 가격
     private int customerPrice;						// 고객 구매 가격
+    private int productPeriod;						// 상품 기간
+    private int customerPeriod;						// 고객 상품 기간
     
+    private String postCode;						// 우편번호
+    private String roadAddress;						// 도로명 주소
+    private String jibunAddress;					// 지번주소
+    private String detailAddress;					// 상세주소
+    private String extraAddress;					// 참고항목
 	
     public int getRowNum() {
 		return rowNum;
@@ -71,6 +78,12 @@ public class MemberVO extends StoreVO {
 	}
 	public int getMemberSeq() {
 		return memberSeq;
+	}
+	public String getPostCode() {
+		return postCode;
+	}
+	public void setPostCode(String postCode) {
+		this.postCode = postCode;
 	}
 	public void setMemberSeq(int memberSeq) {
 		this.memberSeq = memberSeq;
@@ -345,5 +358,40 @@ public class MemberVO extends StoreVO {
 	public void setCustomerPrice(int customerPrice) {
 		this.customerPrice = customerPrice;
 	}
-	
+	public int getProductPeriod() {
+		return productPeriod;
+	}
+	public void setProductPeriod(int productPeriod) {
+		this.productPeriod = productPeriod;
+	}
+	public int getCustomerPeriod() {
+		return customerPeriod;
+	}
+	public void setCustomerPeriod(int customerPeriod) {
+		this.customerPeriod = customerPeriod;
+	}
+	public String getRoadAddress() {
+		return roadAddress;
+	}
+	public void setRoadAddress(String roadAddress) {
+		this.roadAddress = roadAddress;
+	}
+	public String getJibunAddress() {
+		return jibunAddress;
+	}
+	public void setJibunAddress(String jibunAddress) {
+		this.jibunAddress = jibunAddress;
+	}
+	public String getDetailAddress() {
+		return detailAddress;
+	}
+	public void setDetailAddress(String detailAddress) {
+		this.detailAddress = detailAddress;
+	}
+	public String getExtraAddress() {
+		return extraAddress;
+	}
+	public void setExtraAddress(String extraAddress) {
+		this.extraAddress = extraAddress;
+	}
 }

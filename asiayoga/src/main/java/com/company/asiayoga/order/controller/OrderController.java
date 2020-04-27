@@ -43,9 +43,6 @@ public class OrderController {
 	@Inject
 	private ProductService productService;
 	
-	@Inject
-	private AttendanceService attendanceService;
-	
 	private String menuFirstRoot = "order";
 	
 	// 구매 내역 화면으로 이동
@@ -140,9 +137,12 @@ public class OrderController {
 	// 구매 내역 삭제
 	@RequestMapping(value = "orderDelete")
 	@ResponseBody
-	public String orderDelete(Model model,@ModelAttribute("orderVO") OrderVO orderVO) throws Exception{
+	public String orderDelete(HttpServletRequest request,Model model,@ModelAttribute("orderVO") OrderVO orderVO) throws Exception{
 		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		int resultParam = 0;
+		orderVO.setModifyId(manageVO.getId());
 		resultParam = orderService.orderDelete(orderVO);
 		
 		String result = "fail";
@@ -314,11 +314,15 @@ public class OrderController {
 	// 구매 내역 업데이트
 	@RequestMapping(value = "updateOrder")
 	@ResponseBody
-	public String updateOrder(Model model,OrderVO orderVO) throws Exception{
+	public String updateOrder(HttpServletRequest request,Model model,OrderVO orderVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
 		
 		int paramResult = 0;
 		String result = "fail";
 		
+		orderVO.setModifyId(manageVO.getId());
 		paramResult = orderService.updateOrder(orderVO);
 		
 		if(paramResult > 0) {

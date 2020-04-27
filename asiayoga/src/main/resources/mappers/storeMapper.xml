@@ -18,7 +18,11 @@
 			store_name,
 			store_tel,
 			store_phone,
-			store_address,
+			post_code,
+			road_address,
+			jibun_address,
+			detail_address,
+			extra_address,
 			store_memo
 		FROM storeinfo, (SELECT @ROWNUM :=0) AS R
 		WHERE del_yn = 'N'
@@ -27,7 +31,11 @@
 			(		store_name LIKE CONCAT('%',#{searchWord},'%')
 				OR 	store_tel LIKE CONCAT('%',#{searchWord},'%')
 				OR 	store_phone LIKE CONCAT('%',#{searchWord},'%')
-				OR 	store_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	post_code LIKE CONCAT('%',#{searchWord},'%')
+				OR 	road_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	jibun_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	detail_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	extra_address LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
 		ORDER BY store_seq DESC,row_num DESC
@@ -45,7 +53,11 @@
 			(		store_name LIKE CONCAT('%',#{searchWord},'%')
 				OR 	store_tel LIKE CONCAT('%',#{searchWord},'%')
 				OR 	store_phone LIKE CONCAT('%',#{searchWord},'%')
-				OR 	store_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	post_code LIKE CONCAT('%',#{searchWord},'%')
+				OR 	road_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	jibun_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	detail_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	extra_address LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
 	</select>
@@ -57,7 +69,12 @@
 				store_name,
 				store_tel,
 				store_phone,
-				store_address,
+				post_code,
+				road_address,
+				jibun_address,
+				road_address,
+				detail_address,
+				extra_address,
 				store_memo
 		FROM storeinfo
 		WHERE del_yn = 'N'
@@ -71,7 +88,11 @@
 				(	store_name,
 					store_tel,
 					store_phone,
-					store_address,
+					post_code,
+					road_address,
+					jibun_address,
+					detail_address,
+					extra_address,
 					store_memo,
 					del_yn,
 					register_date,
@@ -82,13 +103,17 @@
 		VALUES	(	#{storeName},
 					#{storeTel},
 					#{storePhone},
-					#{storeAddress},
+					#{postCode},
+					#{roadAddress},
+					#{jibunAddress},
+					#{detailAddress},
+					#{extraAddress},
 					#{storeMemo},
 					'N',
 					now(),
-					'admin',
+					#{registerId},
 					now(),
-					'admin'
+					#{registerId}
 				)
 	</select>
 	
@@ -98,7 +123,9 @@
 		/* storeMapper.storeDelete */
 		UPDATE storeinfo
 		<set>
-			del_yn = 'Y'
+			del_yn = 'Y',
+			modify_date= now(),
+			modify_id = #{modifyId}
 		</set>
 		WHERE store_seq = #{storeSeq}
 		AND del_yn = 'N'
@@ -112,10 +139,14 @@
 			<if test="storeName != null and storeName != ''">store_name = #{storeName},</if>
   			<if test="storeTel != null and storeTel != ''">store_tel = #{storeTel},</if>
   			<if test="storePhone != null and storePhone != ''">store_phone = #{storePhone},</if>
-  			<if test="storeAddress != null and storeAddress != ''">store_address = #{storeAddress},</if>
+  			post_code = #{postCode},
+  			road_address = #{roadAddress},
+  			jibun_address = #{jibunAddress},
+  			detail_address = #{detailAddress},
+  			extra_address = #{extraAddress},
   			store_memo = #{storeMemo},
   			modify_date =now(),
-  			modify_id = 'admin' 			
+			modify_id = #{modifyId}
 		</set>
 		WHERE store_seq = #{storeSeq}
 		AND del_yn = 'N'
@@ -130,8 +161,17 @@
 			store_name,
 			store_tel,
 			store_phone,
-			store_address,
-			store_memo
+			post_code,
+			road_address,
+			jibun_address,
+			detail_address,
+			extra_address,
+			store_memo,
+			post_code,
+			road_address,
+			jibun_address,
+			detail_address,
+			extra_address
 		FROM storeinfo, (SELECT @ROWNUM :=0) AS R
 		WHERE del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
@@ -139,7 +179,11 @@
 			(		store_name LIKE CONCAT('%',#{searchWord},'%')
 				OR 	store_tel LIKE CONCAT('%',#{searchWord},'%')
 				OR 	store_phone LIKE CONCAT('%',#{searchWord},'%')
-				OR 	store_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	post_code LIKE CONCAT('%',#{searchWord},'%')
+				OR 	road_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	jibun_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	detail_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	extra_address LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
 		ORDER BY store_seq DESC,row_num DESC
@@ -154,7 +198,11 @@
 			store_name,
 			store_tel,
 			store_phone,
-			store_address,
+			post_code,
+			road_address,
+			jibun_address,
+			detail_address,
+			extra_address,
 			store_memo
 		FROM storeinfo, (SELECT @ROWNUM :=0) AS R
 		WHERE del_yn = 'N'
@@ -164,6 +212,11 @@
 				OR 	store_tel LIKE CONCAT('%',#{searchWord},'%')
 				OR 	store_phone LIKE CONCAT('%',#{searchWord},'%')
 				OR 	store_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	post_code LIKE CONCAT('%',#{searchWord},'%')
+				OR 	road_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	jibun_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	detail_address LIKE CONCAT('%',#{searchWord},'%')
+				OR 	extra_address LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
 		ORDER BY store_seq DESC,row_num DESC

@@ -119,7 +119,7 @@
 														<td><a href="#" onclick="goStoreDetail(${storeList.storeSeq});"><c:out value="${storeList.storeName}"/></a></td>
 														<td><c:out value="${storeList.storeTel}"/></td>
 														<td><c:out value="${storeList.storePhone}"/></td>
-														<td><c:out value="${storeList.storeAddress}"/></td>
+														<td><c:out value="${storeList.jibunAddress}"/> <c:out value="${storeList.detailAddress}"/></td>
 														<td align="center">
 															<input type="button" class="btn btn-block btn-warning btn-sm" id="storeDel" name="storeDel" value="삭제" onclick="goStoreDel(${storeList.storeSeq})">
 														</td>

@@ -12,42 +12,51 @@
 	<!-- 상품 목록  -->
 	<select id="productList" parameterType="productVO" resultType="productVO">
 		/* productMapper.productList */
-		SELECT
-			@ROWNUM:=@ROWNUM+1 AS row_num,
-			prdinfo.product_seq,
-			prdinfo.store_seq,
-			prdinfo.product_name,
-			prdinfo.product_price,
-			prdinfo.del_yn,
-			prdinfo.register_date,
-			prdinfo.register_id,
-			prdinfo.modify_date,
-			prdinfo.modify_id,
-            stinfo.store_name,
-            prdinfo.item_seq,
-            prditem.item_name
-		FROM productinfo prdinfo
-        INNER JOIN (SELECT @ROWNUM :=0) AS R
-        INNER JOIN storeinfo stinfo
-        ON prdinfo.store_seq = stinfo.store_seq
-        INNER JOIN productitem prditem
-        ON prdinfo.item_seq = prditem.item_seq
-		WHERE 1=1
-		<choose>
-			<when test="authority != 'ROLE_ADMIN'">
-				AND prdinfo.store_seq = #{storeSeq}
-			</when>
-			<otherwise></otherwise>
-		</choose>
-		AND	prdinfo.del_yn = 'N'
-		<if test="searchWord != null and searchWord != ''">
-			AND 
-			(		store_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	item_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	product_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	product_price LIKE CONCAT('%',#{searchWord},'%')
-			)
-		</if>
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+				tempA.product_seq,
+				tempA.store_seq,
+				tempA.product_name,
+				tempA.product_price,
+				tempA.product_period,
+				tempA.del_yn,
+				tempA.register_date,
+				tempA.register_id,
+				tempA.modify_date,
+				tempA.modify_id,
+	            tempA.store_name
+		FROM(
+				SELECT  prdinfo.product_seq,
+						prdinfo.store_seq,
+						prdinfo.product_name,
+						prdinfo.product_price,
+						prdinfo.product_period,
+						prdinfo.del_yn,
+						prdinfo.register_date,
+						prdinfo.register_id,
+						prdinfo.modify_date,
+						prdinfo.modify_id,
+			            stinfo.store_name
+				FROM productinfo prdinfo
+		        INNER JOIN (SELECT @ROWNUM :=0) AS R
+		        INNER JOIN storeinfo stinfo
+		        ON prdinfo.store_seq = stinfo.store_seq
+				WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND prdinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
+				AND	prdinfo.del_yn = 'N'
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		stinfo.store_name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	prdinfo.product_name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	prdinfo.product_price LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+				ORDER BY prdinfo.modify_date ASC
+		) AS tempA 	
 		ORDER BY row_num DESC
 		<include refid="commomPaging"/>
 	</select>
@@ -59,16 +68,19 @@
 		FROM productinfo prdinfo
 		INNER JOIN storeinfo stinfo
         ON prdinfo.store_seq = stinfo.store_seq
-        INNER JOIN productitem prditem
-        ON prdinfo.item_seq = prditem.item_seq
-		WHERE prdinfo.store_seq = #{storeSeq}
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND prdinfo.store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose>
 		AND	prdinfo.del_yn = 'N'
 		<if test="searchWord != null and searchWord != ''">
 			AND 
-			(		store_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	item_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	product_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	product_price LIKE CONCAT('%',#{searchWord},'%')
+			(		stinfo.store_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	prdinfo.product_name LIKE CONCAT('%',#{searchWord},'%')
+				OR 	prdinfo.product_price LIKE CONCAT('%',#{searchWord},'%')
 			)
 		</if>
 		<include refid="commomPaging"/>
@@ -80,11 +92,10 @@
 		INSERT INTO productinfo
 				(
 					store_seq,
-					item_seq,
 					product_name,
 					product_memo,
 					product_price,
-					locker_seq,
+					product_period,
 					del_yn,
 					register_date,
 					register_id,
@@ -93,16 +104,15 @@
 				)
 		VALUES	(
 					#{storeSeq},
-					#{itemSeq},
 					#{productName},
 					#{productMemo},
 					#{productPrice},
-					#{lockerSeq},
+					#{productPeriod},
 					'N',
 					now(),
-					'admin',
+					#{registerId},
 					now(),
-					'admin'
+					#{modifyId}
 				)
 	
 	</insert>
@@ -112,7 +122,9 @@
 	<update id="productDelete" parameterType="productVO">
 		/* productMapper.productDelete */
 		UPDATE productinfo
-		SET del_yn ='Y'
+		SET del_yn ='Y',
+			modify_date  = now(),
+			modify_id  = #{modifyId}
 		WHERE product_seq = #{productSeq}
 		AND store_seq = #{storeSeq}
 		AND del_yn = 'N'
@@ -127,16 +139,13 @@
 			prdinfo.product_name,
 			prdinfo.product_memo,
 			prdinfo.product_price,
-			prdinfo.locker_seq,
+			prdinfo.product_period,
 			prdinfo.del_yn,
 			prdinfo.register_date,
 			prdinfo.register_id,
 			prdinfo.modify_date,
 			prdinfo.modify_id,
-            ( SELECT store_name FROM storeinfo WHERE store_seq = #{storeSeq} ) AS store_name,
-            prdinfo.item_seq,
-            ( SELECT item_name FROM productitem WHERE item_seq = prdinfo.item_seq ) AS item_name,
-            ( SELECT large_category FROM productitem WHERE item_seq = prdinfo.item_seq) AS large_category
+            ( SELECT store_name FROM storeinfo WHERE store_seq = #{storeSeq} ) AS store_name
 		FROM productinfo prdinfo
 		WHERE prdinfo.product_seq = #{productSeq} 
 		AND prdinfo.store_seq = #{storeSeq}
@@ -147,13 +156,12 @@
 		/* productMapper.updateProduct */
 		UPDATE productinfo
 		<set>
-			item_seq =#{itemSeq},
 			product_name = #{productName},
 			product_price = #{productPrice},
-			locker_seq = #{lockerSeq},
+			product_period = #{productPeriod},
 			product_memo = #{productMemo},
 			modify_date = now(),
-			modify_id = 'admin'
+			modify_id = #{modifyId}
 		</set>
 		WHERE product_seq = #{productSeq}
 		AND store_seq = #{storeSeq}
@@ -163,37 +171,51 @@
 	<!-- 상품 목록 엑셀 다운로드  -->
 	<select id="productExcelDown" parameterType="productVO" resultType="productVO">
 		/* productMapper.productExcelDown */
-		SELECT
-			@ROWNUM:=@ROWNUM+1 AS row_num,
-			prdinfo.product_seq,
-			prdinfo.store_seq,
-			prdinfo.product_name,
-			prdinfo.product_price,
-            stinfo.store_name,
-            prdinfo.item_seq,
-            prditem.item_name
-		FROM productinfo prdinfo
-        INNER JOIN (SELECT @ROWNUM :=0) AS R
-        INNER JOIN storeinfo stinfo
-        ON prdinfo.store_seq = stinfo.store_seq
-        INNER JOIN productitem prditem
-        ON prdinfo.item_seq = prditem.item_seq
-		WHERE 1=1
-		<choose>
-			<when test="authority != 'ROLE_ADMIN'">
-				AND prdinfo.store_seq = #{storeSeq}
-			</when>
-			<otherwise></otherwise>
-		</choose>
-		AND	prdinfo.del_yn = 'N'
-		<if test="searchWord != null and searchWord != ''">
-			AND 
-			(		store_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	item_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	product_name LIKE CONCAT('%',#{searchWord},'%')
-				OR 	product_price LIKE CONCAT('%',#{searchWord},'%')
-			)
-		</if>
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+				tempA.product_seq,
+				tempA.store_seq,
+				tempA.product_name,
+				tempA.product_price,
+				tempA.product_period,
+				tempA.del_yn,
+				tempA.register_date,
+				tempA.register_id,
+				tempA.modify_date,
+				tempA.modify_id,
+	            tempA.store_name
+		FROM(
+				SELECT  prdinfo.product_seq,
+						prdinfo.store_seq,
+						prdinfo.product_name,
+						prdinfo.product_price,
+						prdinfo.product_period,
+						prdinfo.del_yn,
+						prdinfo.register_date,
+						prdinfo.register_id,
+						prdinfo.modify_date,
+						prdinfo.modify_id,
+			            stinfo.store_name
+				FROM productinfo prdinfo
+		        INNER JOIN (SELECT @ROWNUM :=0) AS R
+		        INNER JOIN storeinfo stinfo
+		        ON prdinfo.store_seq = stinfo.store_seq
+				WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND prdinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
+				AND	prdinfo.del_yn = 'N'
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		stinfo.store_name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	prdinfo.product_name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	prdinfo.product_price LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+				ORDER BY prdinfo.modify_date ASC
+		) AS tempA 	
 		ORDER BY row_num DESC
 	</select>
 	
@@ -202,7 +224,9 @@
 		/* productMapper.searchProductList */
 		SELECT	@ROWNUM:=@ROWNUM+1 AS row_num,
 				prdinfo.product_seq,
-				prdinfo.product_name
+				prdinfo.product_name,
+				prdinfo.product_period,
+				prdinfo.product_price
 		FROM productinfo prdinfo
         INNER JOIN (SELECT @ROWNUM :=0) AS R
 		WHERE prdinfo.store_seq = #{storeSeq}
