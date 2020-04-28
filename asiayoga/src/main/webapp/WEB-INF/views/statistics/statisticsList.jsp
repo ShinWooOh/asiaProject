@@ -49,7 +49,7 @@
     <%@ include file="/WEB-INF/views/include/left_column.jsp" %>
 
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper" style="height: 800px;">
+    <div class="content-wrapper" style="height: 900px;">
         <!-- Content Header (Page header) -->
         <div class="content-header" style="margin-bottom: -10px;">
             <div class="container-fluid">
@@ -187,7 +187,7 @@
 			            	</c:when>
 			            </c:choose>
 			            <div class="row" style="width: 100%; margin-left: 10px; background-color: #69F0AE">
-							<div class="col-lg-12 col-xs-6">
+							<div class="col-lg-6 col-xs-6">
 								<div class="small-box bg-yellow" style="color: #FFFFFF !important;">
 									<div class="inner" style="margin-top: 20px; margin-bottom: 10px;">
 										<h4>회원통계</h4>
@@ -198,6 +198,22 @@
 									</div>
 									<a class="small-box-footer" onclick="showMemberStat();" style="cursor:pointer; color: #FFFFFF !important;">
 									<input type="hidden" id="memberFlag" value="hide">
+									자세히 보기
+										<i class="fa fa-arrow-circle-right"></i>
+									</a>
+								</div>
+							</div>
+							<div class="col-lg-6 col-xs-6">
+								<div class="small-box bg-green">
+									<div class="inner" style="margin-top: 20px; margin-bottom: 10px;">
+										<h4>회원 주소 통계</h4>
+										<p>자세히 보기 클릭 시 상위 4개 정보 제공</p>
+									</div>
+									<div class="icon">
+										<i class="fas fa-user-plus"></i>
+									</div>
+									<a class="small-box-footer" onclick="showMemberAddStat();" style="cursor:pointer; color: #FFFFFF !important;">
+									<input type="hidden" id="statFlag" value="hide">
 									자세히 보기
 										<i class="fa fa-arrow-circle-right"></i>
 									</a>
@@ -266,6 +282,68 @@
 								</div>
 							</div>
 			            </div>
+			            <div class="row" id="newAddStat">
+			            	<div class="col-lg-3 col-xs-6">
+								<div class="small-box" id="bgAqua3">
+									<div class="inner">
+										<h2><c:out value="${memberAddStat.firstAddressCount}"/></h2>
+										<p><c:out value="${memberAddStat.firstAddress}"/></p>
+									</div>
+									<div class="icon">
+										<i class="fas fa-user-plus"></i>
+									</div>
+									<a class="small-box-footer" style="cursor:pointer;" onclick="memberAddStatExcel(${memberAddStat.storeSeq});">
+									엑셀 다운로드
+										<i class="fa fa-arrow-circle-right"></i>
+									</a>
+								</div>
+							</div>
+							<div class="col-lg-3 col-xs-6">
+								<div class="small-box bg-green" id="bgGreen">
+									<div class="inner">
+										<h2><c:out value="${memberAddStat.secondAddressCount}"/></h2>
+										<p><c:out value="${memberAddStat.secondAddress}"/></p>
+									</div>
+									<div class="icon">
+										<i class="fas fa-user-friends"></i>
+									</div>
+									<a class="small-box-footer" style="cursor:pointer;" onclick="memberAddStatExcel(${memberAddStat.storeSeq});">
+									엑셀 다운로드
+										<i class="fa fa-arrow-circle-right"></i>
+									</a>
+								</div>
+							</div>
+							<div class="col-lg-3 col-xs-6">
+								<div class="small-box bg-yellow" id="bgYellow" style="color: #FFFFFF !important;">
+									<div class="inner">
+										<h2><c:out value="${memberAddStat.thirdAddressCount}"/></h2>
+										<p><c:out value="${memberAddStat.thirdAddress}"/></p>
+									</div>
+									<div class="icon">
+										<i class="fas fa-users"></i>
+									</div>
+									<a class="small-box-footer" style="cursor:pointer; color: #FFFFFF !important;" onclick="memberAddStatExcel(${memberAddStat.storeSeq});">
+									엑셀 다운로드
+										<i class="fa fa-arrow-circle-right"></i>
+									</a>
+								</div>
+							</div>
+							<div class="col-lg-3 col-xs-6">
+								<div class="small-box bg-red" id="bgRed">
+									<div class="inner">
+										<h2><c:out value="${memberAddStat.fourthAddressCount}"/></h2>
+										<p><c:out value="${memberAddStat.fourthAddress}"/></p>
+									</div>
+									<div class="icon">
+										<i class="fas fa-users"></i>
+									</div>
+									<a class="small-box-footer" style="cursor:pointer;" onclick="memberAddStatExcel(${memberAddStat.storeSeq});">
+									엑셀 다운로드
+										<i class="fa fa-arrow-circle-right"></i>
+									</a>
+								</div>
+							</div>
+			            </div>
 					</div>
 		        </section>
 	        </div>
@@ -273,18 +351,18 @@
 		        <section class="content" style="width: 100%;">
 		        	<div class="dataTables_wrapper form-inline">
 						<div class="row">
-			        		<div class="col-lg-12" align="center">
+			        		<div class="col-lg-12" align="center" style="margin-bottom: 5px;">
 			        			<!-- 275*183  -->
-			        			<img src="${pageContext.request.contextPath}/resources/image/health_logo.jpg"  alt="User Image">
+			        			<img src="${pageContext.request.contextPath}/resources/image/add_01.png"  alt="User Image">
 			        		</div>
-				        	<div class="col-lg-12" align="center">
-				        		<img src="${pageContext.request.contextPath}/resources/image/health_logo2.jpg"  alt="User Image">
+				        	<div class="col-lg-12" align="center" style="margin-bottom: 5px;">
+				        		<img src="${pageContext.request.contextPath}/resources/image/add_02.png"  alt="User Image">
 				        	</div>
-				        	<div class="col-lg-12" align="center">
-				        		<img src="${pageContext.request.contextPath}/resources/image/health_logo3.jpg"  alt="User Image">
+				        	<div class="col-lg-12" align="center" style="margin-bottom: 5px;">
+				        		<img src="${pageContext.request.contextPath}/resources/image/add_03.png"  alt="User Image">
 				        	</div>
-				        	<div class="col-lg-12" align="center">
-				        		<img src="${pageContext.request.contextPath}/resources/image/health_logo4.jpg"  alt="User Image">
+				        	<div class="col-lg-12" align="center" style="margin-bottom: 5px;">
+				        		<img src="${pageContext.request.contextPath}/resources/image/add_03.png"  alt="User Image">
 				        	</div>
 			        	</div>
 	
@@ -320,6 +398,9 @@
 	<input type="hidden" id="searchWord" name="searchWord">
 	<input type="hidden" id="storeSeq" name="storeSeq">
 	<input type="hidden" id="attendanceFlag" name="attendanceFlag">
+</form:form>
+<form:form action="/statistics/memberAddressStatExcel" id="memberAddressStatExcel" name="memberAddressStatExcel" modelAttribute="statisticsVO" method="get" enctype="multipart/form-data">
+	<input type="hidden" id="storeSeq" name="storeSeq">
 </form:form>
 
 
@@ -361,34 +442,34 @@ function showMemberStat() {
 	
 	if(paramFlag == "hide"){
 		$("#newMember").show();
-		$("#newAttendance").hide();
+		$("#newAddStat").hide();
 		$("#memberFlag").val("show");
 		$("#statFlag").val("hide");
 	}
 	
 	if(paramFlag == "show"){
 		$("#newMember").hide();
-		$("#newAttendance").hide();
+		$("#newAddStat").hide();
 		$("#memberFlag").val("hide");
 		$("#statFlag").val("hide");
 	}
 }
 
-function showAttendanceStat() {
+function showMemberAddStat() {
 	
 	var paramFlag = "hide";
 	paramFlag = $("#statFlag").val();
 	
 	if(paramFlag == "hide"){
 		$("#newMember").hide();
-		$("#newAttendance").show();
+		$("#newAddStat").show();
 		$("#statFlag").val("show");
 		$("#memberFlag").val("hide");
 	}
 	
 	if(paramFlag == "show"){
 		$("#newMember").hide();
-		$("#newAttendance").hide();
+		$("#newAddStat").hide();
 		$("#statFlag").val("hide");
 		$("#memberFlag").val("hide");
 	}
@@ -407,14 +488,14 @@ function defaultCss() {
 	
 	$("#newMember").hide();
 	
-	$("#newAttendance").css({
+	$("#newAddStat").css({
 		"width"				: "100%",
 		"margin-left"		: "10px",
 		"margin-bottom"		: "10px",
 		"background"		: "#69F0AE",
 		"color"				: "#FFFFFF"
 	});
-	$("#newAttendance").hide();
+	$("#newAddStat").hide();
 	
 	
 	$("#bgAqua").css({
@@ -843,8 +924,11 @@ function attendanceExcelDown(storeSeq,attendanceFlag) {
  	}
 	
 }
-
-
+function memberAddStatExcel(storeSeq) {
+ 	$("#memberAddressStatExcel #storeSeq").val(storeSeq);
+ 	$("#memberAddressStatExcel").submit();
+	
+}
 </script>
 
 

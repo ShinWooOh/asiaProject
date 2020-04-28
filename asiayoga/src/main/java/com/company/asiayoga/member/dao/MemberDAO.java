@@ -76,9 +76,49 @@ public class MemberDAO {
 		return sqlSession.update(MEMBER_NAMESPACE+".updateAdjournmentState", memberVO);
 	}
 	
-	// 회원 통계 
-	public MemberVO memberStatistics(MemberVO memberVO) {
-		return sqlSession.selectOne(MEMBER_NAMESPACE+".memberStatistics", memberVO);
+	// 유효 회원 목록 
+	public List<MemberVO> validMemberList(MemberVO memberVO) {
+		return sqlSession.selectList(MEMBER_NAMESPACE+".validMemberList", memberVO);
+	}
+	
+	// 유효 회원 수 
+	public int validMemberCount(MemberVO memberVO) {
+		return sqlSession.selectOne(MEMBER_NAMESPACE+".validMemberCount", memberVO);
+	}
+	
+	// 만기 회원 목록 
+	public List<MemberVO> maturityMemberList(MemberVO memberVO) {
+		return sqlSession.selectList(MEMBER_NAMESPACE+".maturityMemberList", memberVO);
+	}
+	
+	// 만기 회원 수 
+	public int maturityMemberCount(MemberVO memberVO) {
+		return sqlSession.selectOne(MEMBER_NAMESPACE+".maturityMemberCount", memberVO);
+	}
+	
+	// 만기 예정 회원 목록 
+	public List<MemberVO> expiredMemberList(MemberVO memberVO) {
+		return sqlSession.selectList(MEMBER_NAMESPACE+".expiredMemberList", memberVO);
+	}
+	
+	// 만기 예정 회원 수 
+	public int expiredMemberCount(MemberVO memberVO) {
+		return sqlSession.selectOne(MEMBER_NAMESPACE+".expiredMemberCount", memberVO);
+	}
+	
+	// 유효 회원 엑셀 다운로드
+	public List<MemberVO> vaildMemberExcelDownload(MemberVO memberVO){
+		return sqlSession.selectList(MEMBER_NAMESPACE+".vaildMemberExcelDownload", memberVO);
+	}
+	
+	// 만기 회원 엑셀 다운로드
+	public List<MemberVO> maturityMemberExcelDownload(MemberVO memberVO){
+		return sqlSession.selectList(MEMBER_NAMESPACE+".maturityMemberExcelDownload", memberVO);
+	}
+	
+	// 만기예정 회원 엑셀 다운로드
+	public List<MemberVO> expiredMemberExcelDownload(MemberVO memberVO){
+		return sqlSession.selectList(MEMBER_NAMESPACE+".expiredMemberExcelDownload", memberVO);
 	}
 	
 	// 회원번호 중복 체크

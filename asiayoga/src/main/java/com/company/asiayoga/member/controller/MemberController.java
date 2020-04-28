@@ -3,6 +3,7 @@ package com.company.asiayoga.member.controller;
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -66,15 +67,61 @@ public class MemberController {
 		
 		model.addAttribute("memberVO", memberVO);
 		
-		// 매장 별 회원 통계정보
 		MemberVO memberStat = new MemberVO();
-		memberStat.setStoreSeq(memberVO.getStoreSeq());
-		memberStat.setAuthority(memberVO.getAuthority());
-		memberStat = memberService.memberStatistics(memberStat);
-		if((memberStat == null) == true) {
-			return "/error/accessDeniedPage";
-		}
+		
+		// 유효 회원 수
+		int  memberVaildCount = 0;
+		MemberVO vaildMemberVO = new MemberVO();
+		vaildMemberVO.setStoreSeq(memberVO.getStoreSeq());
+		vaildMemberVO.setAuthority(memberVO.getAuthority());
+		memberVaildCount = memberService.validMemberCount(vaildMemberVO);
+		vaildMemberVO.setTotalCount(memberVaildCount);
+		vaildMemberVO.setTotalPage(this.totalPage(memberVaildCount, vaildMemberVO));
+		vaildMemberVO.setEndPage(this.endPage(vaildMemberVO));
+		
+		// 유효 회원 목록
+		List<MemberVO> vaildMemberList = new ArrayList<MemberVO>();
+		vaildMemberList = memberService.validMemberList(memberVO);
+		model.addAttribute("vaildMemberList", vaildMemberList);
+		
+		// 만기자 회원 수
+		int maturityMemberCount = 0;
+		MemberVO maturityMemberVO = new MemberVO();
+		maturityMemberVO.setStoreSeq(memberVO.getStoreSeq());
+		maturityMemberVO.setAuthority(memberVO.getAuthority());
+		maturityMemberCount = memberService.maturityMemberCount(maturityMemberVO);
+		maturityMemberVO.setTotalCount(maturityMemberCount);
+		maturityMemberVO.setTotalPage(this.totalPage(maturityMemberCount, maturityMemberVO));
+		maturityMemberVO.setEndPage(this.endPage(maturityMemberVO));
+		
+		// 만기 회원 목록
+		List<MemberVO> maturityMemberList = new ArrayList<MemberVO>();
+		maturityMemberList = memberService.maturityMemberList(memberVO);
+		model.addAttribute("maturityMemberList", maturityMemberList);
+		
+		// 만기예정자 수
+		int expiredMemberCount = 0;
+		MemberVO expiredMemberVO = new MemberVO();
+		expiredMemberVO.setStoreSeq(memberVO.getStoreSeq());
+		expiredMemberVO.setAuthority(memberVO.getAuthority());
+		expiredMemberCount = memberService.expiredMemberCount(memberVO);
+		expiredMemberVO.setTotalCount(expiredMemberCount);
+		expiredMemberVO.setTotalPage(this.totalPage(expiredMemberCount, expiredMemberVO));
+		expiredMemberVO.setEndPage(this.endPage(expiredMemberVO));
+
+		// 만기예정 회원 목록
+		List<MemberVO> expiredMemberList = new ArrayList<MemberVO>();
+		expiredMemberList = memberService.expiredMemberList(memberVO);
+		model.addAttribute("expiredMemberList", expiredMemberList);
+		
+
+		memberStat.setMemberVaildCount(memberVaildCount);
+		memberStat.setMaturityMemberCount(maturityMemberCount);
+		memberStat.setExpiredMemberCount(expiredMemberCount);
 		model.addAttribute("memberStat", memberStat);
+		model.addAttribute("vaildMemberVO", vaildMemberVO);
+		model.addAttribute("maturityMemberVO", maturityMemberVO);
+		model.addAttribute("expiredMemberVO", expiredMemberVO);
 		
 		// 경로 체크
 		String currentPath = (String)request.getSession().getAttribute("nowPath");
@@ -401,6 +448,264 @@ public class MemberController {
 		return result;
 	}
 
+	// 회원 목록 화면에서의 검색
+	@RequestMapping(value = "searchVaildMemberList")
+	@ResponseBody
+	public HashMap<String, Object> searchVaildMemberList(HttpServletRequest request,Model model,MemberVO vaildMemberVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+
+		vaildMemberVO.setParamPage((vaildMemberVO.getTotalRow()*vaildMemberVO.getPageNum())-vaildMemberVO.getTotalRow());
+		vaildMemberVO.setStoreSeq(manageVO.getStoreSeq());
+		vaildMemberVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
+		List<MemberVO> vaildMemberList = memberService.validMemberList(vaildMemberVO);
+
+		int paramTotalCount = 0;
+		paramTotalCount = memberService.validMemberCount(vaildMemberVO);
+		
+		if(vaildMemberList.size() == 0) {
+			vaildMemberVO.setParamPage(0);
+			vaildMemberVO.setPageNum(1);
+			vaildMemberVO.setPageRow(0);
+
+			if(paramTotalCount != 0) {
+				vaildMemberVO.setStartPage(1);
+				vaildMemberVO.setTotalPage(this.totalPage(paramTotalCount, vaildMemberVO));
+				vaildMemberVO.setEndPage(this.endPage(vaildMemberVO));
+				vaildMemberList = memberService.memberList(vaildMemberVO);
+				hashMap.put("result", "success");
+				hashMap.put("vaildMemberList", vaildMemberList);
+			}else {
+				hashMap.put("result", "noCount");
+			}
+			
+		} else if(vaildMemberList.size() > 0) {
+			int paramStartPage = 0;
+			int paramEndPage = 0;
+			paramStartPage = (vaildMemberVO.getPageRow()*5)+1;
+			
+			vaildMemberVO.setTotalCount(paramTotalCount);
+			vaildMemberVO.setTotalPage(this.totalPage(paramTotalCount, vaildMemberVO));
+			paramEndPage = this.endPage(vaildMemberVO);
+			vaildMemberVO.setStartPage(paramStartPage);
+			vaildMemberVO.setEndPage(paramEndPage);
+			hashMap.put("result", "success");
+			hashMap.put("vaildMemberList", vaildMemberList);
+		} else {
+			vaildMemberVO.setParamPage(0);
+			vaildMemberVO.setPageNum(1);
+			vaildMemberVO.setPageRow(0);
+			hashMap.put("result", "fail");
+		}
+		hashMap.put("vaildMemberVO", vaildMemberVO);
+		
+		return hashMap;
+	}
+	
+	// 회원 목록 화면에서의 검색
+	@RequestMapping(value = "searchMaturityMemberList")
+	@ResponseBody
+	public HashMap<String, Object> searchMaturityMemberList(HttpServletRequest request,Model model,MemberVO maturityMemberVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		
+		maturityMemberVO.setParamPage((maturityMemberVO.getTotalRow()*maturityMemberVO.getPageNum())-maturityMemberVO.getTotalRow());
+		maturityMemberVO.setStoreSeq(manageVO.getStoreSeq());
+		maturityMemberVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
+		List<MemberVO> maturityMemberList = memberService.maturityMemberList(maturityMemberVO);
+		
+		int paramTotalCount = 0;
+		paramTotalCount = memberService.maturityMemberCount(maturityMemberVO);
+		
+		if(maturityMemberList.size() == 0) {
+			maturityMemberVO.setParamPage(0);
+			maturityMemberVO.setPageNum(1);
+			maturityMemberVO.setPageRow(0);
+			
+			if(paramTotalCount != 0) {
+				maturityMemberVO.setStartPage(1);
+				maturityMemberVO.setTotalPage(this.totalPage(paramTotalCount, maturityMemberVO));
+				maturityMemberVO.setEndPage(this.endPage(maturityMemberVO));
+				maturityMemberList = memberService.memberList(maturityMemberVO);
+				hashMap.put("result", "success");
+				hashMap.put("maturityMemberList", maturityMemberList);
+			}else {
+				hashMap.put("result", "noCount");
+			}
+			
+		} else if(maturityMemberList.size() > 0) {
+			int paramStartPage = 0;
+			int paramEndPage = 0;
+			paramStartPage = (maturityMemberVO.getPageRow()*5)+1;
+			
+			maturityMemberVO.setTotalCount(paramTotalCount);
+			maturityMemberVO.setTotalPage(this.totalPage(paramTotalCount, maturityMemberVO));
+			paramEndPage = this.endPage(maturityMemberVO);
+			maturityMemberVO.setStartPage(paramStartPage);
+			maturityMemberVO.setEndPage(paramEndPage);
+			hashMap.put("result", "success");
+			hashMap.put("maturityMemberList", maturityMemberList);
+		} else {
+			maturityMemberVO.setParamPage(0);
+			maturityMemberVO.setPageNum(1);
+			maturityMemberVO.setPageRow(0);
+			hashMap.put("result", "fail");
+		}
+		hashMap.put("maturityMemberVO", maturityMemberVO);
+		
+		return hashMap;
+	}
+	
+	// 회원 목록 화면에서의 검색
+	@RequestMapping(value = "searchExpiredMemberList")
+	@ResponseBody
+	public HashMap<String, Object> searchExpiredMemberList(HttpServletRequest request,Model model,MemberVO expiredMemberVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		
+		expiredMemberVO.setParamPage((expiredMemberVO.getTotalRow()*expiredMemberVO.getPageNum())-expiredMemberVO.getTotalRow());
+		expiredMemberVO.setStoreSeq(manageVO.getStoreSeq());
+		expiredMemberVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
+		List<MemberVO> expiredMemberList = memberService.expiredMemberList(expiredMemberVO);
+		
+		int paramTotalCount = 0;
+		paramTotalCount = memberService.expiredMemberCount(expiredMemberVO);
+		
+		if(expiredMemberList.size() == 0) {
+			expiredMemberVO.setParamPage(0);
+			expiredMemberVO.setPageNum(1);
+			expiredMemberVO.setPageRow(0);
+			
+			if(paramTotalCount != 0) {
+				expiredMemberVO.setStartPage(1);
+				expiredMemberVO.setTotalPage(this.totalPage(paramTotalCount, expiredMemberVO));
+				expiredMemberVO.setEndPage(this.endPage(expiredMemberVO));
+				expiredMemberList = memberService.memberList(expiredMemberVO);
+				hashMap.put("result", "success");
+				hashMap.put("expiredMemberList", expiredMemberList);
+			}else {
+				hashMap.put("result", "noCount");
+			}
+			
+		} else if(expiredMemberList.size() > 0) {
+			int paramStartPage = 0;
+			int paramEndPage = 0;
+			paramStartPage = (expiredMemberVO.getPageRow()*5)+1;
+			
+			expiredMemberVO.setTotalCount(paramTotalCount);
+			expiredMemberVO.setTotalPage(this.totalPage(paramTotalCount, expiredMemberVO));
+			paramEndPage = this.endPage(expiredMemberVO);
+			expiredMemberVO.setStartPage(paramStartPage);
+			expiredMemberVO.setEndPage(paramEndPage);
+			hashMap.put("result", "success");
+			hashMap.put("expiredMemberList", expiredMemberList);
+		} else {
+			expiredMemberVO.setParamPage(0);
+			expiredMemberVO.setPageNum(1);
+			expiredMemberVO.setPageRow(0);
+			hashMap.put("result", "fail");
+		}
+		hashMap.put("expiredMemberVO", expiredMemberVO);
+		
+		return hashMap;
+	}
+	
+	// 유효 회원 엑셀 다운로드
+	@RequestMapping(value = "vaildMemberExcelDownload")
+	public void vaildMemberExcelDownload(HttpServletRequest request, HttpServletResponse reponse, MemberVO memberVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
+		memberVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
+		
+		OutputStream out = null;
+		try {
+			SXSSFWorkbook sxssfWorkbook = memberService.vaildMemberExcelDownload(memberVO);
+			
+			reponse.reset();
+			reponse.setHeader("Content-Disposition", "attachment;filename=vaildMemberList.xlsx");
+			reponse.setContentType("application/vnd.ms-excel");
+			out = new BufferedOutputStream(reponse.getOutputStream());
+			
+			sxssfWorkbook.write(out);
+			out.flush();
+			
+		} catch (Exception e) {
+			logger.error("exception during downloading excel file : {}", e);
+		} finally {
+			if(out != null) { out.close(); }
+		}
+	}
+	// 만기 회원 엑셀 다운로드
+	@RequestMapping(value = "maturityMemberExcelDownload")
+	public void maturityMemberExcelDownload(HttpServletRequest request, HttpServletResponse reponse, MemberVO memberVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
+		memberVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
+		
+		OutputStream out = null;
+		try {
+			SXSSFWorkbook sxssfWorkbook = memberService.maturityMemberExcelDownload(memberVO);
+			
+			reponse.reset();
+			reponse.setHeader("Content-Disposition", "attachment;filename=maturityMemberList.xlsx");
+			reponse.setContentType("application/vnd.ms-excel");
+			out = new BufferedOutputStream(reponse.getOutputStream());
+			
+			sxssfWorkbook.write(out);
+			out.flush();
+			
+		} catch (Exception e) {
+			logger.error("exception during downloading excel file : {}", e);
+		} finally {
+			if(out != null) { out.close(); }
+		}
+	}
+	// 만기예정 회원 엑셀 다운로드
+	@RequestMapping(value = "expiredMemberExcelDownload")
+	public void expiredMemberExcelDownload(HttpServletRequest request, HttpServletResponse reponse, MemberVO memberVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
+		memberVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
+		
+		OutputStream out = null;
+		try {
+			SXSSFWorkbook sxssfWorkbook = memberService.expiredMemberExcelDownload(memberVO);
+			
+			reponse.reset();
+			reponse.setHeader("Content-Disposition", "attachment;filename=expiredMemberList.xlsx");
+			reponse.setContentType("application/vnd.ms-excel");
+			out = new BufferedOutputStream(reponse.getOutputStream());
+			
+			sxssfWorkbook.write(out);
+			out.flush();
+			
+		} catch (Exception e) {
+			logger.error("exception during downloading excel file : {}", e);
+		} finally {
+			if(out != null) { out.close(); }
+		}
+	}
+	
+	
+	
+	
+	
+// 공통 영역	
 	// 마지막 페이지 점검 
 	public int endPage(MemberVO memberVO) {
 		

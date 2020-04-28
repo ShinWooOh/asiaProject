@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.statistics.domain.StatisticsVO;
 
 @Repository
@@ -71,6 +72,16 @@ public class StatisticsDAO {
 	// 매출 정보
 	public StatisticsVO salesInfo(StatisticsVO statisticsVO) throws Exception{
 		return sqlSession.selectOne(STATISTICS_NAMESPACE+".salesInfo",statisticsVO);
+	}
+	
+	// 회원 주소 통계 
+	public List<MemberVO> memberAddressStat(MemberVO memberVO) throws Exception{
+		return sqlSession.selectList(STATISTICS_NAMESPACE+".memberAddressStat", memberVO);
+	}
+	
+	// 회원 주소 통계 엑셀
+	public List<MemberVO> memberAddressStatExcel(MemberVO memberVO) throws Exception{
+		return sqlSession.selectList(STATISTICS_NAMESPACE+".memberAddressStatExcel", memberVO);
 	}
 	
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
+import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.statistics.domain.StatisticsVO;
 
 public interface StatisticsService {
@@ -30,5 +31,11 @@ public interface StatisticsService {
 	
 	// 출석 미출석 엑셀 다운로드
 	SXSSFWorkbook statisticsNoExcelDown(StatisticsVO statisticsVO) throws Exception;
+	
+	// 회원 주소 통계 
+	public List<MemberVO> memberAddressStat(MemberVO memberVO) throws Exception;
+	
+	// 회원 주소 통계 엑셀 
+	SXSSFWorkbook memberAddressStatExcel(MemberVO memberVO) throws Exception;
 
 }

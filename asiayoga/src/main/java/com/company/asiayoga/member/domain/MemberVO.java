@@ -53,16 +53,30 @@ public class MemberVO extends StoreVO {
     private int thisMonth;							// 이번달
     private Date startDay;							// 시작일
     private Date expirationDay;						// 만료일
+    private int expiredPeriod = 7;					// 만료 기간
+    private int memberVaildCount;					// 유효 회원 수
+    private int maturityMemberCount;				// 만기 회원 수
+    private int expiredMemberCount;					// 만기예정 회원
     private int productPrice;						// 상품 가격
     private int customerPrice;						// 고객 구매 가격
     private int productPeriod;						// 상품 기간
     private int customerPeriod;						// 고객 상품 기간
+    private int personnel;							// 인원
     
     private String postCode;						// 우편번호
     private String roadAddress;						// 도로명 주소
     private String jibunAddress;					// 지번주소
     private String detailAddress;					// 상세주소
     private String extraAddress;					// 참고항목
+    
+    private String firstAddress;					// 1등 주소
+    private String secondAddress;					// 2등 주소
+    private String thirdAddress;					// 3등 주소
+    private String fourthAddress;					// 4등 주소
+    private int firstAddressCount;					// 1등 주소 거주 고객 수
+    private int secondAddressCount;					// 2등 주소 거주 고객 수
+    private int thirdAddressCount;					// 3등 주소 거주 고객 수
+    private int fourthAddressCount;					// 4등 주소 거주 고객 수
 	
     public int getRowNum() {
 		return rowNum;
@@ -346,6 +360,30 @@ public class MemberVO extends StoreVO {
 	public void setExpirationDay(Date expirationDay) {
 		this.expirationDay = expirationDay;
 	}
+	public int getExpiredPeriod() {
+		return expiredPeriod;
+	}
+	public void setExpiredPeriod(int expiredPeriod) {
+		this.expiredPeriod = expiredPeriod;
+	}
+	public int getMemberVaildCount() {
+		return memberVaildCount;
+	}
+	public void setMemberVaildCount(int memberVaildCount) {
+		this.memberVaildCount = memberVaildCount;
+	}
+	public int getMaturityMemberCount() {
+		return maturityMemberCount;
+	}
+	public void setMaturityMemberCount(int maturityMemberCount) {
+		this.maturityMemberCount = maturityMemberCount;
+	}
+	public int getExpiredMemberCount() {
+		return expiredMemberCount;
+	}
+	public void setExpiredMemberCount(int expiredMemberCount) {
+		this.expiredMemberCount = expiredMemberCount;
+	}
 	public int getProductPrice() {
 		return productPrice;
 	}
@@ -370,6 +408,12 @@ public class MemberVO extends StoreVO {
 	public void setCustomerPeriod(int customerPeriod) {
 		this.customerPeriod = customerPeriod;
 	}
+	public int getPersonnel() {
+		return personnel;
+	}
+	public void setPersonnel(int personnel) {
+		this.personnel = personnel;
+	}
 	public String getRoadAddress() {
 		return roadAddress;
 	}
@@ -393,5 +437,53 @@ public class MemberVO extends StoreVO {
 	}
 	public void setExtraAddress(String extraAddress) {
 		this.extraAddress = extraAddress;
+	}
+	public String getFirstAddress() {
+		return firstAddress;
+	}
+	public void setFirstAddress(String firstAddress) {
+		this.firstAddress = firstAddress;
+	}
+	public String getSecondAddress() {
+		return secondAddress;
+	}
+	public void setSecondAddress(String secondAddress) {
+		this.secondAddress = secondAddress;
+	}
+	public String getThirdAddress() {
+		return thirdAddress;
+	}
+	public void setThirdAddress(String thirdAddress) {
+		this.thirdAddress = thirdAddress;
+	}
+	public String getFourthAddress() {
+		return fourthAddress;
+	}
+	public void setFourthAddress(String fourthAddress) {
+		this.fourthAddress = fourthAddress;
+	}
+	public int getFirstAddressCount() {
+		return firstAddressCount;
+	}
+	public void setFirstAddressCount(int firstAddressCount) {
+		this.firstAddressCount = firstAddressCount;
+	}
+	public int getSecondAddressCount() {
+		return secondAddressCount;
+	}
+	public void setSecondAddressCount(int secondAddressCount) {
+		this.secondAddressCount = secondAddressCount;
+	}
+	public int getThirdAddressCount() {
+		return thirdAddressCount;
+	}
+	public void setThirdAddressCount(int thirdAddressCount) {
+		this.thirdAddressCount = thirdAddressCount;
+	}
+	public int getFourthAddressCount() {
+		return fourthAddressCount;
+	}
+	public void setFourthAddressCount(int fourthAddressCount) {
+		this.fourthAddressCount = fourthAddressCount;
 	}
 }

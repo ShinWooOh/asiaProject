@@ -123,7 +123,7 @@ public class StoreServiceImpl implements StoreService{
 			cell.setCellValue(vo.getStorePhone());
 			
 			cell = row.createCell(5);
-			cell.setCellValue(vo.getStoreAddress());
+			cell.setCellValue(vo.getJibunAddress()+" "+vo.getDetailAddress());
 		}
 		
 		return sxssfWorkbook;

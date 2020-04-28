@@ -427,76 +427,539 @@
   		AND store_seq = (SELECT store_seq FROM orderinfo WHERE order_seq =#{orderSeq} AND del_yn = 'N' LIMIT 1) 
 	</update>
 	
-	<!-- 회원 통계  -->
-	<select id="memberStatistics" parameterType="memberVO" resultType="memberVO">
-  		/* memberMapper."memberStatistics" */
-		SELECT 
-				( SELECT MONTH(CURDATE())
-				) AS this_month,
-				( SELECT COUNT(1) 
-				  FROM memberinfo 
-				  WHERE 1=1
-				  <choose>
+	<!-- 유효 회원  -->
+	<select id="validMemberList" parameterType="memberVO" resultType="memberVO">
+  		/* memberMapper.validMemberList */
+		SELECT  @ROWNUM:=@ROWNUM+1 AS row_num,
+		 		tempA.member_seq,
+		 		tempA.name,
+		 		tempA.phone,
+		 		tempA.my_membership,
+		 		tempA.sex,
+		 		tempA.expiration_day,
+		 		tempA.store_name
+		FROM (	
+				SELECT 
+						mbinfo.member_seq,
+						mbinfo.name,
+						mbinfo.phone,
+						mbinfo.my_membership,
+						mbinfo.sex,
+						(
+							SELECT expiration_day 
+							FROM orderinfo 
+							WHERE 1=1 
+							<choose>
+								<when test="authority != 'ROLE_ADMIN'">
+									AND store_seq = #{storeSeq}
+								</when>
+								<otherwise></otherwise>
+							</choose>
+							AND	del_yn = 'N' 
+							AND	member_seq = mbinfo.member_seq 
+							<![CDATA[AND expiration_day >= CURDATE()]]>
+							GROUP BY expiration_day
+							ORDER BY expiration_day DESC
+							LIMIT 1
+						) AS expiration_day,
+						stinfo.store_name
+				FROM memberinfo mbinfo
+				INNER JOIN orderinfo ordinfo
+				ON mbinfo.member_seq = ordinfo.member_seq
+				INNER JOIN storeinfo stinfo
+				ON mbinfo.store_seq = stinfo.store_seq
+				WHERE mbinfo.del_yn= 'N'
+				<choose>
 					<when test="authority != 'ROLE_ADMIN'">
-						AND store_seq = #{storeSeq}
+						AND mbinfo.store_seq = #{storeSeq}
 					</when>
 					<otherwise></otherwise>
-				  </choose>
-				  AND join_date BETWEEN CURDATE() and NOW()) AS new_day_member,
-				( SELECT COUNT(1) 
-				  FROM memberinfo 
-				  WHERE 1=1
-				  <choose>
+				</choose>
+				AND ordinfo.del_yn ='N'
+				<![CDATA[AND ordinfo.expiration_day >= CURDATE()]]>
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+				GROUP BY mbinfo.member_seq
+				ORDER BY expiration_day DESC
+				) AS tempA, (SELECT @ROWNUM :=0) AS R
+		ORDER BY row_num DESC
+		<include refid="commomPaging"/>
+	</select>
+	
+	<!-- 유효 회원 수  -->
+	<select id="validMemberCount" parameterType="memberVO" resultType="int">
+  		/* memberMapper.validMemberCount */
+		SELECT COUNT(1)
+		FROM (
+				SELECT 
+						mbinfo.member_seq,
+						mbinfo.name,
+						mbinfo.phone,
+						mbinfo.my_membership,
+						mbinfo.sex,
+						(
+							SELECT expiration_day 
+							FROM orderinfo 
+							WHERE 1=1 
+							<choose>
+								<when test="authority != 'ROLE_ADMIN'">
+									AND store_seq = #{storeSeq}
+								</when>
+								<otherwise></otherwise>
+							</choose>
+							AND	del_yn = 'N' 
+							AND	member_seq = mbinfo.member_seq 
+							<![CDATA[AND expiration_day >= CURDATE()]]>
+							GROUP BY expiration_day
+							ORDER BY expiration_day DESC
+							LIMIT 1
+						) AS expiration_day,
+						stinfo.store_name
+				FROM memberinfo mbinfo
+				INNER JOIN orderinfo ordinfo
+				ON mbinfo.member_seq = ordinfo.member_seq
+				INNER JOIN storeinfo stinfo
+				ON mbinfo.store_seq = stinfo.store_seq
+				WHERE mbinfo.del_yn= 'N'
+				<choose>
 					<when test="authority != 'ROLE_ADMIN'">
-						AND store_seq = #{storeSeq}
+						AND mbinfo.store_seq = #{storeSeq}
 					</when>
 					<otherwise></otherwise>
-				  </choose>
-				  AND join_date BETWEEN DATE_SUB(CURDATE(),INTERVAL(DAYOFWEEK(CURDATE())-1) DAY) AND DATE_ADD(CURDATE(),INTERVAL(7-DAYOFWEEK(CURDATE())) DAY)) AS new_week_member,
-				( SELECT COUNT(1) 
-				  FROM memberinfo 
-				  WHERE 1=1
-				  <choose>
+				</choose>
+				AND ordinfo.del_yn ='N'
+				<![CDATA[AND ordinfo.expiration_day >= CURDATE()]]>
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+				GROUP BY mbinfo.member_seq
+				ORDER BY expiration_day DESC 
+			) AS tempA
+	</select>
+	
+	
+	<!-- 만기 회원  -->
+	<select id="maturityMemberList" parameterType="memberVO" resultType="memberVO">
+  		/* memberMapper.maturityMemberList */
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+				tempA.order_seq,
+				tempA.member_seq,
+				tempA.start_day, 
+				tempA.expiration_day,
+				tempA.name,
+				tempA.my_membership,
+				tempA.phone,
+				tempA.sex,
+				tempA.store_name
+		FROM (	SELECT 	ordinfo.order_seq,
+						ordinfo.member_seq,
+						ordinfo.start_day, 
+						ordinfo.expiration_day,
+						mbinfo.my_membership,
+						mbinfo.name,
+						mbinfo.phone,
+						mbinfo.sex,
+						stinfo.store_name
+				FROM orderinfo ordinfo
+				INNER JOIN memberinfo mbinfo 
+				ON ordinfo.member_seq = mbinfo.member_seq
+				INNER JOIN storeinfo stinfo
+				ON ordinfo.store_seq = stinfo.store_seq
+				WHERE 1=1 
+				<choose>
 					<when test="authority != 'ROLE_ADMIN'">
-						AND store_seq = #{storeSeq}
+						AND ordinfo.store_seq = #{storeSeq}
 					</when>
 					<otherwise></otherwise>
-				  </choose> 
-				  AND join_date BETWEEN DATE_SUB(CURDATE(),INTERVAL(DAYOFMONTH(CURDATE())-1) DAY) AND LAST_DAY(CURDATE())) AS new_month_member,
-				( SELECT COUNT(1) 
-				  FROM memberinfo 
-				  WHERE 1=1
-				  <choose>
+				</choose> 
+				AND	ordinfo.del_yn = 'N' 
+				<![CDATA[AND ordinfo.expiration_day < CURDATE()]]>
+				AND
+					NOT EXISTS ( 	SELECT expiration_day 
+								 	FROM orderinfo 
+								 	<![CDATA[WHERE expiration_day >= CURDATE() ]]>
+								 	AND order_seq =ordinfo.order_seq 
+								)
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+				GROUP BY ordinfo.member_seq
+				ORDER BY ordinfo.expiration_day ASC
+		) AS tempA, (SELECT @ROWNUM :=0) AS R
+		ORDER BY row_num ASC
+		<include refid="commomPaging"/>
+	</select>
+	
+	<!-- 만기 회원 수 -->
+	<select id="maturityMemberCount" parameterType="memberVO" resultType="int">
+  		/* memberMapper.maturityMemberCount */
+		SELECT COUNT(1)
+		FROM (	SELECT 	ordinfo.order_seq,
+						ordinfo.member_seq,
+						ordinfo.start_day, 
+						ordinfo.expiration_day,
+						mbinfo.my_membership,
+						mbinfo.name,
+						mbinfo.phone,
+						mbinfo.sex,
+						stinfo.store_name
+				FROM orderinfo ordinfo
+				INNER JOIN memberinfo mbinfo 
+				ON ordinfo.member_seq = mbinfo.member_seq
+				INNER JOIN storeinfo stinfo
+				ON ordinfo.store_seq = stinfo.store_seq
+				WHERE 1=1 
+				<choose>
 					<when test="authority != 'ROLE_ADMIN'">
-						AND store_seq = #{storeSeq}
+						AND ordinfo.store_seq = #{storeSeq}
 					</when>
 					<otherwise></otherwise>
-				  </choose> 
-				  AND del_yn= 'N') AS total_member,
-				( SELECT COUNT(1) 
-				  FROM memberinfo 
-				  WHERE 1=1
-				  <choose>
+				</choose>
+				AND	ordinfo.del_yn = 'N' 
+				<![CDATA[AND ordinfo.expiration_day < CURDATE()]]>
+				AND
+					NOT EXISTS ( 	SELECT expiration_day 
+								 	FROM orderinfo 
+								 	<![CDATA[WHERE expiration_day >= CURDATE() ]]>
+								 	AND order_seq =ordinfo.order_seq 
+								)
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+				GROUP BY ordinfo.member_seq
+				ORDER BY ordinfo.expiration_day DESC
+		) as tempA
+	</select>
+	
+	<!-- 만기 예정 회원  -->
+	<select id="expiredMemberList" parameterType="memberVO" resultType="memberVO">
+  		/* memberMapper.expiredMemberList */
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+				tempA.order_seq,
+				tempA.member_seq,
+				tempA.start_day, 
+				tempA.expiration_day,
+				tempA.my_membership,
+				tempA.name,
+				tempA.phone,
+				tempA.sex,
+				tempA.store_name
+		FROM ( 
+				SELECT 	ordinfo.order_seq,
+						ordinfo.member_seq,
+						ordinfo.start_day, 
+						ordinfo.expiration_day,
+						mbinfo.my_membership,
+						mbinfo.name,
+						mbinfo.phone,
+						mbinfo.sex,
+						stinfo.store_name
+				FROM orderinfo ordinfo
+				INNER JOIN memberinfo mbinfo 
+				ON ordinfo.member_seq = mbinfo.member_seq
+				INNER JOIN storeinfo stinfo
+				ON ordinfo.store_seq = stinfo.store_seq
+				WHERE 1=1 
+				AND NOT EXISTS ( 	SELECT expiration_day 
+								 	FROM orderinfo 
+								 	WHERE expiration_day > DATE_ADD(CURDATE(), INTERVAL #{expiredPeriod} DAY) 
+								 	AND order_seq =ordinfo.order_seq 
+							)
+				AND	ordinfo.del_yn = 'N' 
+				<choose>
 					<when test="authority != 'ROLE_ADMIN'">
-						AND store_seq = #{storeSeq}
+						AND ordinfo.store_seq = #{storeSeq}
 					</when>
 					<otherwise></otherwise>
-				  </choose> 
-				  AND adjournment_state = 'Y' 
-				  AND del_yn= 'N') AS adjournment_yes,
-				( SELECT COUNT(1) 
-				  FROM memberinfo 
-				  WHERE 1=1
-				  <choose>
+				</choose>
+				AND	ordinfo.expiration_day BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL #{expiredPeriod} DAY)
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+				GROUP BY ordinfo.member_seq
+				ORDER BY ordinfo.expiration_day DESC
+				) AS tempA, (SELECT @ROWNUM :=0) AS R
+		ORDER BY row_num DESC
+		<include refid="commomPaging"/>
+	</select>
+	
+	<!-- 만기 예정 회원 수 -->
+	<select id="expiredMemberCount" parameterType="memberVO" resultType="int">
+  		/* memberMapper.expiredMemberCount */
+		SELECT COUNT(1)
+		FROM (	SELECT 	ordinfo.order_seq,
+						ordinfo.member_seq,
+						ordinfo.start_day, 
+						ordinfo.expiration_day,
+						mbinfo.my_membership,
+						mbinfo.name,
+						mbinfo.phone,
+						mbinfo.sex,
+						stinfo.store_name
+				FROM orderinfo ordinfo
+				INNER JOIN memberinfo mbinfo 
+				ON ordinfo.member_seq = mbinfo.member_seq
+				INNER JOIN storeinfo stinfo
+				ON ordinfo.store_seq = stinfo.store_seq
+				WHERE 1=1 
+				AND
+				NOT EXISTS ( 	SELECT expiration_day 
+							 	FROM orderinfo 
+							 	WHERE expiration_day > DATE_ADD(CURDATE(), INTERVAL #{expiredPeriod} DAY) 
+							 	AND order_seq =ordinfo.order_seq 
+							)
+				AND	ordinfo.del_yn = 'N' 
+				<choose>
 					<when test="authority != 'ROLE_ADMIN'">
-						AND store_seq = #{storeSeq}
+						AND ordinfo.store_seq = #{storeSeq}
 					</when>
 					<otherwise></otherwise>
-				  </choose> 
-				  AND adjournment_state = 'N' 
-				  AND del_yn= 'N') AS adjournment_no
-		FROM memberinfo
-		GROUP by new_day_member,new_week_member,new_month_member,total_member,adjournment_yes,adjournment_no
+				</choose> 
+				AND	ordinfo.expiration_day BETWEEN  CURDATE() AND DATE_ADD(CURDATE(), INTERVAL #{expiredPeriod} DAY)
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+				GROUP BY ordinfo.member_seq
+				ORDER BY ordinfo.expiration_day DESC
+		) as tempA
+	</select>
+	
+	<!-- 유효 회원 엑셀 다운로드 -->
+	<select id="vaildMemberExcelDownload" parameterType="memberVO" resultType="memberVO">
+  		/* memberMapper.vaildMemberExcelDownload */
+		SELECT  @ROWNUM:=@ROWNUM+1 AS row_num,
+		 		tempA.member_seq,
+		 		tempA.name,
+		 		tempA.phone,
+		 		tempA.my_membership,
+		 		tempA.sex,
+		 		tempA.expiration_day,
+		 		tempA.store_name
+		FROM (	
+				SELECT 
+						mbinfo.member_seq,
+						mbinfo.name,
+						mbinfo.phone,
+						mbinfo.my_membership,
+						mbinfo.sex,
+						(
+							SELECT expiration_day 
+							FROM orderinfo 
+							WHERE 1=1 
+							<choose>
+								<when test="authority != 'ROLE_ADMIN'">
+									AND store_seq = #{storeSeq}
+								</when>
+								<otherwise></otherwise>
+							</choose>
+							AND	del_yn = 'N' 
+							AND	member_seq = mbinfo.member_seq 
+							<![CDATA[AND expiration_day >= CURDATE()]]>
+							GROUP BY expiration_day
+							ORDER BY expiration_day DESC
+							LIMIT 1
+						) AS expiration_day,
+						stinfo.store_name
+				FROM memberinfo mbinfo
+				INNER JOIN orderinfo ordinfo
+				ON mbinfo.member_seq = ordinfo.member_seq
+				INNER JOIN storeinfo stinfo
+				ON mbinfo.store_seq = stinfo.store_seq
+				WHERE mbinfo.del_yn= 'N'
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND mbinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
+				AND ordinfo.del_yn ='N'
+				<![CDATA[AND ordinfo.expiration_day >= CURDATE()]]>
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+				GROUP BY mbinfo.member_seq
+				ORDER BY expiration_day DESC
+				) AS tempA, (SELECT @ROWNUM :=0) AS R
+		ORDER BY row_num DESC
+	</select>
+	
+	<!-- 만기 회원 엑셀 다운로드 -->
+	<select id="maturityMemberExcelDownload" parameterType="memberVO" resultType="memberVO">
+  		/* memberMapper.maturityMemberExcelDownload */
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+				tempA.order_seq,
+				tempA.member_seq,
+				tempA.start_day, 
+				tempA.expiration_day,
+				tempA.name,
+				tempA.my_membership,
+				tempA.phone,
+				tempA.sex,
+				tempA.store_name
+		FROM (	SELECT 	ordinfo.order_seq,
+						ordinfo.member_seq,
+						ordinfo.start_day, 
+						ordinfo.expiration_day,
+						mbinfo.my_membership,
+						mbinfo.name,
+						mbinfo.phone,
+						mbinfo.sex,
+						stinfo.store_name
+				FROM orderinfo ordinfo
+				INNER JOIN memberinfo mbinfo 
+				ON ordinfo.member_seq = mbinfo.member_seq
+				INNER JOIN storeinfo stinfo
+				ON ordinfo.store_seq = stinfo.store_seq
+				WHERE 1=1 
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND ordinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose> 
+				AND	ordinfo.del_yn = 'N' 
+				<![CDATA[AND ordinfo.expiration_day < CURDATE()]]>
+				AND
+					NOT EXISTS ( 	SELECT expiration_day 
+								 	FROM orderinfo 
+								 	<![CDATA[WHERE expiration_day >= CURDATE() ]]>
+								 	AND order_seq =ordinfo.order_seq 
+								)
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+				GROUP BY ordinfo.member_seq
+				ORDER BY ordinfo.expiration_day ASC
+		) AS tempA, (SELECT @ROWNUM :=0) AS R
+		ORDER BY row_num ASC
+	</select>
+	
+	<!-- 만기 예정 회원 엑셀 다운로드  -->
+	<select id="expiredMemberExcelDownload" parameterType="memberVO" resultType="memberVO">
+  		/* memberMapper.expiredMemberExcelDownload */
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+				tempA.order_seq,
+				tempA.member_seq,
+				tempA.start_day, 
+				tempA.expiration_day,
+				tempA.my_membership,
+				tempA.name,
+				tempA.phone,
+				tempA.sex,
+				tempA.store_name
+		FROM ( 
+				SELECT 	ordinfo.order_seq,
+						ordinfo.member_seq,
+						ordinfo.start_day, 
+						ordinfo.expiration_day,
+						mbinfo.my_membership,
+						mbinfo.name,
+						mbinfo.phone,
+						mbinfo.sex,
+						stinfo.store_name
+				FROM orderinfo ordinfo
+				INNER JOIN memberinfo mbinfo 
+				ON ordinfo.member_seq = mbinfo.member_seq
+				INNER JOIN storeinfo stinfo
+				ON ordinfo.store_seq = stinfo.store_seq
+				WHERE 1=1 
+				AND NOT EXISTS ( 	SELECT expiration_day 
+								 	FROM orderinfo 
+								 	WHERE expiration_day > DATE_ADD(CURDATE(), INTERVAL #{expiredPeriod} DAY) 
+								 	AND order_seq =ordinfo.order_seq 
+							)
+				AND	ordinfo.del_yn = 'N' 
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND ordinfo.store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose>
+				AND	ordinfo.expiration_day BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL #{expiredPeriod} DAY)
+				<if test="searchWord != null and searchWord != ''">
+					AND 
+					(		mbinfo.name LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.my_membership LIKE CONCAT('%',#{searchWord},'%')
+						OR 	mbinfo.phone LIKE CONCAT('%',#{searchWord},'%')
+					)
+				</if>
+				GROUP BY ordinfo.member_seq
+				ORDER BY ordinfo.expiration_day DESC
+				) AS tempA, (SELECT @ROWNUM :=0) AS R
+		ORDER BY row_num DESC
+		<include refid="commomPaging"/>
+	</select>
+	
+	
+	<!-- 회원 주소 통계  -->
+	<select id="memberAddressStat" parameterType="memberVO" resultType="int">
+  		/* memberMapper."memberAddressStat" */
+		SELECT 	extra_address, 
+				COUNT(extra_address) AS personnel
+		FROM memberinfo 
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose> 
+		AND del_yn = 'N'
+		AND extra_address IS NOT null
+		GROUP BY extra_address 
+		ORDER BY COUNT(extra_address) DESC LIMIT 4;
+	</select>
+	
+	<!-- 회원 주소 통계 엑셀   -->
+	<select id="memberAddressStatExcel" parameterType="memberVO" resultType="int">
+  		/* memberMapper."memberAddressStatExcel" */
+		SELECT 	extra_address, 
+				COUNT(extra_address) AS personnel
+		FROM memberinfo 
+		WHERE 1=1
+		<choose>
+			<when test="authority != 'ROLE_ADMIN'">
+				AND store_seq = #{storeSeq}
+			</when>
+			<otherwise></otherwise>
+		</choose> 
+		AND del_yn = 'N'
+		AND extra_address IS NOT null
+		GROUP BY extra_address 
+		ORDER BY COUNT(extra_address) DESC;
 	</select>
 	
 	<!-- 회원번호 중복 체크  -->

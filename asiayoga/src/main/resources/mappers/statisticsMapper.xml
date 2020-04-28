@@ -28,7 +28,7 @@
 					</when>
 					<otherwise></otherwise>
 				  </choose>
-				  AND join_date BETWEEN CURDATE() and CURDATE()+1) AS new_day_member,
+				  AND join_date BETWEEN CURDATE() and DATE_ADD(CURDATE(), INTERVAL 1 DAY)) AS new_day_member,
 				( SELECT COUNT(1) 
 				  FROM memberinfo 
 				  WHERE 1=1
@@ -106,7 +106,7 @@
 				EXISTS ( SELECT atdinfo.member_seq 
 							FROM attendanceinfo atdinfo
 							WHERE mbinfo.member_seq = atdinfo.member_seq 
-							AND atdinfo.attendance_date BETWEEN CURDATE() and CURDATE()+1
+							AND atdinfo.attendance_date BETWEEN CURDATE() and DATE_ADD(CURDATE(), INTERVAL 1 DAY)
 							AND atdinfo.del_yn = 'N'
 						 ) 
 				AND mbinfo.del_yn ='N'
@@ -139,7 +139,7 @@
 				NOT EXISTS ( SELECT atdinfo.member_seq  
 							FROM attendanceinfo atdinfo
 							WHERE mbinfo.member_seq = atdinfo.member_seq 
-							AND atdinfo.attendance_date BETWEEN CURDATE() and CURDATE()+1
+							AND atdinfo.attendance_date BETWEEN CURDATE() and DATE_ADD(CURDATE(), INTERVAL 1 DAY)
 							AND atdinfo.del_yn = 'N'
 						 ) 
 				AND mbinfo.del_yn ='N'
@@ -183,7 +183,7 @@
 					 	 ( 	SELECT attendance_date 
 							FROM attendanceinfo 
 							WHERE mbinfo.member_seq = member_seq 
-							AND attendance_date BETWEEN CURDATE() AND CURDATE()+1 
+							AND attendance_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 DAY)
 							AND del_yn = 'N' 
 							ORDER BY attendance_date DESC LIMIT 1
 						 ) AS attendance_date 
@@ -197,7 +197,7 @@
 				EXISTS (	SELECT atdinfo.member_seq 
 							FROM attendanceinfo atdinfo
 							WHERE mbinfo.member_seq = atdinfo.member_seq 
-							AND atdinfo.attendance_date BETWEEN CURDATE() and CURDATE()+1
+							AND atdinfo.attendance_date BETWEEN CURDATE() and DATE_ADD(CURDATE(), INTERVAL 1 DAY)
 							AND atdinfo.del_yn = 'N'
 						 ) 
 				AND mbinfo.del_yn ='N'
@@ -239,7 +239,7 @@
 		NOT EXISTS ( 	SELECT atdinfo.member_seq 
 						FROM attendanceinfo atdinfo
 						WHERE mbinfo.member_seq = atdinfo.member_seq 
-						AND atdinfo.attendance_date BETWEEN CURDATE() and CURDATE()+1
+						AND atdinfo.attendance_date BETWEEN CURDATE() and DATE_ADD(CURDATE(), INTERVAL 1 DAY)
 						AND atdinfo.del_yn = 'N'
 				 ) 
 		AND mbinfo.del_yn ='N'
@@ -284,7 +284,7 @@
 					 	 ( 	SELECT attendance_date 
 							FROM attendanceinfo 
 							WHERE mbinfo.member_seq = member_seq 
-							AND attendance_date BETWEEN CURDATE() AND CURDATE()+1 
+							AND attendance_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 DAY)
 							AND del_yn = 'N' 
 							ORDER BY attendance_date DESC LIMIT 1
 						 ) AS attendance_date 
@@ -298,7 +298,7 @@
 				EXISTS (	SELECT atdinfo.member_seq 
 							FROM attendanceinfo atdinfo
 							WHERE mbinfo.member_seq = atdinfo.member_seq 
-							AND atdinfo.attendance_date BETWEEN CURDATE() and CURDATE()+1
+							AND atdinfo.attendance_date BETWEEN CURDATE() and DATE_ADD(CURDATE(), INTERVAL 1 DAY)
 							AND atdinfo.del_yn = 'N'
 						 ) 
 				AND mbinfo.del_yn ='N'
@@ -339,7 +339,7 @@
 		NOT EXISTS ( 	SELECT atdinfo.member_seq 
 						FROM attendanceinfo atdinfo
 						WHERE mbinfo.member_seq = atdinfo.member_seq 
-						AND atdinfo.attendance_date BETWEEN CURDATE() and CURDATE()+1
+						AND atdinfo.attendance_date BETWEEN CURDATE() and DATE_ADD(CURDATE(), INTERVAL 1 DAY)
 						AND atdinfo.del_yn = 'N'
 				 ) 
 		AND mbinfo.del_yn ='N'
@@ -407,7 +407,7 @@
 						<otherwise></otherwise>
 					</choose>
 					AND del_yn = 'N' 
-					AND register_date BETWEEN CURDATE() AND CURDATE()+1
+					AND register_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 DAY)
   				) as today_sales,
   				(
 			  		SELECT SUM(customer_price) AS week_sales
@@ -459,7 +459,7 @@
 		FROM orderinfo 
 		WHERE store_seq= #{store_seq}
 		AND del_yn = 'N' 
-		AND register_date BETWEEN CURDATE() AND CURDATE()+1
+		AND register_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 DAY)
 	</select>
 	
 	<!-- 금주 매출 -->
@@ -492,5 +492,51 @@
 		AND register_date BETWEEN DATE_FORMAT(CURDATE(), '%Y-01-01') AND DATE_FORMAT(CURDATE(), '%Y-12-31')
 	</select>
 	
+	<!-- 회원 주소 통계  -->
+	<select id="memberAddressStat" parameterType="statisticsVO" resultType="statisticsVO">
+  		/* memberMapper."memberAddressStat" */
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+				tempA.extra_address, 
+				tempA.personnel
+		FROM (
+				SELECT 	extra_address, 
+						COUNT(extra_address) AS personnel 
+				FROM memberinfo 
+				WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose> 
+				AND del_yn = 'N'
+				AND extra_address IS NOT null
+				GROUP BY extra_address 
+				ORDER BY COUNT(extra_address) DESC LIMIT 4
+			) AS tempA, (SELECT @ROWNUM :=0) AS R;
+	</select>
 	
+	<!-- 회원 주소 통계 엑셀   -->
+	<select id="memberAddressStatExcel" parameterType="statisticsVO" resultType="statisticsVO">
+  		/* memberMapper."memberAddressStatExcel" */
+		SELECT 	@ROWNUM:=@ROWNUM+1 AS row_num,
+				tempA.extra_address, 
+				tempA.personnel
+		FROM (
+				SELECT 	extra_address, 
+						COUNT(extra_address) AS personnel 
+				FROM memberinfo 
+				WHERE 1=1
+				<choose>
+					<when test="authority != 'ROLE_ADMIN'">
+						AND store_seq = #{storeSeq}
+					</when>
+					<otherwise></otherwise>
+				</choose> 
+				AND del_yn = 'N'
+				AND extra_address IS NOT null
+				GROUP BY extra_address 
+				ORDER BY COUNT(extra_address) DESC
+			) AS tempA, (SELECT @ROWNUM :=0) AS R;
+	</select>
 </mapper>

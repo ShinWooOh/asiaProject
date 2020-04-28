@@ -44,8 +44,32 @@ public interface MemberService {
 	// 회원 휴회 상태 변경
 	public int updateAdjournmentState(MemberVO memberVO) throws Exception;
 
-	// 회원 통계
-	public MemberVO memberStatistics(MemberVO memberVO) throws Exception;
+	// 유효 회원 목록 
+	public List<MemberVO> validMemberList(MemberVO memberVO) throws Exception;
+
+	// 유효 회원 수
+	public int validMemberCount(MemberVO memberVO) throws Exception;
+	
+	// 만기 회원 목록 
+	public List<MemberVO> maturityMemberList(MemberVO memberVO) throws Exception;
+	
+	// 만기 회원 수
+	public int maturityMemberCount(MemberVO memberVO) throws Exception;
+	
+	// 만기 예정 회원 목록 
+	public List<MemberVO> expiredMemberList(MemberVO memberVO) throws Exception;
+	
+	// 만기 예정 회원 수
+	public int expiredMemberCount(MemberVO memberVO) throws Exception;
+
+	// 유효 회원 엑셀 다운로드
+	SXSSFWorkbook vaildMemberExcelDownload(MemberVO memberVO) throws Exception;
+	
+	// 만기 회원 엑셀 다운로드
+	SXSSFWorkbook maturityMemberExcelDownload(MemberVO memberVO) throws Exception;
+	
+	// 만기예정 회원 엑셀 다운로드
+	SXSSFWorkbook expiredMemberExcelDownload(MemberVO memberVO) throws Exception;
 	
 	// 중복 회원번호 체크
 	public int myMembershipDupCheck(MemberVO memberVO) throws Exception;

@@ -188,17 +188,228 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public MemberVO memberStatistics(MemberVO memberVO) throws Exception {
-		return memberDAO.memberStatistics(memberVO);
+	public List<MemberVO> validMemberList(MemberVO memberVO) throws Exception {
+		return memberDAO.validMemberList(memberVO);
 	}
 
+	@Override
+	public int validMemberCount(MemberVO memberVO) throws Exception {
+		return memberDAO.validMemberCount(memberVO);
+	}
+	
+
+	@Override
+	public List<MemberVO> maturityMemberList(MemberVO memberVO) throws Exception {
+		return memberDAO.maturityMemberList(memberVO);
+	}
+
+	@Override
+	public int maturityMemberCount(MemberVO memberVO) throws Exception {
+		return memberDAO.maturityMemberCount(memberVO);
+	}
+
+
+	@Override
+	public List<MemberVO> expiredMemberList(MemberVO memberVO) throws Exception {
+		return memberDAO.expiredMemberList(memberVO);
+	}
+
+	@Override
+	public int expiredMemberCount(MemberVO memberVO) throws Exception {
+		return memberDAO.expiredMemberCount(memberVO);
+	}
+
+
+	@Override
+	public SXSSFWorkbook vaildMemberExcelDownload(MemberVO memberVO) throws Exception {
+		
+		SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
+		
+		SXSSFSheet sheet = sxssfWorkbook.createSheet("유효 회원 목록");
+		
+		SXSSFRow row = null;
+		SXSSFCell cell = null;
+		
+		List<MemberVO> list = new  ArrayList<MemberVO>();
+		list = memberDAO.vaildMemberExcelDownload(memberVO);
+		
+		row = sheet.createRow(0);
+		String[] headerKey = {"No","매장명","회원번호","회원명","연락처","성별","만료일"};
+
+		
+		for(int i = 0; i < headerKey.length; i++) {
+			cell = row.createCell(i);
+			cell.setCellValue(headerKey[i]);
+		}
+		
+		for(int j= 0 ; j < list.size() ; j++) {
+			
+			row = sheet.createRow(j+1);
+			MemberVO vo = list.get(j);
+			
+			cell = row.createCell(0);
+			cell.setCellValue(vo.getRowNum());
+			
+			cell = row.createCell(1);
+			cell.setCellValue(vo.getStoreName());
+			
+			cell = row.createCell(2);
+			cell.setCellValue(vo.getMyMembership());
+			
+			cell = row.createCell(3);
+			cell.setCellValue(vo.getName());
+			
+			cell = row.createCell(4);
+			cell.setCellValue(vo.getPhone());
+			
+			cell = row.createCell(5);
+			if(vo.getSex().equals("M")) {
+				cell.setCellValue("남");
+			} else if(vo.getSex().equals("W")) {
+				cell.setCellValue("여");
+			} else {
+				cell.setCellValue("");
+			}
+			
+			cell = row.createCell(6);
+			Date date = vo.getExpirationDay();
+			Timestamp ts = new Timestamp(date.getTime());
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			cell.setCellValue(formatter.format(ts));
+		}
+		
+		return sxssfWorkbook;
+	}
+
+	@Override
+	public SXSSFWorkbook maturityMemberExcelDownload(MemberVO memberVO) throws Exception {
+		
+		SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
+		
+		SXSSFSheet sheet = sxssfWorkbook.createSheet("만기 회원 목록");
+		
+		SXSSFRow row = null;
+		SXSSFCell cell = null;
+		
+		List<MemberVO> list = new  ArrayList<MemberVO>();
+		list = memberDAO.maturityMemberExcelDownload(memberVO);
+		
+		row = sheet.createRow(0);
+		String[] headerKey = {"No","매장명","회원번호","회원명","연락처","성별","만료일"};
+
+		
+		for(int i = 0; i < headerKey.length; i++) {
+			cell = row.createCell(i);
+			cell.setCellValue(headerKey[i]);
+		}
+		
+		for(int j= 0 ; j < list.size() ; j++) {
+			
+			row = sheet.createRow(j+1);
+			MemberVO vo = list.get(j);
+			
+			cell = row.createCell(0);
+			cell.setCellValue(vo.getRowNum());
+			
+			cell = row.createCell(1);
+			cell.setCellValue(vo.getStoreName());
+			
+			cell = row.createCell(2);
+			cell.setCellValue(vo.getMyMembership());
+			
+			cell = row.createCell(3);
+			cell.setCellValue(vo.getName());
+			
+			cell = row.createCell(4);
+			cell.setCellValue(vo.getPhone());
+			
+			cell = row.createCell(5);
+			if(vo.getSex().equals("M")) {
+				cell.setCellValue("남");
+			} else if(vo.getSex().equals("W")) {
+				cell.setCellValue("여");
+			} else {
+				cell.setCellValue("");
+			}
+			
+			cell = row.createCell(6);
+			Date date = vo.getExpirationDay();
+			Timestamp ts = new Timestamp(date.getTime());
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			cell.setCellValue(formatter.format(ts));
+		}
+		
+		return sxssfWorkbook;
+	}
+
+	@Override
+	public SXSSFWorkbook expiredMemberExcelDownload(MemberVO memberVO) throws Exception {
+
+		SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
+		
+		SXSSFSheet sheet = sxssfWorkbook.createSheet("만기예정 회원 목록");
+		
+		SXSSFRow row = null;
+		SXSSFCell cell = null;
+		
+		List<MemberVO> list = new  ArrayList<MemberVO>();
+		list = memberDAO.expiredMemberExcelDownload(memberVO);
+		
+		row = sheet.createRow(0);
+		String[] headerKey = {"No","매장명","회원번호","회원명","연락처","성별","만료일"};
+
+		
+		for(int i = 0; i < headerKey.length; i++) {
+			cell = row.createCell(i);
+			cell.setCellValue(headerKey[i]);
+		}
+		
+		for(int j= 0 ; j < list.size() ; j++) {
+			
+			row = sheet.createRow(j+1);
+			MemberVO vo = list.get(j);
+			
+			cell = row.createCell(0);
+			cell.setCellValue(vo.getRowNum());
+			
+			cell = row.createCell(1);
+			cell.setCellValue(vo.getStoreName());
+			
+			cell = row.createCell(2);
+			cell.setCellValue(vo.getMyMembership());
+			
+			cell = row.createCell(3);
+			cell.setCellValue(vo.getName());
+			
+			cell = row.createCell(4);
+			cell.setCellValue(vo.getPhone());
+			
+			cell = row.createCell(5);
+			if(vo.getSex().equals("M")) {
+				cell.setCellValue("남");
+			} else if(vo.getSex().equals("W")) {
+				cell.setCellValue("여");
+			} else {
+				cell.setCellValue("");
+			}
+			
+			cell = row.createCell(6);
+			Date date = vo.getExpirationDay();
+			Timestamp ts = new Timestamp(date.getTime());
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			cell.setCellValue(formatter.format(ts));
+		}
+		
+		return sxssfWorkbook;
+	}
+	
+	
 	@Override
 	public int myMembershipDupCheck(MemberVO memberVO) throws Exception {
 		return memberDAO.myMembershipDupCheck(memberVO);
 	}
 
-	
-	
+
 	
 
 }

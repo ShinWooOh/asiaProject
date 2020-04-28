@@ -2,6 +2,7 @@ package com.company.asiayoga.statistics.controller;
 
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.company.asiayoga.manage.domain.ManageVO;
+import com.company.asiayoga.member.domain.MemberVO;
 import com.company.asiayoga.order.domain.OrderVO;
 import com.company.asiayoga.statistics.domain.StatisticsVO;
 import com.company.asiayoga.statistics.service.StatisticsService;
@@ -79,6 +81,22 @@ public class StatisticsController {
 		
 		model.addAttribute("attendanceYesList", hashMap.get("attendanceYesList"));
 		model.addAttribute("attendanceNoList", hashMap.get("attendanceNoList"));
+		
+		// 회원 주소 통계
+		StatisticsVO memberAddStat = new StatisticsVO();
+		memberAddStat.setStoreSeq(statisticsMemberVO.getStoreSeq());
+		memberAddStat.setAuthority(statisticsMemberVO.getAuthority());
+		List<MemberVO> memberAddStatList = new ArrayList<MemberVO>();
+		memberAddStatList = statisticsService.memberAddressStat(memberAddStat);
+		memberAddStat.setFirstAddress(memberAddStatList.get(0).getExtraAddress());
+		memberAddStat.setFirstAddressCount(memberAddStatList.get(0).getPersonnel());
+		memberAddStat.setSecondAddress(memberAddStatList.get(1).getExtraAddress());
+		memberAddStat.setSecondAddressCount(memberAddStatList.get(1).getPersonnel());
+		memberAddStat.setThirdAddress(memberAddStatList.get(2).getExtraAddress());
+		memberAddStat.setThirdAddressCount(memberAddStatList.get(2).getPersonnel());
+		memberAddStat.setFourthAddress(memberAddStatList.get(3).getExtraAddress());
+		memberAddStat.setFourthAddressCount(memberAddStatList.get(3).getPersonnel());
+		model.addAttribute("memberAddStat", memberAddStat);
 		
 		// 경로 체크
 		String currentPath = (String)request.getSession().getAttribute("nowPath");
@@ -255,6 +273,34 @@ public class StatisticsController {
 			
 			reponse.reset();
 			reponse.setHeader("Content-Disposition", "attachment;filename=no_attendance_member.xlsx");
+			reponse.setContentType("application/vnd.ms-excel");
+			out = new BufferedOutputStream(reponse.getOutputStream());
+			
+			sxssfWorkbook.write(out);
+			out.flush();
+			
+		} catch (Exception e) {
+			logger.error("exception during downloading excel file : {}", e);
+		} finally {
+			if(out != null) { out.close(); }
+		}
+	}
+	
+	// 회원 주소 통계 엑셀
+	@RequestMapping(value = "memberAddressStatExcel")
+	public void memberAddressStatExcel(HttpServletRequest request, HttpServletResponse reponse, MemberVO memberVO) throws Exception{
+		
+		ManageVO manageVO = new ManageVO();
+		manageVO = (ManageVO)request.getSession().getAttribute("manageInfo");
+		
+		memberVO.setAuthority(this.checkAuthority(manageVO.getAuthority()));
+		
+		OutputStream out = null;
+		try {
+			SXSSFWorkbook sxssfWorkbook = statisticsService.memberAddressStatExcel(memberVO);
+			
+			reponse.reset();
+			reponse.setHeader("Content-Disposition", "attachment;filename=memberAddresssStat.xlsx");
 			reponse.setContentType("application/vnd.ms-excel");
 			out = new BufferedOutputStream(reponse.getOutputStream());
 			
